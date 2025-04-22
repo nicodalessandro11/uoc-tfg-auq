@@ -1,0 +1,128 @@
+{
+    "barcelona": {
+        "districts": {
+            "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/bcn-districts.json",
+            "processed_file": "insert_ready_districts_bcn.json",
+            "source_link": "TODO: Add source link"
+        },
+        "neighbourhoods": {
+            "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/bcn-neighbourhoods.json",
+            "processed_file": "insert_ready_neighbourhoods_bcn.json",
+            "source_link": "TODO: Add source link"
+        },
+        "point_features": {
+            "raw_file": {
+                "parques_y_jardines": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/point_features/cultura_parcs-i-jardins.csv",
+                "varios": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/point_features/Equipaments_del_mapa.csv",
+                "mercados": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/point_features/mercats-centrescomercials_mercats-municipals.csv"
+            },
+            "processed_file": "insert_ready_point_features_bcn.json",
+            "source_link": "TODO: Add source link"
+        },
+        "indicators": {
+            "raw_file": {
+                "average_gross_taxable_income": {
+                    "2019": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/average_gross_taxable_income/2019_atles_renda_bruta_persona.csv",
+                        "source_link": "TODO: Add source link"
+                    },
+                    "2020": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/average_gross_taxable_income/2020_atles_renda_bruta_persona.csv",
+                        "source_link": "TODO: Add source link"
+                    },
+                    "2021": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/average_gross_taxable_income/2021_atles_renda_bruta_persona.csv",
+                        "source_link": "TODO: Add source link"
+                    },
+                    "2022": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/average_gross_taxable_income/2022_atles_renda_bruta_persona.csv",
+                        "source_link": "TODO: Add source link"
+                    }
+                },
+                "income_disposable": {
+                    "2019": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/income_disposable/2019_renda_disponible_llars_per_persona.csv",
+                        "source_link": "TODO: Add source link"
+                    },
+                    "2020": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/income_disposable/2020_renda_disponible_llars_per_persona.csv",
+                        "source_link": "TODO: Add source link"
+                    },
+                    "2021": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/income_disposable/2021_renda_disponible_llars_per_persona.csv",
+                        "source_link": "TODO: Add source link"
+                    }
+                },
+                "population": {
+                    "2019": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/population/2019_pad_mdbas.csv",
+                        "source_link": "TODO: Add source link"
+                    },
+                    "2020": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/population/2020_pad_mdbas.csv",
+                        "source_link": "TODO: Add source link"
+                    },
+                    "2021": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/population/2021_pad_mdbas.csv",
+                        "source_link": "TODO: Add source link"
+                    },
+                    "2022": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/population/2022_pad_mdbas.csv",
+                        "source_link": "TODO: Add source link"
+                    },
+                    "2023": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/population/2023_pad_mdbas.csv",
+                        "source_link": "TODO: Add source link"
+                    }
+                },
+                "surface": {
+                    "2019": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/surface/2019_superficie.csv",
+                        "source_link": "TODO: Add source link"
+                    },
+                    "2020": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/surface/2020_superficie.csv",
+                        "source_link": "TODO: Add source link"
+                    },
+                    "2021": {
+                        "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/barcelona/indicators/surface/2021_superficie.csv",
+                        "source_link": "TODO: Add source link"
+                    }
+                }
+            },
+            "processed_file": "insert_ready_indicators_bcn.json",
+            "source_link": "TODO: Add source link"
+        }
+    },
+    "madrid": {
+        "districts": {
+            "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/madrid-districts.json",
+            "processed_file": "insert_ready_districts_madrid.json",
+            "source_link": "TODO: Add source link"
+        },
+        "neighbourhoods": {
+            "raw_file": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/madrid-neighbourhoods.json",
+            "processed_file": "insert_ready_neighbourhoods_madrid.json",
+            "source_link": "TODO: Add source link"
+        },
+        "point_features": {
+            "raw_file": {
+                "parques_y_jardines": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/200761-0-parques-jardines.csv",
+                "museos": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/201132-0-museos.csv",
+                "bibliotecas": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/201747-0-bibliobuses-bibliotecas.csv",
+                "centros_educativos": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/300614-0-centros-educativos.csv",
+                "mercados": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/mercados-madrid.csv"
+            },
+            "processed_file": "insert_ready_point_features_madrid.json",
+            "source_link": "TODO: Add source link"
+        },
+        "indicators": {
+            "raw_file": {
+                "population": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/indicators/population.csv",
+                "surface": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/indicators/surface.csv"
+            },
+            "processed_file": "insert_ready_indicators_madrid.json",
+            "source_link": "TODO: Add source link"
+        }
+    }
+}

@@ -14,35 +14,43 @@ Log levels supported:
 - ❗ error()    – Errors or failures in execution
 - 🐞 debug()    – Detailed developer logs (for debugging only)
 
-Example usage:
-    from utils import emoji_logger as log
-
-    log.info("Starting ETL process")
-    log.success("Data successfully loaded")
-    log.warning("Missing values found")
-    log.error("Failed to write to database")
-    log.debug("Current record ID: 12345")
+Each log line includes the file name and level for easier debugging:
+📊 [main.py - info] Starting ETL process
 
 Author: Nicolas D'Alessandro
 Email: Nicodalessandro11@gmail.com
 """
 
+import inspect
+from pathlib import Path
+
+def _get_caller():
+    """Helper to retrieve the filename of the caller."""
+    frame = inspect.stack()[2]
+    filepath = frame.filename
+    return Path(filepath).name
+
 def info(message: str):
     """Prints an informational message prefixed with 📊."""
-    print(f"📊 {message}")
+    caller = _get_caller()
+    print(f"📊 [{caller} - info] {message}")
 
 def success(message: str):
     """Prints a success message prefixed with ✅."""
-    print(f"✅ {message}")
+    caller = _get_caller()
+    print(f"✅ [{caller} - success] {message}")
 
 def warning(message: str):
     """Prints a warning message prefixed with ⚠️."""
-    print(f"⚠️ {message}")
+    caller = _get_caller()
+    print(f"⚠️ [{caller} - warning] {message}")
 
 def error(message: str):
     """Prints an error message prefixed with ❗."""
-    print(f"❗ {message}")
+    caller = _get_caller()
+    print(f"❗ [{caller} - error] {message}")
 
 def debug(message: str):
-    """Prints a debug message prefixed with 🐞 (for developers)."""
-    print(f"🐞 {message}")
+    """Prints a debug message prefixed with 🐞."""
+    caller = _get_caller()
+    print(f"🐞 [{caller} - debug] {message}")

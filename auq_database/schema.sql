@@ -178,6 +178,19 @@ DROP VIEW IF EXISTS geographical_unit_view;
 -- Includes `city_id` explicitly for easier filtering and joins
 -- Note: Using SECURITY INVOKER (default) to respect the permissions of the querying user
 
+-- === Views Definition ===
+
+-- Drop existing view to prevent column name conflicts
+DROP VIEW IF EXISTS geographical_unit_view;
+DROP VIEW IF EXISTS district_polygons_view;
+DROP VIEW IF EXISTS neighborhood_polygons_view;
+
+-- View: geographical_unit_view
+-- Unifies cities, districts, and neighbourhoods into a single structure
+-- Useful for joining with indicators and point_features using (geo_level_id, geo_id)
+-- Includes `city_id` explicitly for easier filtering and joins
+-- Note: Using SECURITY INVOKER (default) to respect the permissions of the querying user
+
 CREATE OR REPLACE VIEW geographical_unit_view WITH (security_invoker = on) AS
 -- Cities (Level 1)
 SELECT
@@ -218,3 +231,31 @@ SELECT
     n.created_at,
     n.updated_at
 FROM neighbourhoods n;
+
+-- View: district_polygons_view
+-- Exposes districts with their geometry as GeoJSON for the frontend
+CREATE OR REPLACE VIEW district_polygons_view AS
+SELECT
+  id,
+  name,
+  district_code,
+  city_id,
+  ST_AsGeoJSON(geom)::json AS geometry
+FROM districts;
+
+-- View: neighborhood_polygons_view
+-- Exposes neighborhoods with their geometry as GeoJSON for the frontend
+CREATE OR REPLACE VIEW neighborhood_polygons_view AS
+SELECT
+  id,
+  name,
+  neighbourhood_code,
+  district_id,
+  city_id,
+  ST_AsGeoJSON(geom)::json AS geometry
+FROM neighbourhoods;
+
+-- Grant permissions for frontend access
+GRANT SELECT ON geographical_unit_view TO anon;
+GRANT SELECT ON district_polygons_view TO anon;
+GRANT SELECT ON neighborhood_polygons_view TO anon;

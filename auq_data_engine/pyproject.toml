@@ -1,0 +1,25 @@
+[project]
+name = "areuqueryous"
+version = "0.1.0"
+description = "ETL tools and geospatial data ingestion for the Are U Query-ous project"
+readme = "README.md"
+authors = [
+  { name = "Nico D'Alessandro Calderon" }
+]
+license = "MIT"
+requires-python = ">=3.8"
+
+dependencies = [
+  "requests",
+  "shapely"
+]
+
+[project.urls]
+Homepage = "https://github.com/youruser/uoc-tfg-auq"
+
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["scripts*"]

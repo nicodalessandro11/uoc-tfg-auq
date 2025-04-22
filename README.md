@@ -1,1 +1,1 @@
-"# uoc-tfg-auq" 
+# Placeholder content for README.md
