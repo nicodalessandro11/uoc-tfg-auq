@@ -51,3 +51,61 @@ SELECT
     n.created_at,
     n.updated_at
 FROM neighbourhoods n;
+
+-- View: cities_geojson_view
+-- Provides GeoJSON representation of cities
+-- Useful for rendering on maps
+-- Note: Using SECURITY INVOKER (default) to respect the permissions of the querying user
+-- Drop existing view to prevent column name conflicts
+create view public.districts_geojson_view as
+select
+  districts.id,
+  districts.name,
+  districts.district_code,
+  districts.city_id,
+  st_asgeojson (districts.geom)::json as geometry
+from
+  districts;
+
+-- View: neighbourhoods_geojson_view
+-- Provides GeoJSON representation of neighbourhoods
+-- Useful for rendering on maps
+-- Note: Using SECURITY INVOKER (default) to respect the permissions of the querying user
+-- Drop existing view to prevent column name conflicts
+create view public.neighbourhoods_geojson_view as
+select
+  neighbourhoods.id,
+  neighbourhoods.name,
+  neighbourhoods.neighbourhood_code,
+  neighbourhoods.district_id,
+  neighbourhoods.city_id,
+  st_asgeojson (neighbourhoods.geom)::json as geometry
+from
+  neighbourhoods;
+
+-- === Create Procedure ===
+
+-- Procedure: execute_sql for supabase integration
+DROP FUNCTION IF EXISTS execute_sql(TEXT);
+
+CREATE OR REPLACE FUNCTION execute_sql(sql_query TEXT)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    result JSONB;
+BEGIN
+    EXECUTE 'SELECT jsonb_agg(row_to_json(t)) FROM (' || sql_query || ') t' INTO result;
+    RETURN result;
+EXCEPTION WHEN OTHERS THEN
+    RETURN jsonb_build_object(
+        'error', SQLERRM,
+        'detail', SQLSTATE
+    );
+END;
+$$;
+
+-- Grant permissions for usage
+GRANT EXECUTE ON FUNCTION execute_sql TO anon;
+GRANT EXECUTE ON FUNCTION execute_sql TO authenticated;

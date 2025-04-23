@@ -23,3 +23,8 @@ test:
 clean:
 	find . -type d -name "__pycache__" -exec rm -r {} +
 	rm -rf .pytest_cache
+
+# Run database migrations
+migrate-db:
+	psql "$$(grep SUPABASE_DB_URL .env | cut -d '=' -f2)" -f auq_database/schema.sql
+	psql "$$(grep SUPABASE_DB_URL .env | cut -d '=' -f2)" -f auq_database/seed.sql

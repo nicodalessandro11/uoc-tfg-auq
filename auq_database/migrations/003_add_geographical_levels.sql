@@ -7,3 +7,10 @@ CREATE TABLE geographical_levels (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Insert geographical levels
+-- 1: City, 2: District, 3: Neighbourhood
+INSERT INTO geographical_levels (name) VALUES
+    ('City'),
+    ('District'),
+    ('Neighbourhood');
