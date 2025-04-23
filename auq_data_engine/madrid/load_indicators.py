@@ -29,7 +29,7 @@ from io import StringIO
 load_dotenv()
 
 # Configuration
-BASE_DIR = Path(__file__).resolve().parents[3]
+BASE_DIR = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = BASE_DIR / "data/files_manifest.json"
 OUTPUT_FILENAME = "insert_ready_indicators_madrid.json"
 DEFAULT_OUTPUT_PATH = BASE_DIR / "data/processed" / OUTPUT_FILENAME

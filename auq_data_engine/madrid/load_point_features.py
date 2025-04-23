@@ -56,7 +56,7 @@ GEO_LEVELS_NAMES = {v: k for k, v in GEO_LEVELS.items()}
 
 # Default output filename
 OUTPUT_FILENAME = "insert_ready_point_features_madrid.json"
-BASE_DIR = Path(__file__).resolve().parents[3]
+BASE_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_PATH = BASE_DIR / "data/processed" / OUTPUT_FILENAME
 
 # File processing configurations

@@ -25,6 +25,7 @@ from auq_data_engine.madrid import load_neighbourhoods as mad_n
 from auq_data_engine.madrid import load_point_features as mad_p
 from auq_data_engine.madrid import load_indicators as mad_i
 from auq_data_engine.upload import upload_to_supabase as upload
+from pathlib import Path
 
 F = "[main.py]"
 
@@ -34,7 +35,7 @@ F = "[main.py]"
 
 def run_tests(test_target: str):
     print(f"{F} 🧪 Running test suite for `{test_target}`...")
-    result = subprocess.run(["pytest", f"tests/{test_target}"], capture_output=True, text=True)
+    result = subprocess.run(["pytest", f"auq_data_engine/tests/{test_target}"], capture_output=True, text=True)
     print(result.stdout)
     if result.returncode != 0:
         print(f"{F} ❌ Tests failed. Upload aborted.")
@@ -69,8 +70,11 @@ def process_base_data():
 def process_point_features():
     print(f"{F} 📍 Running POINT FEATURE ETLs...")
 
-    bcn_p.run()
-    mad_p.run()
+    # Get the correct manifest path
+    manifest_path = Path(__file__).resolve().parent / "data/files_manifest.json"
+    
+    bcn_p.run(manifest_path=manifest_path)
+    mad_p.run(manifest_path=manifest_path)
 
     run_tests("test_point_features_upload.py")
 

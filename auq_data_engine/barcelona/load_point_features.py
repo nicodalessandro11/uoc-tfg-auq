@@ -53,7 +53,7 @@ GEO_LEVELS = {
 
 # Default output filename
 OUTPUT_FILENAME = "insert_ready_point_features_bcn.json"
-BASE_DIR = Path(__file__).resolve().parents[3]
+BASE_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_PATH = BASE_DIR / "data/processed" / OUTPUT_FILENAME
 
 # File processing configurations
