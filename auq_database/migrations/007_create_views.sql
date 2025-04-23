@@ -106,6 +106,13 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$;
 
--- Grant permissions for usage
-GRANT EXECUTE ON FUNCTION execute_sql TO anon;
-GRANT EXECUTE ON FUNCTION execute_sql TO authenticated;
+-- Grant SELECT on all existing tables
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
+
+-- Grant SELECT on all existing views
+GRANT SELECT ON ALL VIEWS IN SCHEMA public TO anon;
+
+-- Ensure future tables and views also grant SELECT automatically
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO anon;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON VIEWS TO anon;
+
