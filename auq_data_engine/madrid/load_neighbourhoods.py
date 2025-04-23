@@ -27,7 +27,7 @@ from shared.common_lib.emoji_logger import info, success, warning, error
 # Configuration
 # =====================
 
-BASE_DIR = Path(__file__).resolve().parents[3]
+BASE_DIR = Path(__file__).resolve().parents[1]
 CITY_ID = 2  # Madrid
 INPUT_URL = "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/madrid-neighbourhoods.json"
 OUTPUT_FILENAME = "insert_ready_neighbourhoods_madrid.json"

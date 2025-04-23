@@ -17,7 +17,7 @@ from typing import Dict, List, Any, Tuple, Optional
 
 # Get the base directory
 BASE_DIR = Path(__file__).resolve().parents[1]
-
+print(f"Base directory in the test indicators upload: {BASE_DIR}")
 # Configuration for different cities
 CITY_CONFIG = {
     "barcelona": {
