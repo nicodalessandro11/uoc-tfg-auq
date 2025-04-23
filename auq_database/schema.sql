@@ -256,6 +256,12 @@ SELECT
 FROM neighbourhoods;
 
 -- Grant permissions for frontend access
-GRANT SELECT ON geographical_unit_view TO anon;
-GRANT SELECT ON district_polygons_view TO anon;
-GRANT SELECT ON neighborhood_polygons_view TO anon;
+-- Grant SELECT on all existing tables
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
+
+-- Grant SELECT on all existing views
+GRANT SELECT ON ALL VIEWS IN SCHEMA public TO anon;
+
+-- Ensure future tables and views also grant SELECT automatically
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO anon;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON VIEWS TO anon;
