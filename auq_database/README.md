@@ -3,10 +3,11 @@
 This module defines the complete **relational database schema** for the Are U Query-ous platform, designed to support geospatial visualization, comparative urban analysis, and multi-level filtering of open data across cities.
 
 It includes:
+
 - The full schema structure (`schema.sql`)
 - Initial seed data (`seed.sql`)
-- A `migrations/` folder for step-by-step schema evolution
-- A `migrate_all.sql` runner for applying migrations in order
+- A database reset utility (`reset_db.sql`)
+- This documentation file (`README.md`)
 
 ---
 
@@ -16,8 +17,7 @@ It includes:
 |---------------------|-----------------------------------------------------------------------------|
 | `schema.sql`        | Consolidated SQL schema — full database structure at current state          |
 | `seed.sql`          | Optional test dataset for local development and demo purposes               |
-| `migrations/`       | Ordered SQL files reflecting incremental schema changes over time           |
-| `migrate_all.sql`   | Master runner to apply all migrations in sequence                           |
+| `reset_db.sql`      | Utility script to reset the database state while preserving PostGIS system tables |
 | `README.md`         | This documentation file                                                     |
 
 ---
@@ -43,26 +43,22 @@ createdb areuqueryous
 
 ### 2. Run the schema
 
-You can either:
-
-✅ Run the full schema:
-
 ```bash
 psql -U postgres -d areuqueryous -f schema.sql
-```
-
-or
-
-✅ Run migrations incrementally:
-
-```bash
-psql -U postgres -d areuqueryous -f migrate_all.sql
 ```
 
 ### 3. (Optional) Insert seed data
 
 ```bash
 psql -U postgres -d areuqueryous -f seed.sql
+```
+
+### 4. (Optional) Reset the database
+
+If you need to start fresh, you can use the reset script:
+
+```bash
+psql -U postgres -d areuqueryous -f reset_db.sql
 ```
 
 ---
@@ -82,33 +78,17 @@ psql -U postgres -d areuqueryous -f seed.sql
 
 - You can use [pgAdmin](https://www.pgadmin.org/) or Supabase Studio to inspect the database visually.
 - All GeoJSON-compatible geometry columns follow PostGIS standards and can be queried directly via API.
-
----
-
-## 🧭 Migrations Workflow
-
-To trace how the schema evolved, check the `migrations/` folder. Each file is named sequentially and can be applied individually:
-
-```bash
-psql -U postgres -d areuqueryous -f migrations/001_create_base_tables.sql
-psql -U postgres -d areuqueryous -f migrations/002_add_districts_neighborhoods.sql
-# etc.
-```
-
-You can also run them all using:
-
-```bash
-psql -U postgres -d areuqueryous -f migrate_all.sql
-```
+- Use `reset_db.sql` to clean the database while preserving PostGIS system tables and extensions.
 
 ---
 
 ## 🛡️ Versioning & Maintenance
 
 If new changes to the schema are needed:
-1. Create a new migration: `migrations/008_add_new_feature.sql`
-2. Apply it manually or add it to `migrate_all.sql`
-3. Avoid editing `schema.sql` directly — regenerate it if needed from the live DB
+
+1. Update the `schema.sql` file with the new changes
+2. Test the changes locally
+3. Document any breaking changes in the README
 
 ---
 

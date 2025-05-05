@@ -34,25 +34,30 @@ ARE-U-QUERY-OUS/
 The backend follows a **layered and modular architecture**, where each layer handles a specific responsibility:
 
 ### 1. API Layer (`app/api/`)
+
 - Defines RESTful endpoints using FastAPI.
 - Parses incoming requests (query/body params).
 - Delegates to the service layer.
 
 ### 2. Service Layer (`app/services/`)
+
 - Orchestrates business logic.
 - May combine multiple repositories.
 - Ensures validation and control flow.
 
 ### 3. Repository Layer (`app/db/repository/`)
+
 - Interacts with the database or Supabase API.
 - Encapsulates raw data access logic.
 - Returns domain data to the services.
 
 ### 4. Schemas Layer (`app/schemas/`)
+
 - Contains Pydantic models for validation and serialization.
 - Ensures input/output data is well-structured and documented.
 
 ### 5. Configuration & Utilities
+
 - `core/config.py`: Loads environment variables.
 - `core/security.py`: Auth handling.
 - `utils/logger.py`: Standard logging wrapper.
@@ -75,9 +80,11 @@ The backend follows a **layered and modular architecture**, where each layer han
 ## 🧩 API Layer: Endpoint Design
 
 ### `/indicators` – GET
+
 **Description:** Fetch indicators based on filters.
 
 Query Parameters:
+
 - `city_id`: optional
 - `geo_level`: `district` | `neighbourhood`
 - `geo_id`: required
@@ -85,6 +92,7 @@ Query Parameters:
 - `year`: optional
 
 Returns:
+
 ```json
 {
   "indicator": "income",
@@ -100,6 +108,7 @@ Returns:
 ## 📦 Supabase Integration
 
 If using Supabase:
+
 - Set `SUPABASE_DB_URL` in `.env`
 - Use Supabase Python SDK in `repository` layer
 - Skip Alembic migrations (managed by Supabase dashboard)
@@ -158,4 +167,3 @@ If using Supabase:
 ## 💬 Contact
 
 For technical documentation, contact the project maintainer or check the `docs/` directory for extended API specs and user flows.
-

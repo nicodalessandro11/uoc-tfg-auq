@@ -19,7 +19,7 @@ Each dataset follows this 3-phase process:
 All processes are orchestrated via:
 
 ```
-scripts/etl/ingest.py
+main.py
 ```
 
 This script runs in this exact order:
@@ -37,32 +37,32 @@ Uploads to Supabase only happen if validations pass (`pytest`).
 ## 📁 Project Structure
 
 ```
-are-u-query-ous/
-├── data/
-│   ├── raw/                  # Raw source files
-│   ├── processed/            # Cleaned & formatted datasets
+auq_data_engine/
+├── data/                    # Raw and processed datasets
+│   ├── raw/                # Raw source files
+│   └── processed/          # Cleaned & formatted datasets
 │
-├── scripts/
-│   ├── etl/
-│   │   ├── barcelona/
-│   │   │   ├── load_districts.py
-│   │   │   ├── load_neighbourhoods.py
-│   │   │   ├── load_point_features.py
-│   │   │   └── load_indicators.py
-│   │   ├── madrid/
-│   │   │   ├── load_districts.py
-│   │   │   ├── load_neighbourhoods.py
-│   │   │   ├── load_point_features.py
-│   │   │   └── load_indicators.py
-│   │   ├── upload/
-│   │   │   └── upload_to_supabase.py
-│   │   └── ingest.py          # 🔁 Main orchestrator
+├── barcelona/              # Barcelona-specific ETL scripts
+│   ├── load_districts.py
+│   ├── load_neighbourhoods.py
+│   ├── load_point_features.py
+│   └── load_indicators.py
 │
-├── shared/
-│   └── emoji_logger.py       # Custom logger for feedback
+├── madrid/                 # Madrid-specific ETL scripts
+│   ├── load_districts.py
+│   ├── load_neighbourhoods.py
+│   ├── load_point_features.py
+│   └── load_indicators.py
 │
-├── tests/
-│   └── test_base_data_upload.py  # Pytest validation rules
+├── upload/                 # Supabase upload utilities
+│   └── upload_to_supabase.py
+│
+├── tests/                  # Pytest validation rules
+│   └── test_base_data_upload.py
+│
+├── main.py                # 🔁 Main orchestrator
+├── pyproject.toml         # Project configuration
+└── __init__.py           # Package initialization
 ```
 
 ---
@@ -70,7 +70,7 @@ are-u-query-ous/
 ## 🔍 Example Execution
 
 ```python
-# Ingest.py simplified:
+# main.py simplified:
 
 # ETL: Districts
 bcn_d.run()
@@ -117,6 +117,7 @@ upload.run_indicator_upload()
 ## 🧪 Validation
 
 Each processed dataset is tested against:
+
 - Geometry structure match
 - Record counts
 - Join validity (e.g. neighbourhoods with valid district IDs)
@@ -150,9 +151,8 @@ Tests are written using `pytest`.
 ## 🔒 Licensing
 
 > Most datasets are under:
+
 - **Barcelona** → [CC BY 4.0](https://opendata-ajuntament.barcelona.cat/)
 - **Madrid** → Open Municipal License
 
 Always retain attribution when visualizing or sharing.
-
----

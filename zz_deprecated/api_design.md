@@ -6,7 +6,7 @@ This document outlines the API endpoints required for the "Are U Query-ous?" geo
 
 ## API Base URL example
 
-https://api.areuqueryous.com/v1
+<https://api.areuqueryous.com/v1>
 
 ## Authentication
 
@@ -27,6 +27,7 @@ Retrieves a list of all available cities.
 - **URL**: `/api/cities`
 - **Method**: `GET`
 - **Response**:
+
   ```json
   [
     {
@@ -49,6 +50,7 @@ Retrieves available geographical levels (city, district, neighborhood).
 - **URL**: `/api/geographical-levels`
 - **Method**: `GET`
 - **Response**:
+
   ```json
   [
     {
@@ -80,6 +82,7 @@ Retrieves all districts for a specific city.
 - **URL Parameters**:
   - `cityId`: ID of the city
 - **Response**:
+
   ```json
   [
     {
@@ -116,6 +119,7 @@ Retrieves all neighborhoods for a specific district.
 - **URL Parameters**:
   - `districtId`: ID of the district
 - **Response**:
+
   ```json
   [
     {
@@ -203,6 +207,7 @@ Retrieves definitions for all available indicators.
 - **URL**: `/api/indicator-definitions`
 - **Method**: `GET`
 - **Response**:
+
   ```json
   [
     {
@@ -233,6 +238,7 @@ Retrieves indicator values for a specific geographical entity.
   - `geoId`: ID of the geographical entity
   - `year`: Year for the data (e.g., 2023)
 - **Response**:
+
   ```json
   [
     {
@@ -266,6 +272,7 @@ Retrieves indicator values for all areas in a city at a specific granularity lev
   - `level`: Granularity level (`district` or `neighborhood`)
   - `year`: Year for the data (e.g., 2023)
 - **Response**:
+
   ```json
   [
     {
@@ -296,6 +303,7 @@ Retrieves definitions for all types of point features.
 - **URL**: `/api/feature-definitions`
 - **Method**: `GET`
 - **Response**:
+
   ```json
   [
     {
@@ -320,6 +328,7 @@ Retrieves all point features for a specific city.
 - **URL Parameters**:
   - `cityId`: ID of the city
 - **Response**:
+
   ```json
   [
     {
@@ -350,6 +359,7 @@ Retrieves point features for a specific geographical entity.
   - `geoLevelId`: ID of the geographical level (2 for district, 3 for neighborhood)
   - `geoId`: ID of the geographical entity
 - **Response**:
+
   ```json
   [
     {
@@ -386,6 +396,7 @@ Compares indicators between two areas in a city.
   - `area2`: ID of the second area
   - `year`: Year for the data (e.g., 2023)
 - **Response**:
+
   ```json
   {
     "area1": {
@@ -448,6 +459,7 @@ Filters areas in a city based on criteria.
   - `minDisposableIncome`: Minimum disposable income
   - `maxDisposableIncome`: Maximum disposable income
 - **Response**:
+
   ```json
   [
     {

@@ -7,7 +7,9 @@ This document defines the professional standard for all Python ETL scripts withi
 ## ✅ Required Components in Every ETL Script
 
 ### 1. 🧾 Module-Level Docstring
+
 Each script must start with a docstring that includes:
+
 - Script name and purpose
 - Input/output description
 - Author name
@@ -27,7 +29,9 @@ Author: [Your Name]
 ---
 
 ### 2. ⚙️ Configuration Block
+
 Declare constants at the top:
+
 - `INPUT_URL`, `OUTPUT_FILENAME`, `CITY_ID`, etc.
 - `BASE_DIR` for consistent path handling
 
@@ -42,6 +46,7 @@ DEFAULT_OUTPUT_PATH = BASE_DIR / "data/processed" / OUTPUT_FILENAME
 ---
 
 ### 3. 🪄 Logging with `shared.emoji_logger`
+
 Use standard emoji-enhanced logging for clarity:
 
 ```python
@@ -49,6 +54,7 @@ from shared.emoji_logger import info, success, warning, error
 ```
 
 Example usage:
+
 ```python
 info("Downloading data...")
 success("File processed successfully.")
@@ -59,7 +65,9 @@ error("Connection to Supabase failed.")
 ---
 
 ### 4. 🛡️ Error Handling
+
 Use try/except blocks to:
+
 - Handle failed downloads or decoding
 - Validate numeric values or WKT
 - Log and skip problematic entries
@@ -67,6 +75,7 @@ Use try/except blocks to:
 ---
 
 ### 5. 🧪 The `run()` Function
+
 Each ETL script must define a single `run()` function:
 
 ```python
@@ -75,6 +84,7 @@ def run(input_url: str = INPUT_URL, output_path: Path = DEFAULT_OUTPUT_PATH, cit
 ```
 
 This function:
+
 - Loads and processes the data
 - Saves the transformed output
 - Logs a summary
@@ -82,6 +92,7 @@ This function:
 ---
 
 ### 6. 🗺️ Geometry Validation
+
 Use `shapely.wkt.loads()` to validate geometries:
 
 ```python
@@ -93,6 +104,7 @@ Catch parsing errors and skip invalid records.
 ---
 
 ### 7. 📤 Output Format
+
 Always write output as a formatted JSON file:
 
 ```python
@@ -103,7 +115,9 @@ with output_path.open("w", encoding="utf-8") as f:
 ---
 
 ### 8. 📊 Summary Log
+
 At the end of the script, log:
+
 - Total input records
 - Number of processed entries
 - Number of skipped entries (if any)
@@ -111,6 +125,7 @@ At the end of the script, log:
 ---
 
 ### 9. 🧪 CLI Fallback with `argparse`
+
 Add an optional block to allow direct execution with arguments:
 
 ```python
@@ -145,6 +160,7 @@ if __name__ == "__main__":
 ---
 
 Following this standard ensures that all scripts:
+
 - Can be tested independently
 - Plug into a larger pipeline (`ingest.py`)
 - Support reusable ETL patterns for any city or dataset

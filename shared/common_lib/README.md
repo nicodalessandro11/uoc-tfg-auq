@@ -8,6 +8,8 @@ A lightweight emoji-enhanced logging utility for ETL pipelines and data scripts.
 
 `common_lib.emoji_logger` provides a set of simple functions for printing log messages with visual emoji prefixes to distinguish log levels. It's especially useful in CLI tools, ETL workflows, and data processing pipelines where quick visual feedback improves clarity.
 
+Each log message automatically includes the caller's filename and log level for easier debugging.
+
 ---
 
 ## 🔧 Log Levels Supported
@@ -32,3 +34,14 @@ log.success("Data successfully loaded")
 log.warning("Missing values found in column 'age'")
 log.error("Failed to write to database")
 log.debug("Current record ID: 12345")
+```
+
+Example output:
+
+```
+📊 [main.py - info] Starting ETL process
+✅ [main.py - success] Data successfully loaded
+⚠️ [main.py - warning] Missing values found in column 'age'
+❗ [main.py - error] Failed to write to database
+🐞 [main.py - debug] Current record ID: 12345
+```
