@@ -1,13 +1,15 @@
+-- === 0. Preliminary Actions ===
 -- Note: PostGIS extension must be enabled in Supabase dashboard first
 -- Database -> Extensions -> PostGIS
 
 -- Set search path to include public schema
 SET search_path TO public;
 
--- Enable PostGIS extension in public schema explicitly
-DROP EXTENSION IF EXISTS postgis CASCADE;
-CREATE EXTENSION postgis SCHEMA public;
+-- === 1. Extensions ===
+-- Ensure PostGIS extension is enabled (do not drop it to avoid losing system tables)
+CREATE EXTENSION IF NOT EXISTS postgis SCHEMA public;
 
+-- === 2. Tables ===
 -- === Table: cities ===
 CREATE TABLE cities (
     id SERIAL PRIMARY KEY,
@@ -63,7 +65,6 @@ CREATE TABLE indicator_definitions (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
 -- === Table: indicators ===
 CREATE TABLE indicators (
     id SERIAL PRIMARY KEY,
@@ -101,20 +102,105 @@ CREATE TABLE point_features (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- === Indexes ===
+-- === 3. Indexes ===
 CREATE INDEX idx_indicators_geo ON indicators (geo_level_id, geo_id);
 CREATE INDEX idx_point_features_geo ON point_features (geo_level_id, geo_id);
 CREATE INDEX idx_point_features_definition ON point_features (feature_definition_id);
 
--- === Permissions ===
-GRANT USAGE ON SCHEMA public TO service_role;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO service_role;
+-- === 4. Views ===
+-- Drop existing views if they exist
+DROP VIEW IF EXISTS geographical_unit_view;
+DROP VIEW IF EXISTS district_polygons_view;
+DROP VIEW IF EXISTS neighborhood_polygons_view;
 
+-- === View: geographical_unit_view ===
+CREATE OR REPLACE VIEW geographical_unit_view WITH (security_invoker = on) AS
+SELECT 1 AS geo_level_id, c.id AS geo_id, c.name, NULL::INTEGER AS code, NULL::INTEGER AS parent_id, c.id AS city_id, c.created_at, c.updated_at
+FROM cities c
+UNION ALL
+SELECT 2, d.id, d.name, d.district_code, d.city_id, d.city_id, d.created_at, d.updated_at
+FROM districts d
+UNION ALL
+SELECT 3, n.id, n.name, n.neighbourhood_code, n.district_id, n.city_id, n.created_at, n.updated_at
+FROM neighbourhoods n;
+
+-- === View: district_polygons_view ===
+CREATE OR REPLACE VIEW district_polygons_view AS
+SELECT id, name, district_code, city_id, ST_AsGeoJSON(geom)::json AS geometry
+FROM districts;
+
+-- === View: neighborhood_polygons_view ===
+CREATE OR REPLACE VIEW neighborhood_polygons_view AS
+SELECT id, name, neighbourhood_code, district_id, city_id, ST_AsGeoJSON(geom)::json AS geometry
+FROM neighbourhoods;
+
+-- Grant SELECT permissions on views
+GRANT SELECT ON geographical_unit_view TO anon;
+GRANT SELECT ON district_polygons_view TO anon;
+GRANT SELECT ON neighborhood_polygons_view TO anon;
+
+-- === 5. Functions ===
+DROP FUNCTION IF EXISTS execute_sql(text);
+
+CREATE OR REPLACE FUNCTION execute_sql(sql_query TEXT)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    result JSONB;
+BEGIN
+    EXECUTE 'SELECT jsonb_agg(row_to_json(t)) FROM (' || sql_query || ') t' INTO result;
+    RETURN result;
+EXCEPTION WHEN OTHERS THEN
+    RETURN jsonb_build_object(
+        'error', SQLERRM,
+        'detail', SQLSTATE
+    );
+END;
+$$;
+
+-- Document the purpose of the function
+COMMENT ON FUNCTION execute_sql(text) IS 'Executes dynamic SQL and returns the result as JSONB. Use with trusted input only.';
+
+-- Grant access to use the function
+GRANT EXECUTE ON FUNCTION execute_sql(TEXT) TO service_role;
+GRANT EXECUTE ON FUNCTION execute_sql(TEXT) TO anon;
+GRANT EXECUTE ON FUNCTION execute_sql(TEXT) TO authenticated;
+
+-- === 6. Permissions ===
+-- Grant schema usage
+GRANT USAGE ON SCHEMA public TO service_role;
 GRANT USAGE ON SCHEMA public TO anon;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
+GRANT USAGE ON SCHEMA public TO authenticated;
+
+-- Grant SELECT on app tables
+GRANT SELECT ON
+  cities,
+  districts,
+  neighbourhoods,
+  geographical_levels,
+  indicator_definitions,
+  indicators,
+  feature_definitions,
+  point_features
+TO service_role;
+
+GRANT SELECT ON
+  cities,
+  districts,
+  neighbourhoods,
+  geographical_levels,
+  indicator_definitions,
+  indicators,
+  feature_definitions,
+  point_features
+TO anon;
+
+-- Default privileges for future tables
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO anon;
 
--- Insert permissions for specific tables (excluding PostGIS system tables)
+-- Grant INSERT on selected tables
 GRANT INSERT ON cities TO service_role;
 GRANT INSERT ON districts TO service_role;
 GRANT INSERT ON neighbourhoods TO service_role;
@@ -123,7 +209,7 @@ GRANT INSERT ON feature_definitions TO service_role;
 GRANT INSERT ON indicator_definitions TO service_role;
 GRANT INSERT ON indicators TO service_role;
 
--- Sequence access
+-- Grant access to sequences
 GRANT USAGE, SELECT ON SEQUENCE cities_id_seq TO service_role;
 GRANT USAGE, SELECT ON SEQUENCE districts_id_seq TO service_role;
 GRANT USAGE, SELECT ON SEQUENCE neighbourhoods_id_seq TO service_role;
@@ -132,7 +218,8 @@ GRANT USAGE, SELECT ON SEQUENCE feature_definitions_id_seq TO service_role;
 GRANT USAGE, SELECT ON SEQUENCE indicator_definitions_id_seq TO service_role;
 GRANT USAGE, SELECT ON SEQUENCE indicators_id_seq TO service_role;
 
--- === RLS (Row-Level Security) Activation ===
+-- === 7. Row-Level Security (RLS) ===
+-- Enable RLS
 ALTER TABLE cities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE districts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE neighbourhoods ENABLE ROW LEVEL SECURITY;
@@ -142,7 +229,7 @@ ALTER TABLE indicators ENABLE ROW LEVEL SECURITY;
 ALTER TABLE feature_definitions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE point_features ENABLE ROW LEVEL SECURITY;
 
--- === RLS Policies ===
+-- === 8. RLS Policies ===
 CREATE POLICY "Service role access on cities"
   ON cities FOR ALL TO service_role USING (true) WITH CHECK (true);
 
@@ -256,12 +343,6 @@ SELECT
 FROM neighbourhoods;
 
 -- Grant permissions for frontend access
--- Grant SELECT on all existing tables
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
-
--- Grant SELECT on all existing views
-GRANT SELECT ON ALL VIEWS IN SCHEMA public TO anon;
-
--- Ensure future tables and views also grant SELECT automatically
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO anon;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON VIEWS TO anon;
+GRANT SELECT ON geographical_unit_view TO anon;
+GRANT SELECT ON district_polygons_view TO anon;
+GRANT SELECT ON neighborhood_polygons_view TO anon;
