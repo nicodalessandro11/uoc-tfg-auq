@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📄 Docs | 2025-05-06 | Update README.md
+
+    - Updated README.md with latest project information
+    - To provide up-to-date details about the project for new contributors and users
+    - Markdown language was used for documentation
+
+    This update ensures that the project documentation remains current and comprehensive, aiding in project understanding and onboarding.
+
 ## 🛠️ Setup | 2025-05-06 | Update .gitignore, Makefile, and READMEs; Add LICENSE and .env files
 
     - Updated .gitignore and Makefile for better build management

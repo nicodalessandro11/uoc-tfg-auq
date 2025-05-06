@@ -1,232 +1,190 @@
-# Placeholder content for README.md
+# *Are U Query-ous?* — Monorepo
 
-# 🛠️ Project: Are-U-Query-ous – Setup Guide
+This monorepo contains the complete codebase for the **Are U Query-ous** platform, a geospatial data visualization tool designed to explore, compare, and analyze open urban datasets at multiple geographical levels.
 
-This document walks you through the full setup process to run the project from scratch — including environment setup, data ingestion, testing, and deployment to Supabase.
+> Developed as part of the UOC Final Degree Project (TFG) by **Nico Dalessandro Calderon**
 
----
-
-## ✅ System Requirements
-
-Ensure you have the following tools installed:
-
----
-
-### 🐍 Python 3.10 or Higher
-
-Use a virtual environment to isolate dependencies.
+## Monorepo Structure
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-```
+.
+├── auq_backend/        # REST API with Fast API to be integrated with Next.js API routes (in progress)
+├── auq_data_engine/    # Python ETL pipeline for urban datasets 
+├── auq_database/       # PostgreSQL + PostGIS schema, migrations, seed data
+├── auq_frontend/       # Next.js + Leaflet frontend application (in progress)
+├── auq_nlp/            # NLP module placeholder (Optional Feature not yet implemented)
+├── shared/             # Common scripts, Python libs, and documentation
+├── Makefile            # Automation entrypoint
+└── README.md           # You’re here!
+````
 
-Then install the dependencies:
+## Platform Overview
+
+The system enables:
+
+* **Interactive geospatial visualization** (districts, neighborhoods, POIs)
+* **Comparative analysis** between urban zones
+* **Real-time data fetching** from a PostGIS-enabled Supabase backend
+* **Custom filtering** and dynamic charts
+* **Modular and scalable ETL pipeline** for new cities or datasets
+
+## Modules
+
+### Frontend (`auq_frontend/`)
+
+* Built with **Next.js**, **Tailwind CSS**, and **Leaflet**
+* Supports:
+
+  * Map view, compare view, visualization dashboards
+  * Point features, dark mode, mobile responsiveness
+  * Admin dashboard with Supabase auth
+* Data can be fetched either via **Supabase** or the internal **API**
+
+📖 [See Frontend README](./auq_frontend/README.md)
+
+### Backend API (`auq_backend/`)
+
+* REST API layer using Fast API for integration with Next.js API routes
+* Matches frontend expectations 1:1 (format, field names)
+* Features:
+
+  * GeoJSON and tabular endpoints
+  * Filtering, comparison, and indicator views
+  * Caching, JWT auth, and error handling built-in
+
+📖 [See API Design Doc](./auq_backend/api-design.md)
+
+### Database (`auq_database/`)
+
+* PostgreSQL + PostGIS schema optimized for:
+
+  * Multi-city support
+  * Dynamic indicators
+  * GeoJSON generation
+* Comes with:
+
+  * Versioned migrations
+  * Seed/test data
+  * Full reset flow via `Makefile`
+
+📖 [See Database README](./auq_database/README.md)
+
+### Data Engine (`auq_data_engine/`)
+
+* Python ETL system using `Pandas`, `GeoPandas`, and `Shapely`
+* Orchestrates ingestion → cleaning → validation → Supabase upload
+* Modular per city (`barcelona/`, `madrid/`, etc.)
+* Safe: uploads only happen after tests pass
+
+📖 [See Data Engine README](./auq_data_engine/README.md)
+
+### Shared Utilities (`shared/`)
+
+* Common Python libraries: emoji logging, reusable helpers
+* GPT-powered scripts:
+
+  * Changelog generator
+  * Commit message generator
+* Internal documentation:
+
+  * Python scripting standards
+  * Git commit format
+
+📖  [See Shared README](./shared/README.md)
+
+## Quickstart
+
+### 1. Requirements
+
+* **Node.js** v20
+* **Python** 3.11
+* A Supabase project with anon & service keys
+
+> If using **GitHub Codespaces**, Python and Node are preinstalled and `venv` is not required.
+
+### 2. Environment Setup
 
 ```bash
-pip install -r requirements.txt
+cp shared/.env.example .env
+cp auq_frontend/.env.local.example auq_frontend/.env.local
 ```
 
----
+Then add your Supabase credentials (URL, anon/public keys) to the files above.
 
-### 🐘 PostgreSQL Client (`psql`)
-
-Used to execute SQL files against your Supabase database.
-
-#### ▪ Ubuntu / Debian
+### 3. Install Dependencies
 
 ```bash
-sudo apt update
-sudo apt install postgresql-client
+make setup-venv
+make install-common-lib
+make install-frontend
 ```
 
-#### ▪ macOS (Homebrew)
+> If developing locally, it's recommended to activate your virtual environment:
 
 ```bash
-brew install postgresql
+source .venv/bin/activate
 ```
 
-#### ▪ Windows
-
-- [Download PostgreSQL](https://www.postgresql.org/download/windows/)
-- Make sure `psql` is added to your PATH
-- Or use WSL (recommended)
-
----
-
-### ⚙️ GNU Make
-
-Used to automate your workflow.
-
-- **macOS/Linux**: Already available
-- **Windows**: Use [Git Bash](https://gitforwindows.org/) or install via WSL
-
----
-
-## 🔐 Environment Variables
-
-Create a `.env` file in the root:
+### 4. Load the Database
 
 ```bash
-cp .env.example .env
+make reset-and-migrate-db
 ```
 
-Fill in your **Supabase project credentials**:
+This will:
 
-```env
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_KEY=your-service-role-key
-DATABASE_URL=postgresql://user:password@host:port/database
-```
+* Reset your Supabase database
+* Apply migrations from `auq_database/migrations/`
+* Seed the database with test data
 
----
-
-## 🚀 Run the Full Pipeline
+### 5. Run the ETL Pipeline
 
 ```bash
-make all
+make run-engine
 ```
 
-This command:
+Use `make run-engine-dev` to skip the upload step during development.
 
-1. Installs Python dependencies
-2. Applies the Supabase schema (`schema.sql`, `views.sql`, `seed.sql`)
-3. Runs all ETL jobs (districts, neighbourhoods)
-4. Executes geometry validation tests
-5. Uploads data to Supabase
-6. Cleans up processed files and caches
+### 6. Launch the Frontend
 
----
+```bash
+make dev-frontend
+```
 
-## 🧪 Run Tests Only
+Then open your browser at [http://localhost:3000](http://localhost:3000)
 
-To validate geometry and processed files without uploading:
+### 7. (Optional) Run Tests
 
 ```bash
 make test
 ```
 
-You can also run:
+## Dataset Sources
 
-```bash
-make test-only
-```
+* **Barcelona** → [Open Data BCN](https://opendata-ajuntament.barcelona.cat/)
+* **Madrid** → [Madrid City Open Data](https://datos.madrid.es/portal/site/egob)
 
-Which runs both ETL and tests — without upload.
+## Documentation Highlights
 
----
+* [API Design](./auq_backend/api-design.md)
+* [Python Standards](./shared/docs/python_scripts_guidelines.md)
+* [Commit Template](./shared/docs/commit_template.md)
+* [Changelog](./CHANGELOG.md)
 
-## 👨‍💻 Developer Mode
+## License & Attribution
 
-Run only the ETL scripts and tests (no upload):
+All code is released under the [MIT License](./LICENSE).
+Please attribute **Nico Dalessandro Calderon** and the **Are U Query-ous** project if reused.
 
-```bash
-make dev
-```
+## Acknowledgments
 
-Useful for local iterations and validations.
+The project integrates real-world open data with modern geospatial web technologies to offer a scalable, interactive platform for exploring, comparing, and understanding urban environments.
 
----
+It was developed as the Final Degree Project (TFG) for the **Bachelor's Degree in Techniques for Software Application Development** at the **Universitat Oberta de Catalunya (UOC)**.
 
-## ⚙️ Run ETL Scripts Without Upload
+It was conducted under the thematic area of **Localization-Based Systems and Intelligent Spaces**, with the following academic guidance:
 
-To just generate the processed files:
+* **Project Supervisor**: Dr. Joaquín Torres Sospedra
+* **Coordinating Professor**: Dr. Antoni Pérez-Navarro
 
-```bash
-make etl
-```
-
----
-
-## 🧼 Clean the Workspace
-
-```bash
-make clean
-```
-
-This deletes:
-
-- `data/processed/*`
-- Python cache files (`__pycache__`, `.pytest_cache`)
-
----
-
-## 🧨 Reset the Database (Danger Zone 🚨)
-
-To drop all tables and reset the public schema:
-
-```bash
-make reset-db
-```
-
-> ⚠️ Use **only in development**. It executes `DROP SCHEMA public CASCADE`.
-
----
-
-## 📤 Manual Upload (Optional)
-
-You can manually trigger uploads via CLI:
-
-```bash
-# Upload all processed files to Supabase
-python scripts/upload/upload_to_supabase.py
-
-# Upload only districts
-python scripts/upload/upload_to_supabase.py --only districts
-```
-
-Supported values for `--only`: `districts`, `neighbourhoods`, `points`, `indicators`, `all`
-
----
-
-## 🧾 Commit History Report
-
-To generate a Markdown log of all Git commits:
-
-```bash
-make commits-report
-```
-
-This creates `docs/implementation_report.md`.
-
----
-
-## 📦 Generate CHANGELOG from Commits (AI-Assisted)
-
-If you have OpenAI configured, generate a `CHANGELOG.md` from the implementation report:
-
-```bash
-make changelog
-```
-
----
-
-## 📚 Quick Command Reference
-
-| Command          | Description                                      |
-|------------------|--------------------------------------------------|
-| `make`           | Full setup: install, schema, ETL, test, upload   |
-| `make install`   | Install Python packages and shared lib           |
-| `make setup`     | Apply database schema and views                  |
-| `make etl`       | Run ETL scripts (no upload)                      |
-| `make test`      | Run only the test suite                          |
-| `make test-only` | Run ETL + tests (no upload)                      |
-| `make dev`       | Dev mode (ETL + tests, skip upload)              |
-| `make ingest`    | Run ETL + test + upload                          |
-| `make clean`     | Remove processed files and cache                 |
-| `make reset-db`  | Drop all tables (dev only)                       |
-| `make commits-report` | Generate Git log as Markdown                |
-| `make changelog` | Generate CHANGELOG from commit history           |
-
----
-
-## 🧠 Final Notes
-
-- Uploads are authenticated with the `service_role` key
-- Geometry integrity is **automatically validated** via `pytest`
-- All ETLs are modular, and can be run per city and feature type
-- Logs are enhanced using emoji-logger for readability
-
----
-
-🎉 That’s it! You’re all set to run, validate, and extend the **Are-U-Query-ous** project. Happy querying!
+Special thanks to both for their continued support, feedback, and guidance throughout the development process.
