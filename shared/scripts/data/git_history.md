@@ -1,5 +1,14 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 🛠️ Setup | 2025-05-06 | Update .gitignore, Makefile, and READMEs; Add LICENSE and .env files
+
+    - Updated .gitignore and Makefile for better build management
+    - Revised README.md files in auq_nlp and shared directories for clearer project documentation
+    - Added LICENSE file in shared directory for legal protection
+    - Introduced .env.example and .env.local.example files in shared directory for environment configuration
+
+    This commit enhances the project setup, making it easier for other developers to understand and contribute to the project. It also provides legal protection through the LICENSE file and enables better environment configuration with the addition of .env files.
+
 ## 📦 Feature | 2025-05-06 | Added new frontend components and updated documentation
 
     - Added new frontend components and pages to `auq_frontend/app` and `auq_frontend/components`

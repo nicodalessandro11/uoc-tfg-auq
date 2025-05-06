@@ -8,26 +8,29 @@
 # License: MIT License
 # ====================================
 
+# ======================
+# Environment Setup
+# ======================
+
+# Setup Python virtual environment (Python 3.11 required)
+setup-venv:
+	@echo "Creating virtual environment with Python 3.11..."
+	@python3.11 -m venv .venv && \
+	source .venv/bin/activate && \
+	echo "Upgrading pip..." && \
+	python -m pip install --upgrade pip && \
+	echo "Installing requirements..." && \
+	pip install -r requirements.txt && \
+	echo "Virtual environment setup complete."
+
+
 # Install shared libraries
 install-common-lib:
 	pip install -e shared/common_lib
 
-# Run full ETL engine
-run-engine:
-	PYTHONPATH=shared python -m auq_data_engine.main
-
-# Run ETL in developer mode (skip uploads)
-run-engine-dev:	
-	PYTHONPATH=shared python -m auq_data_engine.main --skip-upload
-
-# Run tests
-test:
-	pytest
-
-# Clean pycache
-clean:
-	find . -type d -name "__pycache__" -exec rm -r {} +
-	rm -rf .pytest_cache
+# ======================
+# Database Commands
+# ======================
 
 # Reset and apply migrations and seeds
 reset-and-migrate-db:
@@ -42,6 +45,47 @@ reset-and-migrate-db:
 	echo "Applying seed data..."; \
 	psql "$$SUPABASE_DB_URL" -f auq_database/seed.sql && \
 	echo "✅ Database reset and migrated successfully."
+
+# ======================
+# Data engine (ETL) Commands
+# ======================
+
+# Run full ETL engine
+run-engine:
+	PYTHONPATH=shared python -m auq_data_engine.main
+
+# Run ETL in developer mode (skip uploads)
+run-engine-dev:	
+	PYTHONPATH=shared python -m auq_data_engine.main --skip-upload
+
+# Run tests
+test:
+	pytest
+
+# ======================
+# Frontend Commands
+# ======================
+
+# Install frontend dependencies
+install-frontend:
+	cd auq_frontend && pnpm install
+
+# Run frontend development server
+dev-frontend:
+	cd auq_frontend && pnpm dev
+
+# Build frontend for production
+build-frontend:
+	cd auq_frontend && pnpm build
+
+# ======================
+# Support Commands
+# ======================
+
+# Clean pycache
+clean:
+	find . -type d -name "__pycache__" -exec rm -r {} +
+	rm -rf .pytest_cache
 
 # Generate CHANGELOG.md from implementation report
 changelog:
