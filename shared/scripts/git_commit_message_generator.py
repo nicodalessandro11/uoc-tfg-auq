@@ -118,7 +118,7 @@ def run(model="gpt-4"):
             lines = f.readlines()
 
         # Reformat the title with the commit message
-        lines[0] = f"# *Are U Query-ous?* - GIT LOGS\n\n  ## {message}\n\n"
+        lines[0] = f"# *Are U Query-ous?* - GIT LOGS\n\n## {message}\n"
 
         with HISTORY_FILE.open("w", encoding="utf-8") as f:
             f.writelines(lines)
