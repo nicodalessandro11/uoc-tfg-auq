@@ -1,4 +1,13 @@
-# GIT LOGS
+# *Are U Query-ous?* - GIT LOGS
+
+  ## 📄 Docs | 2025-05-06 | Update scripts and documentation
+
+- Updated CHANGELOG.md with recent changes
+- Moved git_history.md to data folder for better organization
+- Modified generate_changelog.py and git_commit_message_generator.py scripts for improved functionality
+
+These changes are part of our ongoing efforts to keep our documentation and scripts up-to-date and well-organized.
+
 
 ## 🗃️ DB | 2024-05-05 | Major project restructuring and cleanup
 

@@ -23,7 +23,7 @@ load_dotenv()
 
 # Configuration Block
 BASE_DIR = Path(__file__).resolve().parents[1]
-REPORT_PATH = "shared/scripts/git_history.md"
+REPORT_PATH = "shared/scripts/data/git_history.md"
 OUTPUT_PATH = BASE_DIR / "CHANGELOG.md"
 MODEL_NAME = "gpt-4"
 
