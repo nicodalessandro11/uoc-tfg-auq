@@ -2,11 +2,11 @@
 
 ## 🛠️ Setup | 2025-05-06 | Update Makefile
 
-- Modified the Makefile to include new build rules
-- This was done to streamline the build process and improve efficiency
-- Technical detail: Added rules for new dependencies and updated the ones for existing files
+    - Modified the Makefile to include new build rules
+    - This was done to streamline the build process and improve efficiency
+    - Technical detail: Added rules for new dependencies and updated the ones for existing files
 
-This change will help in maintaining a consistent build process across the team and reduce potential issues related to build inconsistencies.
+    This change will help in maintaining a consistent build process across the team and reduce potential issues related to build inconsistencies.
 
 ## 📄 Docs | 2025-05-06 | Update scripts and documentation
 
