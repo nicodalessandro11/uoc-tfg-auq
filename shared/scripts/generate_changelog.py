@@ -15,7 +15,11 @@ License: MIT
 import os
 from pathlib import Path
 from openai import OpenAI
-from shared.emoji_logger import info, success, error
+from shared.common_lib.emoji_logger import info, success, error
+
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv()
 
 # Configuration Block
 BASE_DIR = Path(__file__).resolve().parents[1]
