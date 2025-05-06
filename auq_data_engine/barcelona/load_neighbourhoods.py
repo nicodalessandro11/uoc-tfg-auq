@@ -1,4 +1,4 @@
-# scripts/etl/barcelona/load_neighbourhoods.py
+# auq_data_engine/barcelona/load_neighbourhoods.py
 
 """
 ETL Script: Load Neighbourhoods of Barcelona
@@ -9,8 +9,11 @@ This script performs the following tasks:
 - Validates and transforms the raw data.
 - Outputs a clean JSON file ready for Supabase insertion.
 
-Author: Nico D'Alessandro <nicodalessandro11@gmail.com>
+Author: Nico D'Alessandro Calderon
+Email: nicodalessandro11@gmail.com
 Date: 2025-04-17
+Version: 1.0.0
+License: MIT License
 """
 
 import json

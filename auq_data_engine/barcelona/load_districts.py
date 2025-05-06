@@ -1,4 +1,4 @@
-# scripts/etl/barcelona/load_districts.py
+# auq_data_engine/barcelona/load_districts.py
 
 """
 ETL Script: Load Districts of Barcelona
@@ -13,8 +13,11 @@ Usage:
     python load_districts.py
     (Optional) with CLI arguments for input URL and output file.
 
-Author: Nico D'Alessandro <nicodalessandro11@gmail.com>
+Author: Nico D'Alessandro Calderon
+Email: nicodalessandro11@gmail.com
 Date: 2025-04-17
+Version: 1.0.0
+License: MIT License
 """
 
 import json

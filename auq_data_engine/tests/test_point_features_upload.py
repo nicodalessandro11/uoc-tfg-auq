@@ -1,4 +1,4 @@
-# auq-back/tests/test_point_features.py
+# auq_data_enginetests/test_point_features.py
 
 """
 Test Point Features ETL Outputs
@@ -6,6 +6,12 @@ Test Point Features ETL Outputs
 This module contains tests to validate the output of the point features ETL scripts
 for both Barcelona and Madrid. It ensures the data structure and content meet
 the expected format and quality standards.
+
+Author: Nico D'Alessandro Calderon
+Email: nicodalessandro11@gmail.com
+Date: 2025-04-17
+Version: 1.0.0
+License: MIT License
 """
 
 import json

@@ -9,6 +9,8 @@ Script: main.py
 Author: Nicolas Dalessandro
 Email: nicodalessandro11@gmail.com
 Date: 2025-04-21
+Version: 1.0.0Z
+License: MIT License (see LICENSE file for details)
 """
 
 import os
@@ -27,7 +29,7 @@ from shared.common_lib.emoji_logger import info, success, warning, error
 # Ignore LangChain internal deprecation warnings
 warnings.filterwarnings("ignore", category=LangChainDeprecationWarning)
 
-# ⚙️ Configuration Block
+# Configuration Block
 BASE_DIR = Path(__file__).resolve().parents[0]
 PROMPT_PATH = BASE_DIR / "custom_prompt.txt"
 DEFAULT_QUESTION = "What is the neighborhood with the greatest number of people in Barcelona?"
@@ -50,7 +52,7 @@ def load_model():
 def run(question: str = DEFAULT_QUESTION):
     info("Starting NLP + SQL Agent")
 
-    # 🔐 Validate environment variables
+    # Validate environment variables
     if not SUPABASE_URI:
         error("SUPABASE_URI is missing in the .env file.")
         raise ValueError("Missing database URI.")
@@ -62,7 +64,7 @@ def run(question: str = DEFAULT_QUESTION):
     info("Loading OpenAI model...")
     llm = load_model()
 
-    # 🔗 Connect to Supabase DB
+    # Connect to Supabase DB
     info("🔗 Connecting to Supabase database...")
     try:
         db = SQLDatabase.from_uri(SUPABASE_URI, sample_rows_in_table_info=0)
@@ -98,7 +100,7 @@ def run(question: str = DEFAULT_QUESTION):
         error(f"Agent creation failed: {e}")
         raise
 
-    # 💬 Ask the question
+    # Ask the question
     info(f"Asking: {question}")
     try:
         response = agent.invoke({"input": question}, handle_parsing_errors=True)
@@ -108,7 +110,7 @@ def run(question: str = DEFAULT_QUESTION):
         error(f"Agent failed to respond: {e}")
         raise
 
-# 🧪 CLI fallback + optional input()
+# CLI fallback + optional input()
 if __name__ == "__main__":
     import argparse
 

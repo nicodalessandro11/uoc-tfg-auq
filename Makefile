@@ -1,6 +1,11 @@
 # ====================================
 # Makefile — Are U Query-ous Project
+# Description: This Makefile is used to manage the 
+# development and deployment of the Are U Query-ous project.
 # Author: Nico D'Alessandro Calderon
+# Date: 2025-03-01
+# Version: 1.0.0
+# License: MIT License
 # ====================================
 
 # Install shared libraries
@@ -29,17 +34,24 @@ reset-and-migrate-db:
 	@set -a; . "$(CURDIR)/.env"; set +a; \
 	echo "Resetting database..."; \
 	psql "$$SUPABASE_DB_URL" -f auq_database/reset_db.sql && \
-	echo "Applying schema..."; \
-	psql "$$SUPABASE_DB_URL" -f auq_database/schema.sql && \
+	echo "Applying migrations..."; \
+	for f in auq_database/migrations/*.sql; do \
+		echo "Applying $$f..."; \
+		psql "$$SUPABASE_DB_URL" -f $$f || exit 1; \
+	done && \
 	echo "Applying seed data..."; \
 	psql "$$SUPABASE_DB_URL" -f auq_database/seed.sql && \
-	echo "Database reset and migrated successfully."
+	echo "✅ Database reset and migrated successfully."
 
+
+# Print environment variables
 print-env:
 	@set -a; . "$(CURDIR)/.env"; set +a; \
-	echo "SUPABASE_URL=$$SUPABASE_URL" && \
-	echo "SUPABASE_DB_URL=$$SUPABASE_DB_URL"
+	for f in $$(grep -v '^#' .env | cut -d '=' -f 1); do \
+		echo "$$f=$${!f}"; \
+	done
 
+# Check database permissions
 check-perms:
 	@set -a; . "$(CURDIR)/.env"; set +a; \
 	psql "$$SUPABASE_DB_URL" -c "SELECT grantee, privilege_type FROM information_schema.role_table_grants WHERE table_schema = 'public' AND table_name = 'districts';"

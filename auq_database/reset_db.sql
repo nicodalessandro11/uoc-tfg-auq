@@ -1,7 +1,13 @@
--- === Reset Database Script ===
--- This script deletes all user-defined objects in the 'public' schema
+-- ==========================================================
+-- Description: This script deletes all user-defined objects in the 'public' schema
 -- It preserves PostGIS system tables (spatial_ref_sys, geography_columns, geometry_columns)
 -- and avoids touching extensions or auth/storage schemas
+-- Author: Nico D'Alessandro Calderon
+-- Email: nicodalessandro11@gmail.com
+-- Date: 2025-04-01
+-- Version: 1.0.0
+-- License: MIT License
+-- ===========================================================  
 
 -- Disable constraints temporarily
 SET session_replication_role = replica;

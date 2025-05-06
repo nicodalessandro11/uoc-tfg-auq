@@ -1,4 +1,4 @@
-# scripts/etl/madrid/load_point_features.py
+# auq_data_engine/madrid/load_point_features.py
 
 """
 ETL Script: Load Point Features of Madrid
@@ -13,8 +13,11 @@ Usage:
     python load_point_features.py
     (Optional) with CLI arguments for input URLs and output file.
 
-Author: Nico D'Alessandro <nicodalessandro11@gmail.com>
-Date: 2025-04-18
+Author: Nico D'Alessandro Calderon
+Email: nicodalessandro11@gmail.com
+Date: 2025-04-17
+Version: 1.0.0
+License: MIT License
 """
 
 import json

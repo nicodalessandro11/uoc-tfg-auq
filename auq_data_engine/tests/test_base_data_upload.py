@@ -1,4 +1,4 @@
-# auq-back/tests/test_base_data_upload.py
+# auq_data_engine/tests/test_base_data_upload.py
 
 """
 Test Suite: ETL Output Validation (Base Data)
@@ -8,8 +8,11 @@ This test module ensures that all processed ETL base files:
 - Contain valid and accurate geometries
 - Preserve shapes between raw and processed data
 
-Author: Nico D'Alessandro <nicodalessandro11@gmail.com>
+Author: Nico D'Alessandro Calderon
+Email: nicodalessandro11@gmail.com
 Date: 2025-04-17
+Version: 1.0.0
+License: MIT License
 """
 
 import json

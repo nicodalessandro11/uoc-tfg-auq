@@ -1,4 +1,14 @@
--- === 0. Preliminary Actions ===
+-- ====================================
+-- Description: This SQL script sets up the database schema for the AUQ application.
+-- Author: Nico D'Alessandro Calderon
+-- Email: nicodalessandro11@gmail.com
+-- Date: 2025-04-01
+-- Version: 1.0.0
+-- License: MIT License
+-- ====================================
+
+-- === Database Setup ===
+-- This script is designed to be run in a PostgreSQL database with PostGIS extension enabled.
 -- Note: PostGIS extension must be enabled in Supabase dashboard first
 -- Database -> Extensions -> PostGIS
 

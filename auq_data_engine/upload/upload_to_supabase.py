@@ -1,4 +1,4 @@
-# scripts/upload/upload_to_supabase.py
+# auq_data_engine/upload/upload_to_supabase.py
 
 """
 ETL Script: Upload Processed Geo Data to Supabase
@@ -7,8 +7,11 @@ ETL Script: Upload Processed Geo Data to Supabase
 - Uploads records to corresponding Supabase tables
 - Provides CLI-based execution with logging and error handling
 
-Author: Nico D'Alessandro (nico.dalessandro@gmail.com)
+Author: Nico D'Alessandro Calderon
+Email: nicodalessandro11@gmail.com
 Date: 2025-04-17
+Version: 1.0.0
+License: MIT License
 """
 
 import json

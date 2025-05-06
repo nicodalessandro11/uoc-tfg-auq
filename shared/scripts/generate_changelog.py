@@ -5,8 +5,11 @@ Automation Script: Generate CHANGELOG.md from implementation report using OpenAI
 - Sends it to OpenAI with a custom changelog prompt
 - Outputs a formatted CHANGELOG.md to the root directory
 
-Author: Nico D'Alessandro Calderon (nico.dalessandro@gmail.com)
+Author: Nico D'Alessandro Calderon 
+Email:  nico.dalessandro@gmail.com
 Date: 2025-04-12
+Version: 1.0.0
+License: MIT
 """
 
 import os
@@ -14,14 +17,21 @@ from pathlib import Path
 from openai import OpenAI
 from shared.emoji_logger import info, success, error
 
-# === Configuration Block ===
+# Configuration Block
 BASE_DIR = Path(__file__).resolve().parents[1]
-REPORT_PATH = BASE_DIR / "docs" / "implementation_report.md"
+REPORT_PATH = "shared/scripts/git_history.md"
 OUTPUT_PATH = BASE_DIR / "CHANGELOG.md"
 MODEL_NAME = "gpt-4"
 
-# === Main Script Function ===
+# Main Script Function
 def run(report_path: Path = REPORT_PATH, output_path: Path = OUTPUT_PATH, model: str = MODEL_NAME) -> None:
+    """
+    Generate CHANGELOG.md from implementation report using OpenAI.
+    Args:   
+        report_path (Path): Path to the implementation report.
+        output_path (Path): Path to save the generated CHANGELOG.md.
+        model (str): OpenAI model to use for generation.
+    """
     try:
         info(f"Reading implementation report from {report_path}")
         with report_path.open("r", encoding="utf-8") as f:
@@ -31,7 +41,7 @@ def run(report_path: Path = REPORT_PATH, output_path: Path = OUTPUT_PATH, model:
         return
 
     prompt_header = (
-        "# 📦 Changelog — ARE-U-QUERY-OUS\n\n"
+        "# \*Are U Query-ous?\* - Python Script Standards & Best Practices\n\n"
         "This project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and uses "
         "[Semantic Versioning](https://semver.org/).\n\n"
         "---\n\n"
@@ -39,10 +49,10 @@ def run(report_path: Path = REPORT_PATH, output_path: Path = OUTPUT_PATH, model:
     )
 
     prompt = (
-        "You're a technical release manager. Based on the following implementation report, generate "
+        "You're a technical release manager. Based on the following git history, generate "
         "a clean and professional CHANGELOG.md file.\n\n"
         f"Make sure to include this header at the top:\n\n{prompt_header}\n"
-        "Now generate the changelog from the following implementation report:\n\n"
+        "Now generate the changelog from the following git history:\n\n"
         f"{input_text}"
     )
 
@@ -70,14 +80,19 @@ def run(report_path: Path = REPORT_PATH, output_path: Path = OUTPUT_PATH, model:
         error(f"Failed to write output file: {e}")
 
 
-# === CLI Fallback ===
+# CLI Fallback
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Generate CHANGELOG.md from implementation report using OpenAI.")
-    parser.add_argument("--report_path", type=str, default=str(REPORT_PATH), help="Path to implementation_report.md")
-    parser.add_argument("--output_path", type=str, default=str(OUTPUT_PATH), help="Output path for CHANGELOG.md")
-    parser.add_argument("--model", type=str, default=MODEL_NAME, help="OpenAI model to use")
+    parser = argparse.ArgumentParser(
+        description="Generate CHANGELOG.md from implementation report using OpenAI.")
+    parser.add_argument("--report_path", type=str, default=str(REPORT_PATH),
+                        help="Path to implementation_report.md")
+    parser.add_argument("--output_path", type=str,
+                        default=str(OUTPUT_PATH), help="Output path for CHANGELOG.md")
+    parser.add_argument("--model", type=str,
+                        default=MODEL_NAME, help="OpenAI model to use")
 
     args = parser.parse_args()
-    run(report_path=Path(args.report_path), output_path=Path(args.output_path), model=args.model)
+    run(report_path=Path(args.report_path), output_path=Path(
+        args.output_path), model=args.model)

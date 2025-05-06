@@ -1,4 +1,13 @@
--- === Seed script for initial data ===
+-- ====================================
+-- Description: Seed script for the initial setup of the database
+-- This script populates the database with initial data for cities, geographical levels,
+-- feature definitions, and indicator definitions.
+-- Author: Nico D'Alessandro Calderon
+-- Email: nicodalessandro11@gmail.com
+-- Date: 2025-04-01
+-- Version: 1.0.0
+-- License: MIT License
+-- ====================================
 
 -- Insert cities
 INSERT INTO cities (name) VALUES

@@ -1,3 +1,17 @@
+"""
+Script: test_connection.py
+
+-  Test connection to Supabase PostgreSQL database
+-  Check PostgreSQL version
+-  Print success or failure message
+
+Author: Nicolas Dalessandro
+Email: nicodalessandro11@gmail.com
+Date: 2025-04-21
+Version: 1.0.0
+License: MIT License (see LICENSE file for details)
+"""
+
 import os
 import psycopg2
 from dotenv import load_dotenv

@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/youruser/uoc-tfg-auq"
+Homepage = "https://github.com/nicodalessandro11/uoc-tfg-auq"
 
 [build-system]
 requires = ["setuptools>=64", "wheel"]

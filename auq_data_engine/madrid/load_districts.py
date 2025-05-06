@@ -1,4 +1,4 @@
-# scripts/etl/madrid/load_districts.py
+# auq_data_engine/madrid/load_districts.py
 
 """
 ETL Script: Load Districts of Madrid
@@ -8,8 +8,11 @@ ETL Script: Load Districts of Madrid
 - Transforms and validates the data
 - Outputs a JSON file ready for Supabase/PostGIS
 
-Author: Nico D'Alessandro <nicodalessandro11@gmail.com>
+Author: Nico D'Alessandro Calderon
+Email: nicodalessandro11@gmail.com
 Date: 2025-04-17
+Version: 1.0.0
+License: MIT License
 """
 
 import json

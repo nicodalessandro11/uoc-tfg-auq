@@ -1,4 +1,4 @@
-# scripts/etl/madrid/load_indicators.py
+# auq_data_engine/madrid/load_indicators.py
 
 """
 ETL Script: Load Madrid Indicators
@@ -8,8 +8,11 @@ ETL Script: Load Madrid Indicators
 - Validates and transforms data into the required format
 - Outputs a JSON file ready for Supabase/PostGIS
 
-Author: Nicolas D'Alessandro nicodalessandro11@gmail.com
+Author: Nico D'Alessandro Calderon
+Email: nicodalessandro11@gmail.com
 Date: 2025-04-17
+Version: 1.0.0
+License: MIT License
 """
 
 import json

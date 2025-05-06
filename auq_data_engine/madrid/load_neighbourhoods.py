@@ -1,4 +1,4 @@
-# scripts/etl/madrid/load_neighbourhoods.py
+# auq_data_engine/madrid/load_neighbourhoods.py
 
 """
 ETL Script: Load Neighbourhoods of Madrid
@@ -8,8 +8,11 @@ ETL Script: Load Neighbourhoods of Madrid
 - Validates geometry and codes
 - Outputs a clean JSON file for PostGIS import
 
-Author: Nico D'Alessandro <nicodalessandro11@gmail.com>
+Author: Nico D'Alessandro Calderon
+Email: nicodalessandro11@gmail.com
 Date: 2025-04-17
+Version: 1.0.0
+License: MIT License
 """
 
 import json
