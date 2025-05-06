@@ -2,12 +2,11 @@
 
 This monorepo contains the complete codebase for the **Are U Query-ous** platform, a geospatial data visualization tool designed to explore, compare, and analyze open urban datasets at multiple geographical levels.
 
-> Developed as part of the UOC Final Degree Project (TFG) by **Nico Dalessandro Calderon**
+> Developed as part of the Universitat Oberta de Catalunya (UOC) Final Degree Project (TFG) by **Nico Dalessandro Calderon**
 
 ## Monorepo Structure
 
 ```bash
-.
 ├── auq_backend/        # REST API with Fast API to be integrated with Next.js API routes (in progress)
 ├── auq_data_engine/    # Python ETL pipeline for urban datasets 
 ├── auq_database/       # PostgreSQL + PostGIS schema, migrations, seed data
