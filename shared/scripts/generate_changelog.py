@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configuration Block
-BASE_DIR = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(__file__).resolve().parents[2]
 REPORT_PATH = "shared/scripts/data/git_history.md"
 OUTPUT_PATH = BASE_DIR / "CHANGELOG.md"
 MODEL_NAME = "gpt-4"
@@ -45,7 +45,7 @@ def run(report_path: Path = REPORT_PATH, output_path: Path = OUTPUT_PATH, model:
         return
 
     prompt_header = (
-        "# \*Are U Query-ous?\* - Python Script Standards & Best Practices\n\n"
+        "# \*Are U Query-ous?\* - Changelog\n\n"
         "This project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and uses "
         "[Semantic Versioning](https://semver.org/).\n\n"
         "---\n\n"

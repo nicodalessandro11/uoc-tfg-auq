@@ -1,5 +1,14 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📄 Docs | 2025-05-06 | Update documentation and changelog generation script
+
+    - Updated CHANGELOG.md with recent changes and modifications
+    - Modified api-design.md in auq_backend to include new API endpoints
+    - Removed deprecated shared/CHANGELOG.md
+    - Improved the generate_changelog.py script in shared/scripts for better changelog generation
+
+    This commit aims to keep our documentation up-to-date and improve the way we generate our changelogs. The removal of the shared changelog is part of a broader effort to centralize our documentation.
+
 ## 🛠️ Setup | 2025-05-06 | Update Makefile
 
     - Modified the Makefile to include new build rules
