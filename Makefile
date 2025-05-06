@@ -43,6 +43,17 @@ reset-and-migrate-db:
 	psql "$$SUPABASE_DB_URL" -f auq_database/seed.sql && \
 	echo "✅ Database reset and migrated successfully."
 
+# Generate CHANGELOG.md from implementation report
+changelog:
+	@set -a; . "$(CURDIR)/.env"; set +a; \
+	python -m shared.scripts.generate_changelog
+
+# Generate and display Git commit message using GPT
+git-commit-m:
+	@set -a; . "$(CURDIR)/.env"; set +a; \
+	python -m shared.scripts.git_commit_message_generator
+	@echo "Generated commit message: $$(cat .git_commit_message.txt)"
+	@echo "Please review the commit message and use it to commit your changes."
 
 # Print environment variables
 print-env:
