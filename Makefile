@@ -52,7 +52,6 @@ changelog:
 git-commit-m:
 	@set -a; . "$(CURDIR)/.env"; set +a; \
 	python -m shared.scripts.git_commit_message_generator
-	@echo "Generated commit message: $$(cat .git_commit_message.txt)"
 	@echo "Please review the commit message and use it to commit your changes."
 
 # Print environment variables

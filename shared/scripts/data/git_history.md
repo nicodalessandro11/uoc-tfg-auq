@@ -1,5 +1,14 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-06 | Added new frontend components and updated documentation
+
+    - Added new frontend components and pages to `auq_frontend/app` and `auq_frontend/components`
+    - These components and pages were added to improve user interface and experience
+    - Technical details: TypeScript and React were used to build these components
+    - Updated `README.md` and added new documentation files in `auq_frontend/docs` to provide more context about the project structure and data pipeline.
+
+    This commit marks a significant milestone in our frontend development, providing a more interactive and user-friendly interface. It also enhances our documentation, making it easier for new developers to understand the project.
+
 ## 📄 Docs | 2025-05-06 | Update documentation and changelog generation script
 
     - Updated CHANGELOG.md with recent changes and modifications
