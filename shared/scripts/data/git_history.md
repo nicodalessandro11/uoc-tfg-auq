@@ -1,5 +1,16 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 🗃️ DB | 2025-05-20 | Added city_id to point features and updated data loading scripts
+
+- Modified the data loading scripts for Barcelona and Madrid in 'auq_data_engine/barcelona/load_point_features.py' and 'auq_data_engine/madrid/load_point_features.py'
+- This was done to accommodate the new 'city_id' field in the point features table, which was added to improve data organization and querying
+- Also updated the processed data files 'insert_ready_point_features_bcn.json' and 'insert_ready_point_features_madrid.json' to include the new 'city_id' field
+- Added a new migration file '007_add_city_id_to_point_features.sql' to implement the database schema change
+- Updated the main database schema file 'schema.sql' to reflect the new table structure
+- Added a new file 'test_supabase_connection.py' for testing the connection to our Supabase database
+
+With this update, we can now more easily distinguish between point features from different cities in our database. This should greatly improve the efficiency of our data queries and analysis.
+
 ## 📄 Docs | 2025-05-06 | Update README.md
 
     - Updated README.md with latest project information

@@ -7,6 +7,7 @@
     "geom": "SRID=4326;POINT(2.159570336326216 41.42748106849125)",
     "geo_level_id": 3,
     "geo_id": 43,
+    "city_id": 1,
     "properties": {
       "address": "C Grífols",
       "postal_code": "08032"
@@ -20,6 +21,7 @@
     "geom": "SRID=4326;POINT(2.1611073679131896 41.36883058473533)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Avinguda de Miramar",
       "postal_code": "08038"
@@ -33,6 +35,7 @@
     "geom": "SRID=4326;POINT(2.1611073679131896 41.36883058473533)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Avinguda de Miramar",
       "postal_code": "08038"
@@ -46,6 +49,7 @@
     "geom": "SRID=4326;POINT(2.1260066458684292 41.37996721919083)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "Trav Corts",
       "postal_code": "08028"
@@ -59,6 +63,7 @@
     "geom": "SRID=4326;POINT(2.1710300807550866 41.40796085984799)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Indústria",
       "postal_code": "08025"
@@ -72,6 +77,7 @@
     "geom": "SRID=4326;POINT(2.213498149079968 41.404717048212895)",
     "geo_level_id": 3,
     "geo_id": 69,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Selva de Mar",
       "postal_code": "08019"
@@ -85,6 +91,7 @@
     "geom": "SRID=4326;POINT(2.1467430809493484 41.36914809976752)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Av Francesc Ferrer Guàrdia",
       "postal_code": "08038"
@@ -98,6 +105,7 @@
     "geom": "SRID=4326;POINT(2.227513379115536 41.40879244777238)",
     "geo_level_id": 3,
     "geo_id": 70,
+    "city_id": 1,
     "properties": {
       "address": "Pl Fòrum",
       "postal_code": "08019"
@@ -111,6 +119,7 @@
     "geom": "SRID=4326;POINT(2.157447662343646 41.42769015831456)",
     "geo_level_id": 3,
     "geo_id": 37,
+    "city_id": 1,
     "properties": {
       "address": "C Dante Alighieri",
       "postal_code": "08032"
@@ -124,6 +133,7 @@
     "geom": "SRID=4326;POINT(2.191738858342075 41.434925914293984)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Segre",
       "postal_code": "08030"
@@ -137,6 +147,7 @@
     "geom": "SRID=4326;POINT(2.1262516820863993 41.38132376004671)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "Trav Corts",
       "postal_code": "08028"
@@ -150,6 +161,7 @@
     "geom": "SRID=4326;POINT(2.1468802640256657 41.43225574768443)",
     "geo_level_id": 3,
     "geo_id": 41,
+    "city_id": 1,
     "properties": {
       "address": "Jorge Manrique",
       "postal_code": "08035"
@@ -163,6 +175,7 @@
     "geom": "SRID=4326;POINT(2.191460787027334 41.3923548800096)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "address": "C Llull",
       "postal_code": "08005"
@@ -176,6 +189,7 @@
     "geom": "SRID=4326;POINT(2.1460345774287792 41.389335688280276)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Comte Borrell",
       "postal_code": "08029"
@@ -189,6 +203,7 @@
     "geom": "SRID=4326;POINT(2.1460345774287792 41.389335688280276)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Comte Borrell",
       "postal_code": "08029"
@@ -202,6 +217,7 @@
     "geom": "SRID=4326;POINT(2.188638562006768 41.444421063133845)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "address": "C Gran de Sant Andreu",
       "postal_code": "08030"
@@ -215,6 +231,7 @@
     "geom": "SRID=4326;POINT(2.143988466465584 41.41123159253481)",
     "geo_level_id": 3,
     "geo_id": 27,
+    "city_id": 1,
     "properties": {
       "address": "Av República Argentina",
       "postal_code": "08023"
@@ -228,6 +245,7 @@
     "geom": "SRID=4326;POINT(2.201661451325657 41.40633543755732)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "address": "Camí Antic de València",
       "postal_code": "08005"
@@ -241,6 +259,7 @@
     "geom": "SRID=4326;POINT(2.1452552059295558 41.39098475931237)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Buenos Aires",
       "postal_code": "08029"
@@ -254,6 +273,7 @@
     "geom": "SRID=4326;POINT(2.1797990174583877 41.40409793289094)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Padilla",
       "postal_code": "08013"
@@ -267,6 +287,7 @@
     "geom": "SRID=4326;POINT(2.1797990174583877 41.40409793289094)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Padilla",
       "postal_code": "08013"
@@ -280,6 +301,7 @@
     "geom": "SRID=4326;POINT(2.153308491000778 41.42263286964232)",
     "geo_level_id": 3,
     "geo_id": 37,
+    "city_id": 1,
     "properties": {
       "address": "Llobregós",
       "postal_code": "08032"
@@ -293,6 +315,7 @@
     "geom": "SRID=4326;POINT(2.1654810232921857 41.41357708464317)",
     "geo_level_id": 3,
     "geo_id": 33,
+    "city_id": 1,
     "properties": {
       "address": "Pl Alfons el Savi",
       "postal_code": "08024"
@@ -306,6 +329,7 @@
     "geom": "SRID=4326;POINT(2.1744888744706907 41.43904973751512)",
     "geo_level_id": 3,
     "geo_id": 48,
+    "city_id": 1,
     "properties": {
       "address": "Plaça de la República",
       "postal_code": "08016"
@@ -319,6 +343,7 @@
     "geom": "SRID=4326;POINT(2.1414074544650044 41.42219349572098)",
     "geo_level_id": 3,
     "geo_id": 38,
+    "city_id": 1,
     "properties": {
       "address": "Arenys",
       "postal_code": "08035"
@@ -332,6 +357,7 @@
     "geom": "SRID=4326;POINT(2.1659008246716773 41.394518930348355)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de València",
       "postal_code": "08009"
@@ -345,6 +371,7 @@
     "geom": "SRID=4326;POINT(2.1659008246716773 41.394518930348355)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de València",
       "postal_code": "08009"
@@ -358,6 +385,7 @@
     "geom": "SRID=4326;POINT(2.1659008246716773 41.394518930348355)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de València",
       "postal_code": "08009"
@@ -371,6 +399,7 @@
     "geom": "SRID=4326;POINT(2.212231951523546 41.40849031137141)",
     "geo_level_id": 3,
     "geo_id": 69,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Llull",
       "postal_code": "08019"
@@ -384,6 +413,7 @@
     "geom": "SRID=4326;POINT(2.15412689316291 41.40765541373202)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Sant Salvador",
       "postal_code": "08024"
@@ -397,6 +427,7 @@
     "geom": "SRID=4326;POINT(2.15412689316291 41.40765541373202)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Sant Salvador",
       "postal_code": "08024"
@@ -410,6 +441,7 @@
     "geom": "SRID=4326;POINT(2.15412689316291 41.40765541373202)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Sant Salvador",
       "postal_code": "08024"
@@ -423,6 +455,7 @@
     "geom": "SRID=4326;POINT(2.15412689316291 41.40765541373202)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Sant Salvador",
       "postal_code": "08024"
@@ -436,6 +469,7 @@
     "geom": "SRID=4326;POINT(2.144808762527653 41.35939523618376)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "Foc",
       "postal_code": "08038"
@@ -449,6 +483,7 @@
     "geom": "SRID=4326;POINT(2.1785970770178253 41.41426519749023)",
     "geo_level_id": 3,
     "geo_id": 64,
+    "city_id": 1,
     "properties": {
       "address": "C Sant Antoni Maria Claret",
       "postal_code": "08041"
@@ -462,6 +497,7 @@
     "geom": "SRID=4326;POINT(2.14340824232278 41.40554846163865)",
     "geo_level_id": 3,
     "geo_id": 27,
+    "city_id": 1,
     "properties": {
       "address": "Rda General Mitre",
       "postal_code": "08023"
@@ -475,6 +511,7 @@
     "geom": "SRID=4326;POINT(2.12223915785275 41.37777055382389)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Pintor Pahissa",
       "postal_code": "08028"
@@ -488,6 +525,7 @@
     "geom": "SRID=4326;POINT(2.201624246671236 41.391532179445136)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "address": "Jaume Vicens i Vives",
       "postal_code": "08005"
@@ -501,6 +539,7 @@
     "geom": "SRID=4326;POINT(2.1493051264770284 41.42736654472414)",
     "geo_level_id": 3,
     "geo_id": 41,
+    "city_id": 1,
     "properties": {
       "address": "Avinguda del Cardenal Vidal i Barraquer",
       "postal_code": "08035"
@@ -514,6 +553,7 @@
     "geom": "SRID=4326;POINT(2.1716724323305296 41.40179726989525)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Nàpols",
       "postal_code": "08013"
@@ -527,6 +567,7 @@
     "geom": "SRID=4326;POINT(2.1716724323305296 41.40179726989525)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Nàpols",
       "postal_code": "08013"
@@ -540,6 +581,7 @@
     "geom": "SRID=4326;POINT(2.1733171427256734 41.40455109461742)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Passatge de Simó",
       "postal_code": "08025"
@@ -553,6 +595,7 @@
     "geom": "SRID=4326;POINT(2.1733171427256734 41.40455109461742)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Passatge de Simó",
       "postal_code": "08025"
@@ -566,6 +609,7 @@
     "geom": "SRID=4326;POINT(2.2106231077244987 41.40232349200489)",
     "geo_level_id": 3,
     "geo_id": 69,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Bac de Roda",
       "postal_code": "08005"
@@ -579,6 +623,7 @@
     "geom": "SRID=4326;POINT(2.1659541496737007 41.44296160942353)",
     "geo_level_id": 3,
     "geo_id": 49,
+    "city_id": 1,
     "properties": {
       "address": "C Miguel Hernández",
       "postal_code": "08042"
@@ -592,6 +637,7 @@
     "geom": "SRID=4326;POINT(2.1744888744706907 41.43904973751512)",
     "geo_level_id": 3,
     "geo_id": 48,
+    "city_id": 1,
     "properties": {
       "address": "Pl de la República",
       "postal_code": "08016"
@@ -605,6 +651,7 @@
     "geom": "SRID=4326;POINT(2.158482875531215 41.36812384413011)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Pg Santa Madrona",
       "postal_code": "08038"
@@ -618,6 +665,7 @@
     "geom": "SRID=4326;POINT(2.156511461067073 41.367133300030396)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Av Estadi",
       "postal_code": "08038"
@@ -631,6 +679,7 @@
     "geom": "SRID=4326;POINT(2.1132864987094315 41.378339528442744)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "C Cardenal Reig",
       "postal_code": "08028"
@@ -644,6 +693,7 @@
     "geom": "SRID=4326;POINT(2.1624466331941234 41.38202846704778)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Floridablanca",
       "postal_code": "08011"
@@ -657,6 +707,7 @@
     "geom": "SRID=4326;POINT(2.1624466331941234 41.38202846704778)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Floridablanca",
       "postal_code": "08011"
@@ -670,6 +721,7 @@
     "geom": "SRID=4326;POINT(2.1578240406820526 41.43630327476819)",
     "geo_level_id": 3,
     "geo_id": 43,
+    "city_id": 1,
     "properties": {
       "address": "C Lloret de Mar",
       "postal_code": "08031"
@@ -683,6 +735,7 @@
     "geom": "SRID=4326;POINT(2.133690322091076 41.39063297052693)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "Caravel.la la Niña",
       "postal_code": "08017"
@@ -696,6 +749,7 @@
     "geom": "SRID=4326;POINT(2.209957203592256 41.40386703390893)",
     "geo_level_id": 3,
     "geo_id": 69,
+    "city_id": 1,
     "properties": {
       "address": "Carrer dels Pellaires",
       "postal_code": "08019"
@@ -709,6 +763,7 @@
     "geom": "SRID=4326;POINT(2.1658337161656225 41.370463961160546)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "C Nou de la Rambla",
       "postal_code": "08004"
@@ -722,6 +777,7 @@
     "geom": "SRID=4326;POINT(2.158998204210256 41.377351035156295)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Avinguda de Mistral",
       "postal_code": "08015"
@@ -735,6 +791,7 @@
     "geom": "SRID=4326;POINT(2.1724976608238196 41.37732863079318)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "address": "C Nou de la Rambla",
       "postal_code": "08001"
@@ -748,6 +805,7 @@
     "geom": "SRID=4326;POINT(2.163452092831893 41.38784455590361)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Diputació",
       "postal_code": "08007"
@@ -761,6 +819,7 @@
     "geom": "SRID=4326;POINT(2.163452092831893 41.38784455590361)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Diputació",
       "postal_code": "08007"
@@ -774,6 +833,7 @@
     "geom": "SRID=4326;POINT(2.1571451648239623 41.37904847535037)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Sepúlveda",
       "postal_code": "08015"
@@ -787,6 +847,7 @@
     "geom": "SRID=4326;POINT(2.1571451648239623 41.37904847535037)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Sepúlveda",
       "postal_code": "08015"
@@ -800,6 +861,7 @@
     "geom": "SRID=4326;POINT(2.1383570245016768 41.37888989600432)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "address": "Comtes de Bell-lloc",
       "postal_code": "08014"
@@ -813,6 +875,7 @@
     "geom": "SRID=4326;POINT(2.179464430011531 41.38300055778058)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "address": "C Sots-tinent Navarro",
       "postal_code": "08002"
@@ -826,6 +889,7 @@
     "geom": "SRID=4326;POINT(2.1446039272005524 41.41052351533626)",
     "geo_level_id": 3,
     "geo_id": 27,
+    "city_id": 1,
     "properties": {
       "address": "Costa",
       "postal_code": "08023"
@@ -839,6 +903,7 @@
     "geom": "SRID=4326;POINT(2.1526212419493542 41.4092608672373)",
     "geo_level_id": 3,
     "geo_id": 30,
+    "city_id": 1,
     "properties": {
       "address": "Mossèn Batlle",
       "postal_code": "08024"
@@ -852,6 +917,7 @@
     "geom": "SRID=4326;POINT(2.149012074553124 41.35439601685321)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "C Mare de Déu de Port",
       "postal_code": "08038"
@@ -865,6 +931,7 @@
     "geom": "SRID=4326;POINT(2.149012074553124 41.35439601685321)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "C Mare de Déu de Port",
       "postal_code": "08038"
@@ -878,6 +945,7 @@
     "geom": "SRID=4326;POINT(2.1309603596928692 41.40335416512297)",
     "geo_level_id": 3,
     "geo_id": 24,
+    "city_id": 1,
     "properties": {
       "address": "C Ganduxer",
       "postal_code": "08022"
@@ -891,6 +959,7 @@
     "geom": "SRID=4326;POINT(2.1353909998606846 41.415769691707396)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "address": "C Josep Garí",
       "postal_code": "08035"
@@ -904,6 +973,7 @@
     "geom": "SRID=4326;POINT(2.1828602593903743 41.44627491871234)",
     "geo_level_id": 3,
     "geo_id": 52,
+    "city_id": 1,
     "properties": {
       "address": "Via Favència",
       "postal_code": "08016"
@@ -917,6 +987,7 @@
     "geom": "SRID=4326;POINT(2.1586241741465275 41.40557115587016)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de l'Encarnació",
       "postal_code": "08012"
@@ -930,6 +1001,7 @@
     "geom": "SRID=4326;POINT(2.209081556822592 41.401402084881234)",
     "geo_level_id": 3,
     "geo_id": 69,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Espronceda",
       "postal_code": "08005"
@@ -943,6 +1015,7 @@
     "geom": "SRID=4326;POINT(2.213355360398716 41.40360835888967)",
     "geo_level_id": 3,
     "geo_id": 69,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Provençals",
       "postal_code": "08019"
@@ -956,6 +1029,7 @@
     "geom": "SRID=4326;POINT(2.15131477992075 41.42969190027591)",
     "geo_level_id": 3,
     "geo_id": 42,
+    "city_id": 1,
     "properties": {
       "address": "Av Cardenal Vidal Barraquer",
       "postal_code": "08035"
@@ -969,6 +1043,7 @@
     "geom": "SRID=4326;POINT(2.173552696712672 41.39372211779633)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Gran Via de les Corts Catalanes",
       "postal_code": "08010"
@@ -982,6 +1057,7 @@
     "geom": "SRID=4326;POINT(2.173552696712672 41.39372211779633)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Gran Via de les Corts Catalanes",
       "postal_code": "08010"
@@ -995,6 +1071,7 @@
     "geom": "SRID=4326;POINT(2.1224523282306436 41.422886630339505)",
     "geo_level_id": 3,
     "geo_id": 39,
+    "city_id": 1,
     "properties": {
       "address": "Camí de Can Borni",
       "postal_code": "08035"
@@ -1008,6 +1085,7 @@
     "geom": "SRID=4326;POINT(2.166586088461681 41.4136431206065)",
     "geo_level_id": 3,
     "geo_id": 33,
+    "city_id": 1,
     "properties": {
       "address": "Camèlies",
       "postal_code": "08024"
@@ -1021,6 +1099,7 @@
     "geom": "SRID=4326;POINT(2.1225533493940674 41.38914624270509)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "address": "Jiménez i Iglesias",
       "postal_code": "08034"
@@ -1034,6 +1113,7 @@
     "geom": "SRID=4326;POINT(2.17232416934953 41.36961505587559)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Ctra Miramar",
       "postal_code": "08038"
@@ -1047,6 +1127,7 @@
     "geom": "SRID=4326;POINT(2.158621128519657 41.37014353208927)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Pg Santa Madrona",
       "postal_code": "08038"
@@ -1060,6 +1141,7 @@
     "geom": "SRID=4326;POINT(2.1115767347502405 41.39433185278547)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "address": "Av Pearson",
       "postal_code": "08034"
@@ -1073,6 +1155,7 @@
     "geom": "SRID=4326;POINT(2.1679803401568054 41.38888657157082)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "G.V. Corts Catalanes",
       "postal_code": "08007"
@@ -1086,6 +1169,7 @@
     "geom": "SRID=4326;POINT(2.193838416918405 41.38205501687279)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 1,
     "properties": {
       "address": "Passeig Marítim de la Barceloneta - Oriol Bohigas",
       "postal_code": "08003"
@@ -1099,6 +1183,7 @@
     "geom": "SRID=4326;POINT(2.1852809514836546 41.403683456120994)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Plaça de les Glòries Catalanes",
       "postal_code": "08013"
@@ -1112,6 +1197,7 @@
     "geom": "SRID=4326;POINT(2.1785979471098837 41.44818476886138)",
     "geo_level_id": 3,
     "geo_id": 50,
+    "city_id": 1,
     "properties": {
       "address": "C Nou Barris",
       "postal_code": "08042"
@@ -1125,6 +1211,7 @@
     "geom": "SRID=4326;POINT(2.14064642439631 41.38307311248152)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "address": "Robrenyo",
       "postal_code": "08029"
@@ -1138,6 +1225,7 @@
     "geom": "SRID=4326;POINT(2.174862325367673 41.37287599278931)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Pg Josep Carner",
       "postal_code": "08038"
@@ -1151,6 +1239,7 @@
     "geom": "SRID=4326;POINT(2.1887155595871257 41.412218402872526)",
     "geo_level_id": 3,
     "geo_id": 65,
+    "city_id": 1,
     "properties": {
       "address": "C València",
       "postal_code": "08026"
@@ -1164,6 +1253,7 @@
     "geom": "SRID=4326;POINT(2.2254324620547092 41.40918252937949)",
     "geo_level_id": 3,
     "geo_id": 70,
+    "city_id": 1,
     "properties": {
       "address": "Pl Fòrum",
       "postal_code": "08019"
@@ -1177,6 +1267,7 @@
     "geom": "SRID=4326;POINT(2.1407880011566567 41.41032319278719)",
     "geo_level_id": 3,
     "geo_id": 27,
+    "city_id": 1,
     "properties": {
       "address": "Espinoi",
       "postal_code": "08023"
@@ -1190,6 +1281,7 @@
     "geom": "SRID=4326;POINT(2.1262629609289165 41.378740454073025)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Emèrita Augusta",
       "postal_code": "08028"
@@ -1203,6 +1295,7 @@
     "geom": "SRID=4326;POINT(2.1568468331568917 41.362685495322765)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Doctor Font i Quer",
       "postal_code": "08038"
@@ -1216,6 +1309,7 @@
     "geom": "SRID=4326;POINT(2.1568468331568917 41.362685495322765)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Doctor Font i Quer",
       "postal_code": "08038"
@@ -1229,6 +1323,7 @@
     "geom": "SRID=4326;POINT(2.1568468331568917 41.362685495322765)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Doctor Font i Quer",
       "postal_code": "08038"
@@ -1242,6 +1337,7 @@
     "geom": "SRID=4326;POINT(2.195536965654686 41.43644435327476)",
     "geo_level_id": 3,
     "geo_id": 59,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de l'Havana",
       "postal_code": "08030"
@@ -1255,6 +1351,7 @@
     "geom": "SRID=4326;POINT(2.159538941393651 41.396131607667456)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de Gràcia",
       "postal_code": "08008"
@@ -1268,6 +1365,7 @@
     "geom": "SRID=4326;POINT(2.159538941393651 41.396131607667456)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de Gràcia",
       "postal_code": "08008"
@@ -1281,6 +1379,7 @@
     "geom": "SRID=4326;POINT(2.155269268607678 41.41516676215983)",
     "geo_level_id": 3,
     "geo_id": 37,
+    "city_id": 1,
     "properties": {
       "address": "Ctra Carmel",
       "postal_code": "08024"
@@ -1294,6 +1393,7 @@
     "geom": "SRID=4326;POINT(2.1887374394493406 41.40191375197916)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "address": "C Àvila",
       "postal_code": "08018"
@@ -1307,6 +1407,7 @@
     "geom": "SRID=4326;POINT(2.1802251621629414 41.393871248178975)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carretera Antiga d'Horta",
       "postal_code": "08013"
@@ -1320,6 +1421,7 @@
     "geom": "SRID=4326;POINT(2.1802251621629414 41.393871248178975)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carretera Antiga d'Horta",
       "postal_code": "08013"
@@ -1333,6 +1435,7 @@
     "geom": "SRID=4326;POINT(2.1520437522177067 41.386904180935765)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Comte d'Urgell",
       "postal_code": "08036"
@@ -1346,6 +1449,7 @@
     "geom": "SRID=4326;POINT(2.1520437522177067 41.386904180935765)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Comte d'Urgell",
       "postal_code": "08036"
@@ -1359,6 +1463,7 @@
     "geom": "SRID=4326;POINT(2.1077390567867273 41.37932819241353)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "Av Albert Bastardas",
       "postal_code": "08028"
@@ -1372,6 +1477,7 @@
     "geom": "SRID=4326;POINT(2.141848467458373 41.416930612365384)",
     "geo_level_id": 3,
     "geo_id": 28,
+    "city_id": 1,
     "properties": {
       "address": "Av Vallcarca",
       "postal_code": "08023"
@@ -1385,6 +1491,7 @@
     "geom": "SRID=4326;POINT(2.15552474177204 41.38263747374256)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Comte Borrell",
       "postal_code": "08015"
@@ -1398,6 +1505,7 @@
     "geom": "SRID=4326;POINT(2.15552474177204 41.38263747374256)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Comte Borrell",
       "postal_code": "08015"
@@ -1411,6 +1519,7 @@
     "geom": "SRID=4326;POINT(2.167687591797475 41.405576512012246)",
     "geo_level_id": 3,
     "geo_id": 32,
+    "city_id": 1,
     "properties": {
       "address": "Sicília",
       "postal_code": "08025"
@@ -1424,6 +1533,7 @@
     "geom": "SRID=4326;POINT(2.115102292721839 41.40262028359711)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "C Can Caralleu",
       "postal_code": "08017"
@@ -1437,6 +1547,7 @@
     "geom": "SRID=4326;POINT(2.1468892962598556 41.39627461437971)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "address": "C Muntaner",
       "postal_code": "08021"
@@ -1450,6 +1561,7 @@
     "geom": "SRID=4326;POINT(2.1421295392287054 41.35813057147215)",
     "geo_level_id": 3,
     "geo_id": 12,
+    "city_id": 1,
     "properties": {
       "address": "Foc",
       "postal_code": "08038"
@@ -1463,6 +1575,7 @@
     "geom": "SRID=4326;POINT(2.1296659137585396 41.38271945689916)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "Gerard Piera",
       "postal_code": "08028"
@@ -1476,6 +1589,7 @@
     "geom": "SRID=4326;POINT(2.1474785392754883 41.4335657076192)",
     "geo_level_id": 3,
     "geo_id": 41,
+    "city_id": 1,
     "properties": {
       "address": "Berruguete",
       "postal_code": "08035"
@@ -1489,6 +1603,7 @@
     "geom": "SRID=4326;POINT(2.135813646243058 41.385038122169874)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "Marquès de Sentmenat",
       "postal_code": "08014"
@@ -1502,6 +1617,7 @@
     "geom": "SRID=4326;POINT(2.1712296246319656 41.4368445525108)",
     "geo_level_id": 3,
     "geo_id": 48,
+    "city_id": 1,
     "properties": {
       "address": "Pl Major de Nou Barris",
       "postal_code": "08042"
@@ -1515,6 +1631,7 @@
     "geom": "SRID=4326;POINT(2.178975150453768 41.4005493193399)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Marina",
       "postal_code": "08013"
@@ -1528,6 +1645,7 @@
     "geom": "SRID=4326;POINT(2.178975150453768 41.4005493193399)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Marina",
       "postal_code": "08013"
@@ -1541,6 +1659,7 @@
     "geom": "SRID=4326;POINT(2.1698701741655286 41.3816748521253)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "address": "C Floristes de la Rambla",
       "postal_code": "08001"
@@ -1554,6 +1673,7 @@
     "geom": "SRID=4326;POINT(2.1462520569914068 41.419264262411424)",
     "geo_level_id": 3,
     "geo_id": 29,
+    "city_id": 1,
     "properties": {
       "address": "Pg Mare de Déu del Coll",
       "postal_code": "08023"
@@ -1567,6 +1687,7 @@
     "geom": "SRID=4326;POINT(2.1462520569914068 41.419264262411424)",
     "geo_level_id": 3,
     "geo_id": 29,
+    "city_id": 1,
     "properties": {
       "address": "Pg Mare de Déu del Coll",
       "postal_code": "08023"
@@ -1580,6 +1701,7 @@
     "geom": "SRID=4326;POINT(2.171156906606161 41.44622249771628)",
     "geo_level_id": 3,
     "geo_id": 50,
+    "city_id": 1,
     "properties": {
       "address": "C Artesania",
       "postal_code": "08042"
@@ -1593,6 +1715,7 @@
     "geom": "SRID=4326;POINT(2.144758244840197 41.4116593851312)",
     "geo_level_id": 3,
     "geo_id": 28,
+    "city_id": 1,
     "properties": {
       "address": "Av República Argentina",
       "postal_code": "08023"
@@ -1606,6 +1729,7 @@
     "geom": "SRID=4326;POINT(2.1769835422306465 41.40992338699636)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Còrsega",
       "postal_code": "08025"
@@ -1619,6 +1743,7 @@
     "geom": "SRID=4326;POINT(2.1769835422306465 41.40992338699636)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Còrsega",
       "postal_code": "08025"
@@ -1632,6 +1757,7 @@
     "geom": "SRID=4326;POINT(2.1702761978400433 41.40045732937218)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Roger de Flor",
       "postal_code": "08013"
@@ -1645,6 +1771,7 @@
     "geom": "SRID=4326;POINT(2.1702761978400433 41.40045732937218)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Roger de Flor",
       "postal_code": "08013"
@@ -1658,6 +1785,7 @@
     "geom": "SRID=4326;POINT(2.145591339075409 41.397897961749294)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "address": "Tavern",
       "postal_code": "08021"
@@ -1671,6 +1799,7 @@
     "geom": "SRID=4326;POINT(2.1425177258809422 41.407747349305964)",
     "geo_level_id": 3,
     "geo_id": 27,
+    "city_id": 1,
     "properties": {
       "address": "C Manacor",
       "postal_code": "08023"
@@ -1684,6 +1813,7 @@
     "geom": "SRID=4326;POINT(2.1397735122452017 41.401613054797835)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Muntaner",
       "postal_code": "08006"
@@ -1697,6 +1827,7 @@
     "geom": "SRID=4326;POINT(2.1923164605289123 41.44169761987187)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Cinca",
       "postal_code": "08030"
@@ -1710,6 +1841,7 @@
     "geom": "SRID=4326;POINT(2.1923164605289123 41.44169761987187)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Cinca",
       "postal_code": "08030"
@@ -1723,6 +1855,7 @@
     "geom": "SRID=4326;POINT(2.193270557140923 41.40985780765191)",
     "geo_level_id": 3,
     "geo_id": 65,
+    "city_id": 1,
     "properties": {
       "address": "Plaça de Gabriela Mistral",
       "postal_code": "08018"
@@ -1736,6 +1869,7 @@
     "geom": "SRID=4326;POINT(2.1882640727435843 41.39755768900707)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Sancho de Ávila",
       "postal_code": "08018"
@@ -1749,6 +1883,7 @@
     "geom": "SRID=4326;POINT(2.1352528620975972 41.35971339722081)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de l'Energia",
       "postal_code": "08038"
@@ -1762,6 +1897,7 @@
     "geom": "SRID=4326;POINT(2.1572720150890574 41.37053826503267)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "C Lleida",
       "postal_code": "08004"
@@ -1775,6 +1911,7 @@
     "geom": "SRID=4326;POINT(2.162312408547999 41.39824492278454)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Roger de Llúria",
       "postal_code": "08037"
@@ -1788,6 +1925,7 @@
     "geom": "SRID=4326;POINT(2.162312408547999 41.39824492278454)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Roger de Llúria",
       "postal_code": "08037"
@@ -1801,6 +1939,7 @@
     "geom": "SRID=4326;POINT(2.1493406545619487 41.37726829547463)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Aragó",
       "postal_code": "08015"
@@ -1814,6 +1953,7 @@
     "geom": "SRID=4326;POINT(2.1493406545619487 41.37726829547463)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Aragó",
       "postal_code": "08015"
@@ -1827,6 +1967,7 @@
     "geom": "SRID=4326;POINT(2.1703273038218924 41.430959022271544)",
     "geo_level_id": 3,
     "geo_id": 46,
+    "city_id": 1,
     "properties": {
       "address": "Pg Peira",
       "postal_code": "08031"
@@ -1840,6 +1981,7 @@
     "geom": "SRID=4326;POINT(2.117049167834166 41.40167574739713)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "C Ràfols",
       "postal_code": "08034"
@@ -1853,6 +1995,7 @@
     "geom": "SRID=4326;POINT(2.1241174089578516 41.39479511770534)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "Fontcoberta",
       "postal_code": "08034"
@@ -1866,6 +2009,7 @@
     "geom": "SRID=4326;POINT(2.119004804837095 41.3777061847001)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "C Pintor Tapiró",
       "postal_code": "08028"
@@ -1879,6 +2023,7 @@
     "geom": "SRID=4326;POINT(2.1333917229930712 41.39329452670943)",
     "geo_level_id": 3,
     "geo_id": 24,
+    "city_id": 1,
     "properties": {
       "address": "Ptge Ricard Zamora",
       "postal_code": "08017"
@@ -1892,6 +2037,7 @@
     "geom": "SRID=4326;POINT(2.1755311321584228 41.4050563057242)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Pl Gaudí",
       "postal_code": "08013"
@@ -1905,6 +2051,7 @@
     "geom": "SRID=4326;POINT(2.14255769920195 41.410819046980855)",
     "geo_level_id": 3,
     "geo_id": 27,
+    "city_id": 1,
     "properties": {
       "address": "C Portolà",
       "postal_code": "08023"
@@ -1918,6 +2065,7 @@
     "geom": "SRID=4326;POINT(2.1072570259147585 41.396311253391424)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "address": "C Rábida",
       "postal_code": "08034"
@@ -1931,6 +2079,7 @@
     "geom": "SRID=4326;POINT(2.151024116769772 41.38872228496438)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Rosselló",
       "postal_code": "08036"
@@ -1944,6 +2093,7 @@
     "geom": "SRID=4326;POINT(2.151024116769772 41.38872228496438)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Rosselló",
       "postal_code": "08036"
@@ -1957,6 +2107,7 @@
     "geom": "SRID=4326;POINT(2.158482875531215 41.36812384413011)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Pg Santa Madrona",
       "postal_code": "08038"
@@ -1970,6 +2121,7 @@
     "geom": "SRID=4326;POINT(2.136566647910745 41.42584651716662)",
     "geo_level_id": 3,
     "geo_id": 39,
+    "city_id": 1,
     "properties": {
       "address": "Natzaret",
       "postal_code": "08035"
@@ -1983,6 +2135,7 @@
     "geom": "SRID=4326;POINT(2.142646475130079 41.43250966110126)",
     "geo_level_id": 3,
     "geo_id": 40,
+    "city_id": 1,
     "properties": {
       "address": "C Poesia",
       "postal_code": "08035"
@@ -1996,6 +2149,7 @@
     "geom": "SRID=4326;POINT(2.1445309541605844 41.40190748902283)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Brusi",
       "postal_code": "08006"
@@ -2009,6 +2163,7 @@
     "geom": "SRID=4326;POINT(2.1770124965475017 41.40995851184003)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Còrsega",
       "postal_code": "08025"
@@ -2022,6 +2177,7 @@
     "geom": "SRID=4326;POINT(2.1770124965475017 41.40995851184003)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Còrsega",
       "postal_code": "08025"
@@ -2035,6 +2191,7 @@
     "geom": "SRID=4326;POINT(2.1715220785730867 41.394705643823904)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Girona",
       "postal_code": "08009"
@@ -2048,6 +2205,7 @@
     "geom": "SRID=4326;POINT(2.1715220785730867 41.394705643823904)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Girona",
       "postal_code": "08009"
@@ -2061,6 +2219,7 @@
     "geom": "SRID=4326;POINT(2.1715220785730867 41.394705643823904)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Girona",
       "postal_code": "08009"
@@ -2074,6 +2233,7 @@
     "geom": "SRID=4326;POINT(2.189716845737701 41.44124821570757)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "address": "Valentí Iglésias",
       "postal_code": "08030"
@@ -2087,6 +2247,7 @@
     "geom": "SRID=4326;POINT(2.128782316455014 41.38826987549862)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "Av Diagonal",
       "postal_code": "08028"
@@ -2100,6 +2261,7 @@
     "geom": "SRID=4326;POINT(2.1483932883821786 41.43124231829737)",
     "geo_level_id": 3,
     "geo_id": 41,
+    "city_id": 1,
     "properties": {
       "address": "Juan de Mena",
       "postal_code": "08032"
@@ -2113,6 +2275,7 @@
     "geom": "SRID=4326;POINT(2.1483932883821786 41.43124231829737)",
     "geo_level_id": 3,
     "geo_id": 41,
+    "city_id": 1,
     "properties": {
       "address": "Juan de Mena",
       "postal_code": "08032"
@@ -2126,6 +2289,7 @@
     "geom": "SRID=4326;POINT(2.160979651846159 41.36829695911561)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Av Miramar",
       "postal_code": "08038"
@@ -2139,6 +2303,7 @@
     "geom": "SRID=4326;POINT(2.169153046082549 41.39309052605406)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Roger de Llúria",
       "postal_code": "08009"
@@ -2152,6 +2317,7 @@
     "geom": "SRID=4326;POINT(2.169153046082549 41.39309052605406)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Roger de Llúria",
       "postal_code": "08009"
@@ -2165,6 +2331,7 @@
     "geom": "SRID=4326;POINT(2.1942807632698473 41.41162448134339)",
     "geo_level_id": 3,
     "geo_id": 65,
+    "city_id": 1,
     "properties": {
       "address": "C Lope de Vega",
       "postal_code": "08018"
@@ -2178,6 +2345,7 @@
     "geom": "SRID=4326;POINT(2.1728272813678537 41.40197393230216)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Pl Sagrada Família",
       "postal_code": "08013"
@@ -2191,6 +2359,7 @@
     "geom": "SRID=4326;POINT(2.136570351595846 41.35883305531073)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "Pl Sant Cristòfol",
       "postal_code": "08038"
@@ -2204,6 +2373,7 @@
     "geom": "SRID=4326;POINT(2.141747531666055 41.385688059832844)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "Pl Caba",
       "postal_code": "08029"
@@ -2217,6 +2387,7 @@
     "geom": "SRID=4326;POINT(2.1533729159452237 41.37914804834278)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Rocafort",
       "postal_code": "08015"
@@ -2230,6 +2401,7 @@
     "geom": "SRID=4326;POINT(2.1533729159452237 41.37914804834278)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Rocafort",
       "postal_code": "08015"
@@ -2243,6 +2415,7 @@
     "geom": "SRID=4326;POINT(2.1086342209204902 41.41524382456094)",
     "geo_level_id": 3,
     "geo_id": 22,
+    "city_id": 1,
     "properties": {
       "address": "Gabriel Ferrater",
       "postal_code": "08017"
@@ -2256,6 +2429,7 @@
     "geom": "SRID=4326;POINT(2.1466182423244065 41.392238511822384)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Buenos Aires",
       "postal_code": "08036"
@@ -2269,6 +2443,7 @@
     "geom": "SRID=4326;POINT(2.1466182423244065 41.392238511822384)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Buenos Aires",
       "postal_code": "08036"
@@ -2282,6 +2457,7 @@
     "geom": "SRID=4326;POINT(2.1360044594209735 41.40960311452634)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "address": "Ptge Maluquer",
       "postal_code": "08022"
@@ -2295,6 +2471,7 @@
     "geom": "SRID=4326;POINT(2.1194602767606807 41.396041358939556)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "Enric Giménez",
       "postal_code": "08034"
@@ -2308,6 +2485,7 @@
     "geom": "SRID=4326;POINT(2.121963830470535 41.39374957203114)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "Santa Amèlia",
       "postal_code": "08034"
@@ -2321,6 +2499,7 @@
     "geom": "SRID=4326;POINT(2.121963830470535 41.39374957203114)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "Santa Amèlia",
       "postal_code": "08034"
@@ -2334,6 +2513,7 @@
     "geom": "SRID=4326;POINT(2.1334122098021124 41.378379079024555)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "address": "Joan Güell",
       "postal_code": "08028"
@@ -2347,6 +2527,7 @@
     "geom": "SRID=4326;POINT(2.16931451433491 41.37650077245051)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "address": "Sant Pau",
       "postal_code": "08001"
@@ -2360,6 +2541,7 @@
     "geom": "SRID=4326;POINT(2.138376389148415 41.390389369333256)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "Entença",
       "postal_code": "08029"
@@ -2373,6 +2555,7 @@
     "geom": "SRID=4326;POINT(2.1184352989192647 41.38654937434819)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "address": "Av Diagonal",
       "postal_code": "08034"
@@ -2386,6 +2569,7 @@
     "geom": "SRID=4326;POINT(2.185381778970792 41.38633657544665)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de Picasso",
       "postal_code": "08003"
@@ -2399,6 +2583,7 @@
     "geom": "SRID=4326;POINT(2.185381778970792 41.38633657544665)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de Picasso",
       "postal_code": "08003"
@@ -2412,6 +2597,7 @@
     "geom": "SRID=4326;POINT(2.1529654736615242 41.36609351846864)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Av Estadi",
       "postal_code": "08038"
@@ -2425,6 +2611,7 @@
     "geom": "SRID=4326;POINT(2.1529654736615242 41.36609351846864)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Av Estadi",
       "postal_code": "08038"
@@ -2438,6 +2625,7 @@
     "geom": "SRID=4326;POINT(2.112199777559347 41.39940218424315)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "C Montevideo",
       "postal_code": "08034"
@@ -2451,6 +2639,7 @@
     "geom": "SRID=4326;POINT(2.1419158924657906 41.39410523623182)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "address": "Av Pau Casals",
       "postal_code": "08021"
@@ -2464,6 +2653,7 @@
     "geom": "SRID=4326;POINT(2.169190267865246 41.366934580208515)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Carretera de Montjuïc",
       "postal_code": "08038"
@@ -2477,6 +2667,7 @@
     "geom": "SRID=4326;POINT(2.129170503906372 41.380803694745275)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "Fígols",
       "postal_code": "08028"
@@ -2490,6 +2681,7 @@
     "geom": "SRID=4326;POINT(2.1691315376296347 41.40476853682401)",
     "geo_level_id": 3,
     "geo_id": 32,
+    "city_id": 1,
     "properties": {
       "address": "C Sicília",
       "postal_code": "08025"
@@ -2503,6 +2695,7 @@
     "geom": "SRID=4326;POINT(2.1431598087414914 41.3564820545708)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "Pg Zona Franca",
       "postal_code": "08038"
@@ -2516,6 +2709,7 @@
     "geom": "SRID=4326;POINT(2.128687898396678 41.39345626377472)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "Pg Sant Joan Bosco",
       "postal_code": "08017"
@@ -2529,6 +2723,7 @@
     "geom": "SRID=4326;POINT(2.1488412870625373 41.39931373822779)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "address": "C Alfons XII",
       "postal_code": "08006"
@@ -2542,6 +2737,7 @@
     "geom": "SRID=4326;POINT(2.1831290669497436 41.42211513121085)",
     "geo_level_id": 3,
     "geo_id": 62,
+    "city_id": 1,
     "properties": {
       "address": "C Jordi de Sant Jordi",
       "postal_code": "08027"
@@ -2555,6 +2751,7 @@
     "geom": "SRID=4326;POINT(2.1380613376395097 41.35868827870441)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Mecànica",
       "postal_code": "08038"
@@ -2568,6 +2765,7 @@
     "geom": "SRID=4326;POINT(2.140746507324218 41.427728364374765)",
     "geo_level_id": 3,
     "geo_id": 40,
+    "city_id": 1,
     "properties": {
       "address": "Arquitectura",
       "postal_code": "08035"
@@ -2581,6 +2779,7 @@
     "geom": "SRID=4326;POINT(2.135777274514516 41.38920000343089)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Constança",
       "postal_code": "08029"
@@ -2594,6 +2793,7 @@
     "geom": "SRID=4326;POINT(2.141405753452258 41.35757415117613)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "Pg Zona Franca",
       "postal_code": "08038"
@@ -2607,6 +2807,7 @@
     "geom": "SRID=4326;POINT(2.1947344565530855 41.3879985899126)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "address": "Marina",
       "postal_code": "08005"
@@ -2620,6 +2821,7 @@
     "geom": "SRID=4326;POINT(2.1699197153982093 41.416006230644655)",
     "geo_level_id": 3,
     "geo_id": 35,
+    "city_id": 1,
     "properties": {
       "address": "Av Mare de Déu de Montserrat",
       "postal_code": "08041"
@@ -2633,6 +2835,7 @@
     "geom": "SRID=4326;POINT(2.164654527288568 41.4277578202143)",
     "geo_level_id": 3,
     "geo_id": 36,
+    "city_id": 1,
     "properties": {
       "address": "Pg Maragall",
       "postal_code": "08032"
@@ -2646,6 +2849,7 @@
     "geom": "SRID=4326;POINT(2.1680932350532816 41.38374121537106)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "address": "Jardí dels Tarongers",
       "postal_code": "08001"
@@ -2659,6 +2863,7 @@
     "geom": "SRID=4326;POINT(2.1687645955837462 41.38350225179667)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Elisabets",
       "postal_code": "08001"
@@ -2672,6 +2877,7 @@
     "geom": "SRID=4326;POINT(2.1687645955837462 41.38350225179667)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Elisabets",
       "postal_code": "08001"
@@ -2685,6 +2891,7 @@
     "geom": "SRID=4326;POINT(2.147575619309494 41.42660537548248)",
     "geo_level_id": 3,
     "geo_id": 41,
+    "city_id": 1,
     "properties": {
       "address": "C Granja Vella",
       "postal_code": "08035"
@@ -2698,6 +2905,7 @@
     "geom": "SRID=4326;POINT(2.147575619309494 41.42660537548248)",
     "geo_level_id": 3,
     "geo_id": 41,
+    "city_id": 1,
     "properties": {
       "address": "C Granja Vella",
       "postal_code": "08035"
@@ -2711,6 +2919,7 @@
     "geom": "SRID=4326;POINT(2.147575619309494 41.42660537548248)",
     "geo_level_id": 3,
     "geo_id": 41,
+    "city_id": 1,
     "properties": {
       "address": "C Granja Vella",
       "postal_code": "08035"
@@ -2724,6 +2933,7 @@
     "geom": "SRID=4326;POINT(2.147575619309494 41.42660537548248)",
     "geo_level_id": 3,
     "geo_id": 41,
+    "city_id": 1,
     "properties": {
       "address": "C Granja Vella",
       "postal_code": "08035"
@@ -2737,6 +2947,7 @@
     "geom": "SRID=4326;POINT(2.198051769477209 41.41989650584673)",
     "geo_level_id": 3,
     "geo_id": 72,
+    "city_id": 1,
     "properties": {
       "address": "C Menorca",
       "postal_code": "08020"
@@ -2750,6 +2961,7 @@
     "geom": "SRID=4326;POINT(2.139615634878941 41.360236193911376)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "Foneria",
       "postal_code": "08038"
@@ -2763,6 +2975,7 @@
     "geom": "SRID=4326;POINT(2.199436307435502 41.40379957835931)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "address": "C Marià Aguiló",
       "postal_code": "08005"
@@ -2776,6 +2989,7 @@
     "geom": "SRID=4326;POINT(2.1181888535525486 41.3833569079077)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "C Pascual i Vila",
       "postal_code": "08028"
@@ -2789,6 +3003,7 @@
     "geom": "SRID=4326;POINT(2.1181888535525486 41.3833569079077)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "C Pascual i Vila",
       "postal_code": "08028"
@@ -2802,6 +3017,7 @@
     "geom": "SRID=4326;POINT(2.1181888535525486 41.3833569079077)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "C Pascual i Vila",
       "postal_code": "08028"
@@ -2815,6 +3031,7 @@
     "geom": "SRID=4326;POINT(2.1181888535525486 41.3833569079077)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "C Pascual i Vila",
       "postal_code": "08028"
@@ -2828,6 +3045,7 @@
     "geom": "SRID=4326;POINT(2.1181888535525486 41.3833569079077)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "C Pascual i Vila",
       "postal_code": "08028"
@@ -2841,6 +3059,7 @@
     "geom": "SRID=4326;POINT(2.1181888535525486 41.3833569079077)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "C Pascual i Vila",
       "postal_code": "08028"
@@ -2854,6 +3073,7 @@
     "geom": "SRID=4326;POINT(2.1997573736435094 41.40679356695045)",
     "geo_level_id": 3,
     "geo_id": 71,
+    "city_id": 1,
     "properties": {
       "address": "Av Diagonal",
       "postal_code": "08018"
@@ -2867,6 +3087,7 @@
     "geom": "SRID=4326;POINT(2.1997573736435094 41.40679356695045)",
     "geo_level_id": 3,
     "geo_id": 71,
+    "city_id": 1,
     "properties": {
       "address": "Av Diagonal",
       "postal_code": "08018"
@@ -2880,6 +3101,7 @@
     "geom": "SRID=4326;POINT(2.1997573736435094 41.40679356695045)",
     "geo_level_id": 3,
     "geo_id": 71,
+    "city_id": 1,
     "properties": {
       "address": "Av Diagonal",
       "postal_code": "08018"
@@ -2893,6 +3115,7 @@
     "geom": "SRID=4326;POINT(2.123956896300959 41.387053996155295)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "Av Diagonal",
       "postal_code": "08028"
@@ -2906,6 +3129,7 @@
     "geom": "SRID=4326;POINT(2.1367088188150576 41.361026562681914)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "C Foneria",
       "postal_code": "08038"
@@ -2919,6 +3143,7 @@
     "geom": "SRID=4326;POINT(2.139411091038567 41.388228506917976)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "C Montnegre",
       "postal_code": "08029"
@@ -2932,6 +3157,7 @@
     "geom": "SRID=4326;POINT(2.139411091038567 41.388228506917976)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "C Montnegre",
       "postal_code": "08029"
@@ -2945,6 +3171,7 @@
     "geom": "SRID=4326;POINT(2.139411091038567 41.388228506917976)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "C Montnegre",
       "postal_code": "08029"
@@ -2958,6 +3185,7 @@
     "geom": "SRID=4326;POINT(2.145944208997487 41.41325448470696)",
     "geo_level_id": 3,
     "geo_id": 28,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Mare de Déu dels Reis",
       "postal_code": "08023"
@@ -2971,6 +3199,7 @@
     "geom": "SRID=4326;POINT(2.145944208997487 41.41325448470696)",
     "geo_level_id": 3,
     "geo_id": 28,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Mare de Déu dels Reis",
       "postal_code": "08023"
@@ -2984,6 +3213,7 @@
     "geom": "SRID=4326;POINT(2.1529711276398347 41.39006208376871)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "C Casanova",
       "postal_code": "08036"
@@ -2997,6 +3227,7 @@
     "geom": "SRID=4326;POINT(2.209628537621381 41.41307054790584)",
     "geo_level_id": 3,
     "geo_id": 71,
+    "city_id": 1,
     "properties": {
       "address": "C Cristóbal de Moura",
       "postal_code": "08019"
@@ -3010,6 +3241,7 @@
     "geom": "SRID=4326;POINT(2.2074071363962013 41.40426650204561)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "address": "Ramon Turró",
       "postal_code": "08005"
@@ -3023,6 +3255,7 @@
     "geom": "SRID=4326;POINT(2.1843840154597025 41.37680536906014)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "address": "Moll Espanya",
       "postal_code": "08039"
@@ -3036,6 +3269,7 @@
     "geom": "SRID=4326;POINT(2.162735015218643 41.39622434116736)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Pau Claris",
       "postal_code": "08037"
@@ -3049,6 +3283,7 @@
     "geom": "SRID=4326;POINT(2.162735015218643 41.39622434116736)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Pau Claris",
       "postal_code": "08037"
@@ -3062,6 +3297,7 @@
     "geom": "SRID=4326;POINT(2.211229278665123 41.40298554153319)",
     "geo_level_id": 3,
     "geo_id": 69,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Josep Ferrater i Móra",
       "postal_code": "08019"
@@ -3075,6 +3311,7 @@
     "geom": "SRID=4326;POINT(2.1371959203557087 41.39196559276461)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "address": "Av Sarrià",
       "postal_code": "08017"
@@ -3088,6 +3325,7 @@
     "geom": "SRID=4326;POINT(2.149011845799688 41.35439614126615)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "C Mare de Déu de Port",
       "postal_code": "08038"
@@ -3101,6 +3339,7 @@
     "geom": "SRID=4326;POINT(2.185564297133557 41.401642081183404)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Pl Glòries Catalanes",
       "postal_code": "08013"
@@ -3114,6 +3353,7 @@
     "geom": "SRID=4326;POINT(2.189077717717574 41.40421438991055)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "address": "Av Diagonal",
       "postal_code": "08018"
@@ -3127,6 +3367,7 @@
     "geom": "SRID=4326;POINT(2.1771519171502733 41.43354088046919)",
     "geo_level_id": 3,
     "geo_id": 45,
+    "city_id": 1,
     "properties": {
       "address": "Pl Sóller",
       "postal_code": "08016"
@@ -3140,6 +3381,7 @@
     "geom": "SRID=4326;POINT(2.1527809830615108 41.44061374485372)",
     "geo_level_id": 3,
     "geo_id": 43,
+    "city_id": 1,
     "properties": {
       "address": "C Síndic Rahola",
       "postal_code": "08035"
@@ -3153,6 +3395,7 @@
     "geom": "SRID=4326;POINT(2.213516046803923 41.403082214514825)",
     "geo_level_id": 3,
     "geo_id": 69,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de Garcia Fària",
       "postal_code": "08019"
@@ -3166,6 +3409,7 @@
     "geom": "SRID=4326;POINT(2.1818083028292117 41.398394329812795)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Marina",
       "postal_code": "08013"
@@ -3179,6 +3423,7 @@
     "geom": "SRID=4326;POINT(2.1818083028292117 41.398394329812795)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Marina",
       "postal_code": "08013"
@@ -3192,6 +3437,7 @@
     "geom": "SRID=4326;POINT(2.1509795641937965 41.390385228782456)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Còrsega",
       "postal_code": "08036"
@@ -3205,6 +3451,7 @@
     "geom": "SRID=4326;POINT(2.1509795641937965 41.390385228782456)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Còrsega",
       "postal_code": "08036"
@@ -3218,6 +3465,7 @@
     "geom": "SRID=4326;POINT(2.1235314163176278 41.39929570329813)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "C Hort de la Vila",
       "postal_code": "08017"
@@ -3231,6 +3479,7 @@
     "geom": "SRID=4326;POINT(2.2156580187174053 41.41722742418654)",
     "geo_level_id": 3,
     "geo_id": 70,
+    "city_id": 1,
     "properties": {
       "address": "C Pere Moragues",
       "postal_code": "08019"
@@ -3244,6 +3493,7 @@
     "geom": "SRID=4326;POINT(2.1883260751324616 41.42089541340011)",
     "geo_level_id": 3,
     "geo_id": 61,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Hondures",
       "postal_code": "08027"
@@ -3257,6 +3507,7 @@
     "geom": "SRID=4326;POINT(2.1754773789935244 41.394513419470094)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Pl Tetuan",
       "postal_code": "08010"
@@ -3270,6 +3521,7 @@
     "geom": "SRID=4326;POINT(2.174866842344611 41.418061038351816)",
     "geo_level_id": 3,
     "geo_id": 35,
+    "city_id": 1,
     "properties": {
       "address": "Antic del Guinardó",
       "postal_code": "08026"
@@ -3283,6 +3535,7 @@
     "geom": "SRID=4326;POINT(2.173545947718336 41.43465289400298)",
     "geo_level_id": 3,
     "geo_id": 45,
+    "city_id": 1,
     "properties": {
       "address": "C Deià",
       "postal_code": "08016"
@@ -3296,6 +3549,7 @@
     "geom": "SRID=4326;POINT(2.1650128504069532 41.36867092135471)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Plaça de Dante",
       "postal_code": "08038"
@@ -3309,6 +3563,7 @@
     "geom": "SRID=4326;POINT(2.1807441254908606 41.434302563565325)",
     "geo_level_id": 3,
     "geo_id": 45,
+    "city_id": 1,
     "properties": {
       "address": "C Pintor Alsamora",
       "postal_code": "08016"
@@ -3322,6 +3577,7 @@
     "geom": "SRID=4326;POINT(2.1565777551335916 41.41813481606472)",
     "geo_level_id": 3,
     "geo_id": 37,
+    "city_id": 1,
     "properties": {
       "address": "Ctra Carmel",
       "postal_code": "08024"
@@ -3335,6 +3591,7 @@
     "geom": "SRID=4326;POINT(2.1495931040167817 41.386378210246036)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Provença",
       "postal_code": "08029"
@@ -3348,6 +3605,7 @@
     "geom": "SRID=4326;POINT(2.1495931040167817 41.386378210246036)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Provença",
       "postal_code": "08029"
@@ -3361,6 +3619,7 @@
     "geom": "SRID=4326;POINT(2.183157005742885 41.436593069404815)",
     "geo_level_id": 3,
     "geo_id": 45,
+    "city_id": 1,
     "properties": {
       "address": "C Rosselló i Porcel",
       "postal_code": "08016"
@@ -3374,6 +3633,7 @@
     "geom": "SRID=4326;POINT(2.1353308120104346 41.41090504207735)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "address": "Pg Sant Gervasi",
       "postal_code": "08022"
@@ -3387,6 +3647,7 @@
     "geom": "SRID=4326;POINT(2.108768648660978 41.37852227053537)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "C General Batet",
       "postal_code": "08028"
@@ -3400,6 +3661,7 @@
     "geom": "SRID=4326;POINT(2.168658421542334 41.40977850723608)",
     "geo_level_id": 3,
     "geo_id": 33,
+    "city_id": 1,
     "properties": {
       "address": "C Marina",
       "postal_code": "08025"
@@ -3413,6 +3675,7 @@
     "geom": "SRID=4326;POINT(2.168658421542334 41.40977850723608)",
     "geo_level_id": 3,
     "geo_id": 33,
+    "city_id": 1,
     "properties": {
       "address": "C Marina",
       "postal_code": "08025"
@@ -3426,6 +3689,7 @@
     "geom": "SRID=4326;POINT(2.174637822860927 41.3725776684158)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Vila i Vilà",
       "postal_code": "08004"
@@ -3439,6 +3703,7 @@
     "geom": "SRID=4326;POINT(2.1950946466204972 41.38631260802294)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 1,
     "properties": {
       "address": "Avinguda del Litoral",
       "postal_code": "08005"
@@ -3452,6 +3717,7 @@
     "geom": "SRID=4326;POINT(2.1288904326716365 41.390323977616085)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "Flos i Calcat",
       "postal_code": "08034"
@@ -3465,6 +3731,7 @@
     "geom": "SRID=4326;POINT(2.140179532716965 41.39904051559378)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Freixa",
       "postal_code": "08021"
@@ -3478,6 +3745,7 @@
     "geom": "SRID=4326;POINT(2.140179532716965 41.39904051559378)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Freixa",
       "postal_code": "08021"
@@ -3491,6 +3759,7 @@
     "geom": "SRID=4326;POINT(2.1900153665666733 41.40847228003916)",
     "geo_level_id": 3,
     "geo_id": 65,
+    "city_id": 1,
     "properties": {
       "address": "Escultors Claperós",
       "postal_code": "08018"
@@ -3504,6 +3773,7 @@
     "geom": "SRID=4326;POINT(2.190739286407059 41.42688804853377)",
     "geo_level_id": 3,
     "geo_id": 61,
+    "city_id": 1,
     "properties": {
       "address": "C Sagrera",
       "postal_code": "08027"
@@ -3517,6 +3787,7 @@
     "geom": "SRID=4326;POINT(2.190739286407059 41.42688804853377)",
     "geo_level_id": 3,
     "geo_id": 61,
+    "city_id": 1,
     "properties": {
       "address": "C Sagrera",
       "postal_code": "08027"
@@ -3530,6 +3801,7 @@
     "geom": "SRID=4326;POINT(2.154985585974796 41.392434558929324)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Rosselló",
       "postal_code": "08036"
@@ -3543,6 +3815,7 @@
     "geom": "SRID=4326;POINT(2.154985585974796 41.392434558929324)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Rosselló",
       "postal_code": "08036"
@@ -3556,6 +3829,7 @@
     "geom": "SRID=4326;POINT(2.1839578397165673 41.39367157911195)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Nàpols",
       "postal_code": "08018"
@@ -3569,6 +3843,7 @@
     "geom": "SRID=4326;POINT(2.1839578397165673 41.39367157911195)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Nàpols",
       "postal_code": "08018"
@@ -3582,6 +3857,7 @@
     "geom": "SRID=4326;POINT(2.1612599936774197 41.366423867792854)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "C Doctor Font i Quer",
       "postal_code": "08038"
@@ -3595,6 +3871,7 @@
     "geom": "SRID=4326;POINT(2.1335788480441584 41.399968634043724)",
     "geo_level_id": 3,
     "geo_id": 24,
+    "city_id": 1,
     "properties": {
       "address": "Ganduxer",
       "postal_code": "08022"
@@ -3608,6 +3885,7 @@
     "geom": "SRID=4326;POINT(2.170572319182133 41.40342763386252)",
     "geo_level_id": 3,
     "geo_id": 32,
+    "city_id": 1,
     "properties": {
       "address": "Rosselló",
       "postal_code": "08025"
@@ -3621,6 +3899,7 @@
     "geom": "SRID=4326;POINT(2.1922204602052937 41.40301853453876)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "address": "C Ciutat de Granada",
       "postal_code": "08018"
@@ -3634,6 +3913,7 @@
     "geom": "SRID=4326;POINT(2.2121733489011537 41.41740022783761)",
     "geo_level_id": 3,
     "geo_id": 70,
+    "city_id": 1,
     "properties": {
       "address": "Pl Jaume Huguet",
       "postal_code": "08019"
@@ -3647,6 +3927,7 @@
     "geom": "SRID=4326;POINT(2.1630513619866973 41.36885056534847)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Av Miramar",
       "postal_code": "08038"
@@ -3660,6 +3941,7 @@
     "geom": "SRID=4326;POINT(2.118740285636823 41.42161843553102)",
     "geo_level_id": 3,
     "geo_id": 22,
+    "city_id": 1,
     "properties": {
       "address": "Plaça del Tibidabo",
       "postal_code": "08035"
@@ -3673,6 +3955,7 @@
     "geom": "SRID=4326;POINT(2.118740285636823 41.42161843553102)",
     "geo_level_id": 3,
     "geo_id": 22,
+    "city_id": 1,
     "properties": {
       "address": "Plaça del Tibidabo",
       "postal_code": "08035"
@@ -3686,6 +3969,7 @@
     "geom": "SRID=4326;POINT(2.1457298000042595 41.38542222450258)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "C Rocafort",
       "postal_code": "08029"
@@ -3699,6 +3983,7 @@
     "geom": "SRID=4326;POINT(2.1701826605872294 41.371920689797676)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de Montjuïc",
       "postal_code": "08038"
@@ -3712,6 +3997,7 @@
     "geom": "SRID=4326;POINT(2.172430025242432 41.37448327029571)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Av Paral.lel",
       "postal_code": "08004"
@@ -3725,6 +4011,7 @@
     "geom": "SRID=4326;POINT(2.172430025242432 41.37448327029571)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Av Paral.lel",
       "postal_code": "08004"
@@ -3738,6 +4025,7 @@
     "geom": "SRID=4326;POINT(2.14105045396157 41.368634514222805)",
     "geo_level_id": 3,
     "geo_id": 14,
+    "city_id": 1,
     "properties": {
       "address": "G.V. Corts Catalanes",
       "postal_code": "08004"
@@ -3751,6 +4039,7 @@
     "geom": "SRID=4326;POINT(2.19871115503559 41.44731312584859)",
     "geo_level_id": 3,
     "geo_id": 58,
+    "city_id": 1,
     "properties": {
       "address": "Campins",
       "postal_code": "08030"
@@ -3764,6 +4053,7 @@
     "geom": "SRID=4326;POINT(2.1466294160580546 41.37466510611165)",
     "geo_level_id": 3,
     "geo_id": 15,
+    "city_id": 1,
     "properties": {
       "address": "C Vidriol",
       "postal_code": "08014"
@@ -3777,6 +4067,7 @@
     "geom": "SRID=4326;POINT(2.182758231950628 41.40064539572248)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Gran Via de les Corts Catalanes",
       "postal_code": "08013"
@@ -3790,6 +4081,7 @@
     "geom": "SRID=4326;POINT(2.182758231950628 41.40064539572248)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Gran Via de les Corts Catalanes",
       "postal_code": "08013"
@@ -3803,6 +4095,7 @@
     "geom": "SRID=4326;POINT(2.137749555318519 41.36437449049291)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "C Mineria",
       "postal_code": "08038"
@@ -3816,6 +4109,7 @@
     "geom": "SRID=4326;POINT(2.137749555318519 41.36437449049291)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "C Mineria",
       "postal_code": "08038"
@@ -3829,6 +4123,7 @@
     "geom": "SRID=4326;POINT(2.1678356444626248 41.39479752399747)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Passatge del Rector Oliveras",
       "postal_code": "08009"
@@ -3842,6 +4137,7 @@
     "geom": "SRID=4326;POINT(2.1678356444626248 41.39479752399747)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Passatge del Rector Oliveras",
       "postal_code": "08009"
@@ -3855,6 +4151,7 @@
     "geom": "SRID=4326;POINT(2.1409312542675263 41.43592904989888)",
     "geo_level_id": 3,
     "geo_id": 40,
+    "city_id": 1,
     "properties": {
       "address": "Pg Vall d'Hebron",
       "postal_code": "08007"
@@ -3868,6 +4165,7 @@
     "geom": "SRID=4326;POINT(2.130839745769486 41.41609393601731)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "address": "Av Tibidabo",
       "postal_code": "08035"
@@ -3881,6 +4179,7 @@
     "geom": "SRID=4326;POINT(2.1702808171636128 41.37631144514348)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "address": "Tàpies",
       "postal_code": "08001"
@@ -3894,6 +4193,7 @@
     "geom": "SRID=4326;POINT(2.1531271963876577 41.41350924872243)",
     "geo_level_id": 3,
     "geo_id": 30,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Olot",
       "postal_code": "08024"
@@ -3907,6 +4207,7 @@
     "geom": "SRID=4326;POINT(2.1531271963876577 41.41350924872243)",
     "geo_level_id": 3,
     "geo_id": 30,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Olot",
       "postal_code": "08024"
@@ -3920,6 +4221,7 @@
     "geom": "SRID=4326;POINT(2.1475613087947547 41.43795704876439)",
     "geo_level_id": 3,
     "geo_id": 40,
+    "city_id": 1,
     "properties": {
       "address": "Passeig dels Castanyers",
       "postal_code": "08035"
@@ -3933,6 +4235,7 @@
     "geom": "SRID=4326;POINT(2.1475613087947547 41.43795704876439)",
     "geo_level_id": 3,
     "geo_id": 40,
+    "city_id": 1,
     "properties": {
       "address": "Passeig dels Castanyers",
       "postal_code": "08035"
@@ -3946,6 +4249,7 @@
     "geom": "SRID=4326;POINT(2.169613897166294 41.41948943678852)",
     "geo_level_id": 3,
     "geo_id": 35,
+    "city_id": 1,
     "properties": {
       "address": "Garriga i Roca",
       "postal_code": "08041"
@@ -3959,6 +4263,7 @@
     "geom": "SRID=4326;POINT(2.1634471242007627 41.43346223343624)",
     "geo_level_id": 3,
     "geo_id": 46,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de Fabra i Puig",
       "postal_code": "08031"
@@ -3972,6 +4277,7 @@
     "geom": "SRID=4326;POINT(2.1335326462367803 41.38491336528375)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "C Vallespir",
       "postal_code": "08014"
@@ -3985,6 +4291,7 @@
     "geom": "SRID=4326;POINT(2.1335326462367803 41.38491336528375)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "C Vallespir",
       "postal_code": "08014"
@@ -3998,6 +4305,7 @@
     "geom": "SRID=4326;POINT(2.1398740063223722 41.37653564822331)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Muntadas",
       "postal_code": "08014"
@@ -4011,6 +4319,7 @@
     "geom": "SRID=4326;POINT(2.1398740063223722 41.37653564822331)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Muntadas",
       "postal_code": "08014"
@@ -4024,6 +4333,7 @@
     "geom": "SRID=4326;POINT(2.142956277997902 41.359733095858935)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "Carrer dels Alts Forns",
       "postal_code": "08038"
@@ -4037,6 +4347,7 @@
     "geom": "SRID=4326;POINT(2.0995879296735516 41.42098586112135)",
     "geo_level_id": 3,
     "geo_id": 22,
+    "city_id": 1,
     "properties": {
       "address": "Ctra Església",
       "postal_code": "08017"
@@ -4050,6 +4361,7 @@
     "geom": "SRID=4326;POINT(2.141832834710263 41.413432230810066)",
     "geo_level_id": 3,
     "geo_id": 28,
+    "city_id": 1,
     "properties": {
       "address": "C Esteve Terradas",
       "postal_code": "08023"
@@ -4063,6 +4375,7 @@
     "geom": "SRID=4326;POINT(2.1178101517815517 41.39034641953064)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "address": "C Dulcet",
       "postal_code": "08034"
@@ -4076,6 +4389,7 @@
     "geom": "SRID=4326;POINT(2.1752703802550593 41.39730692489515)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Roger de Flor",
       "postal_code": "08013"
@@ -4089,6 +4403,7 @@
     "geom": "SRID=4326;POINT(2.1752703802550593 41.39730692489515)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Roger de Flor",
       "postal_code": "08013"
@@ -4102,6 +4417,7 @@
     "geom": "SRID=4326;POINT(2.1094394046493576 41.38456852873157)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "address": "Av Diagonal",
       "postal_code": "08034"
@@ -4115,6 +4431,7 @@
     "geom": "SRID=4326;POINT(2.175925124292116 41.459500375086016)",
     "geo_level_id": 3,
     "geo_id": 55,
+    "city_id": 1,
     "properties": {
       "address": "Avinguda dels Rasos de Peguera",
       "postal_code": "08033"
@@ -4128,6 +4445,7 @@
     "geom": "SRID=4326;POINT(2.122626694472471 41.40140824622511)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "Via Augusta",
       "postal_code": "08017"
@@ -4141,6 +4459,7 @@
     "geom": "SRID=4326;POINT(2.178438240083388 41.40884184106481)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Rosselló",
       "postal_code": "08025"
@@ -4154,6 +4473,7 @@
     "geom": "SRID=4326;POINT(2.178438240083388 41.40884184106481)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Rosselló",
       "postal_code": "08025"
@@ -4167,6 +4487,7 @@
     "geom": "SRID=4326;POINT(2.171626934226467 41.40392085729826)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Rosselló",
       "postal_code": "08025"
@@ -4180,6 +4501,7 @@
     "geom": "SRID=4326;POINT(2.171626934226467 41.40392085729826)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Rosselló",
       "postal_code": "08025"
@@ -4193,6 +4515,7 @@
     "geom": "SRID=4326;POINT(2.1697100674592678 41.38936004235012)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Casp",
       "postal_code": "08010"
@@ -4206,6 +4529,7 @@
     "geom": "SRID=4326;POINT(2.1697100674592678 41.38936004235012)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Casp",
       "postal_code": "08010"
@@ -4219,6 +4543,7 @@
     "geom": "SRID=4326;POINT(2.1211872573336934 41.39390619967619)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Eduardo Conde",
       "postal_code": "08034"
@@ -4232,6 +4557,7 @@
     "geom": "SRID=4326;POINT(2.1949132863342933 41.40387167479853)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "address": "C Llacuna",
       "postal_code": "08018"
@@ -4245,6 +4571,7 @@
     "geom": "SRID=4326;POINT(2.1871870138081793 41.386153673583415)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "address": "Parc Ciutadella",
       "postal_code": "08003"
@@ -4258,6 +4585,7 @@
     "geom": "SRID=4326;POINT(2.1871870138081793 41.386153673583415)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "address": "Parc Ciutadella",
       "postal_code": "08003"
@@ -4271,6 +4599,7 @@
     "geom": "SRID=4326;POINT(2.204896714047769 41.40238689007209)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "address": "C Bilbao",
       "postal_code": "08005"
@@ -4284,6 +4613,7 @@
     "geom": "SRID=4326;POINT(2.138719495862864 41.42495383985393)",
     "geo_level_id": 3,
     "geo_id": 39,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Lledoner",
       "postal_code": "08035"
@@ -4297,6 +4627,7 @@
     "geom": "SRID=4326;POINT(2.138719495862864 41.42495383985393)",
     "geo_level_id": 3,
     "geo_id": 39,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Lledoner",
       "postal_code": "08035"
@@ -4310,6 +4641,7 @@
     "geom": "SRID=4326;POINT(2.1347402415620436 41.42676173206655)",
     "geo_level_id": 3,
     "geo_id": 39,
+    "city_id": 1,
     "properties": {
       "address": "C Cànoves",
       "postal_code": "08035"
@@ -4323,6 +4655,7 @@
     "geom": "SRID=4326;POINT(2.162795360343474 41.377425411135064)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Comte Borrell",
       "postal_code": "08015"
@@ -4336,6 +4669,7 @@
     "geom": "SRID=4326;POINT(2.162795360343474 41.377425411135064)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Comte Borrell",
       "postal_code": "08015"
@@ -4349,6 +4683,7 @@
     "geom": "SRID=4326;POINT(2.157516161678922 41.36332511934043)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Pg Migdia",
       "postal_code": "08038"
@@ -4362,6 +4697,7 @@
     "geom": "SRID=4326;POINT(2.1483932883821786 41.43124231829737)",
     "geo_level_id": 3,
     "geo_id": 41,
+    "city_id": 1,
     "properties": {
       "address": "Juan de Mena",
       "postal_code": "08032"
@@ -4375,6 +4711,7 @@
     "geom": "SRID=4326;POINT(2.1407821790178123 41.37274705563819)",
     "geo_level_id": 3,
     "geo_id": 16,
+    "city_id": 1,
     "properties": {
       "address": "Gaiarre",
       "postal_code": "08014"
@@ -4388,6 +4725,7 @@
     "geom": "SRID=4326;POINT(2.1785261828350926 41.42704189433846)",
     "geo_level_id": 3,
     "geo_id": 62,
+    "city_id": 1,
     "properties": {
       "address": "Felip II",
       "postal_code": "08027"
@@ -4401,6 +4739,7 @@
     "geom": "SRID=4326;POINT(2.126885535770078 41.39059694605795)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "address": "Ptge Rosa Leveroni",
       "postal_code": "08034"
@@ -4414,6 +4753,7 @@
     "geom": "SRID=4326;POINT(2.1851898009580086 41.449616932711336)",
     "geo_level_id": 3,
     "geo_id": 53,
+    "city_id": 1,
     "properties": {
       "address": "C Tamariu",
       "postal_code": "08033"
@@ -4427,6 +4767,7 @@
     "geom": "SRID=4326;POINT(2.1639253838246706 41.41740107744514)",
     "geo_level_id": 3,
     "geo_id": 34,
+    "city_id": 1,
     "properties": {
       "address": "Pl Font Castellana",
       "postal_code": "08024"
@@ -4440,6 +4781,7 @@
     "geom": "SRID=4326;POINT(2.152778867095455 41.43226118482405)",
     "geo_level_id": 3,
     "geo_id": 41,
+    "city_id": 1,
     "properties": {
       "address": "Av Cardenal Vidal Barraquer",
       "postal_code": "08032"
@@ -4453,6 +4795,7 @@
     "geom": "SRID=4326;POINT(2.1805386383036622 41.400655547799026)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Diputació",
       "postal_code": "08013"
@@ -4466,6 +4809,7 @@
     "geom": "SRID=4326;POINT(2.1805386383036622 41.400655547799026)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Diputació",
       "postal_code": "08013"
@@ -4479,6 +4823,7 @@
     "geom": "SRID=4326;POINT(2.1591661776855657 41.38357457590137)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "C Villarroel",
       "postal_code": "08011"
@@ -4492,6 +4837,7 @@
     "geom": "SRID=4326;POINT(2.1591661776855657 41.38357457590137)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "C Villarroel",
       "postal_code": "08011"
@@ -4505,6 +4851,7 @@
     "geom": "SRID=4326;POINT(2.1945261956868345 41.395142955127184)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "address": "Àlaba",
       "postal_code": "08005"
@@ -4518,6 +4865,7 @@
     "geom": "SRID=4326;POINT(2.117180526318858 41.37870385314168)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "address": "C Cardenal Reig",
       "postal_code": "08028"
@@ -4531,6 +4879,7 @@
     "geom": "SRID=4326;POINT(2.1543867487969446 41.381753328658114)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Viladomat",
       "postal_code": "08015"
@@ -4544,6 +4893,7 @@
     "geom": "SRID=4326;POINT(2.1543867487969446 41.381753328658114)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Viladomat",
       "postal_code": "08015"
@@ -4557,6 +4907,7 @@
     "geom": "SRID=4326;POINT(2.1833082836130293 41.39645533894941)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Sardenya",
       "postal_code": "08013"
@@ -4570,6 +4921,7 @@
     "geom": "SRID=4326;POINT(2.1833082836130293 41.39645533894941)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Sardenya",
       "postal_code": "08013"
@@ -4583,6 +4935,7 @@
     "geom": "SRID=4326;POINT(2.1430348062786257 41.407464947326254)",
     "geo_level_id": 3,
     "geo_id": 27,
+    "city_id": 1,
     "properties": {
       "address": "C Manacor",
       "postal_code": "08023"
@@ -4596,6 +4949,7 @@
     "geom": "SRID=4326;POINT(2.164970618039537 41.3751703874243)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Avinguda del Paral·lel",
       "postal_code": "08015"
@@ -4609,6 +4963,7 @@
     "geom": "SRID=4326;POINT(2.158471027260515 41.36753206409716)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de Santa Madrona",
       "postal_code": "08038"
@@ -4622,6 +4977,7 @@
     "geom": "SRID=4326;POINT(2.1959361294253372 41.43809175061317)",
     "geo_level_id": 3,
     "geo_id": 59,
+    "city_id": 1,
     "properties": {
       "address": "Ferran Junoy",
       "postal_code": "08030"
@@ -4635,6 +4991,7 @@
     "geom": "SRID=4326;POINT(2.154259435001784 41.43107919974659)",
     "geo_level_id": 3,
     "geo_id": 42,
+    "city_id": 1,
     "properties": {
       "address": "Av Estatut de Catalunya",
       "postal_code": "08035"
@@ -4648,6 +5005,7 @@
     "geom": "SRID=4326;POINT(2.1392774628599005 41.38763361496539)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Montnegre",
       "postal_code": "08029"
@@ -4661,6 +5019,7 @@
     "geom": "SRID=4326;POINT(2.1448367370116634 41.3809608611564)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Avinguda de Roma",
       "postal_code": "08015"
@@ -4674,6 +5033,7 @@
     "geom": "SRID=4326;POINT(2.1448367370116634 41.3809608611564)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Avinguda de Roma",
       "postal_code": "08015"
@@ -4687,6 +5047,7 @@
     "geom": "SRID=4326;POINT(2.1324980431422143 41.37242263913515)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Antoni de Capmany",
       "postal_code": "08014"
@@ -4700,6 +5061,7 @@
     "geom": "SRID=4326;POINT(2.1199379356081067 41.397576792774)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "address": "C Mendel",
       "postal_code": "08034"
@@ -4713,6 +5075,7 @@
     "geom": "SRID=4326;POINT(2.1991766508205544 41.389048081071486)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "address": "Av Litoral",
       "postal_code": "08005"
@@ -4726,6 +5089,7 @@
     "geom": "SRID=4326;POINT(2.207470604184096 41.397279718190724)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "address": "Av Litoral",
       "postal_code": "08005"
@@ -4739,6 +5103,7 @@
     "geom": "SRID=4326;POINT(2.1453180539412853 41.38715671178988)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Calàbria",
       "postal_code": "08029"
@@ -4752,6 +5117,7 @@
     "geom": "SRID=4326;POINT(2.1453180539412853 41.38715671178988)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Calàbria",
       "postal_code": "08029"
@@ -4765,6 +5131,7 @@
     "geom": "SRID=4326;POINT(2.1366261847980823 41.38684157051108)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "address": "Nicaragua",
       "postal_code": "08029"
@@ -4778,6 +5145,7 @@
     "geom": "SRID=4326;POINT(2.1356084071087156 41.39314134177889)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Doctor Fleming",
       "postal_code": "08017"
@@ -4791,6 +5159,7 @@
     "geom": "SRID=4326;POINT(2.1943004594477817 41.40491751304483)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "address": "Av Diagonal",
       "postal_code": "08018"
@@ -4804,6 +5173,7 @@
     "geom": "SRID=4326;POINT(2.1149674090960895 41.392520033928925)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "address": "Sor Eulàlia d'Anzizu",
       "postal_code": "08034"
@@ -4817,6 +5187,7 @@
     "geom": "SRID=4326;POINT(2.2056310183411125 41.40379216389054)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "address": "C Llull",
       "postal_code": "08005"
@@ -4830,6 +5201,7 @@
     "geom": "SRID=4326;POINT(2.175718380948309 41.42771563875548)",
     "geo_level_id": 3,
     "geo_id": 44,
+    "city_id": 1,
     "properties": {
       "address": "C Costa i Cuxart",
       "postal_code": "08016"
@@ -4843,6 +5215,7 @@
     "geom": "SRID=4326;POINT(2.167331566974877 41.384031930477754)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "address": "C Montalegre",
       "postal_code": "08001"
@@ -4856,6 +5229,7 @@
     "geom": "SRID=4326;POINT(2.1197957867323467 41.42179367685009)",
     "geo_level_id": 3,
     "geo_id": 22,
+    "city_id": 1,
     "properties": {
       "address": "Pl Tibidabo",
       "postal_code": "08035"
@@ -4869,6 +5243,7 @@
     "geom": "SRID=4326;POINT(2.2217148764638015 41.41106682138965)",
     "geo_level_id": 3,
     "geo_id": 70,
+    "city_id": 1,
     "properties": {
       "address": "Pl Fòrum",
       "postal_code": "08019"
@@ -4882,6 +5257,7 @@
     "geom": "SRID=4326;POINT(2.135308972460361 41.405365338998074)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "address": "C Muntaner",
       "postal_code": "08022"
@@ -4895,6 +5271,7 @@
     "geom": "SRID=4326;POINT(2.135308972460361 41.405365338998074)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "address": "C Muntaner",
       "postal_code": "08022"
@@ -4908,6 +5285,7 @@
     "geom": "SRID=4326;POINT(2.1580613330328386 41.397680327870454)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de Gràcia",
       "postal_code": "08008"
@@ -4921,6 +5299,7 @@
     "geom": "SRID=4326;POINT(2.202340412388594 41.416482630468536)",
     "geo_level_id": 3,
     "geo_id": 72,
+    "city_id": 1,
     "properties": {
       "address": "C Jordi Rubió i Balaguer",
       "postal_code": "08020"
@@ -4934,6 +5313,7 @@
     "geom": "SRID=4326;POINT(2.1956548753915466 41.449268825219306)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "address": "Pg Santa Coloma",
       "postal_code": "08030"
@@ -4947,6 +5327,7 @@
     "geom": "SRID=4326;POINT(2.1694344399364667 41.39988081391009)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de Sant Joan",
       "postal_code": "08037"
@@ -4960,6 +5341,7 @@
     "geom": "SRID=4326;POINT(2.1694344399364667 41.39988081391009)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Passeig de Sant Joan",
       "postal_code": "08037"
@@ -4973,6 +5355,7 @@
     "geom": "SRID=4326;POINT(2.1314784393711608 41.403660833481105)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "address": "Maó",
       "postal_code": "08022"
@@ -4986,6 +5369,7 @@
     "geom": "SRID=4326;POINT(2.1533107565639185 41.39042902342673)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Rosselló",
       "postal_code": "08036"
@@ -4999,6 +5383,7 @@
     "geom": "SRID=4326;POINT(2.1533107565639185 41.39042902342673)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Rosselló",
       "postal_code": "08036"
@@ -5012,6 +5397,7 @@
     "geom": "SRID=4326;POINT(2.1796733508132946 41.41020051685212)",
     "geo_level_id": 3,
     "geo_id": 64,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Rosselló",
       "postal_code": "08026"
@@ -5025,6 +5411,7 @@
     "geom": "SRID=4326;POINT(2.190767526636862 41.38220869633313)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Ginebra",
       "postal_code": "08003"
@@ -5038,6 +5425,7 @@
     "geom": "SRID=4326;POINT(2.1560671072867783 41.37909660891617)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Calàbria",
       "postal_code": "08015"
@@ -5051,6 +5439,7 @@
     "geom": "SRID=4326;POINT(2.1560671072867783 41.37909660891617)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Calàbria",
       "postal_code": "08015"
@@ -5064,6 +5453,7 @@
     "geom": "SRID=4326;POINT(2.1905541269734763 41.39596629856599)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Pallars",
       "postal_code": "08018"
@@ -5077,6 +5467,7 @@
     "geom": "SRID=4326;POINT(2.1669218986242362 41.37985241916283)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Sant Llàtzer",
       "postal_code": "08001"
@@ -5090,6 +5481,7 @@
     "geom": "SRID=4326;POINT(2.193466781947299 41.3889993175699)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "address": "Av Icària",
       "postal_code": "08005"
@@ -5103,6 +5495,7 @@
     "geom": "SRID=4326;POINT(2.124268289181158 41.390680064262654)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "address": "C Doctor Ferran",
       "postal_code": "08034"
@@ -5116,6 +5509,7 @@
     "geom": "SRID=4326;POINT(2.1523101998969025 41.366998796852336)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Avinguda dels Montanyans",
       "postal_code": "08038"
@@ -5129,6 +5523,7 @@
     "geom": "SRID=4326;POINT(2.141207701348071 41.37012820294741)",
     "geo_level_id": 3,
     "geo_id": 16,
+    "city_id": 1,
     "properties": {
       "address": "C Cuyàs",
       "postal_code": "08014"
@@ -5142,6 +5537,7 @@
     "geom": "SRID=4326;POINT(2.1932928240604213 41.43483282206298)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "address": "C Sant Adrià",
       "postal_code": "08030"
@@ -5155,6 +5551,7 @@
     "geom": "SRID=4326;POINT(2.1592652707595708 41.376675184893614)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Calàbria",
       "postal_code": "08015"
@@ -5168,6 +5565,7 @@
     "geom": "SRID=4326;POINT(2.1592652707595708 41.376675184893614)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Calàbria",
       "postal_code": "08015"
@@ -5181,6 +5579,7 @@
     "geom": "SRID=4326;POINT(2.172745125885269 41.39889739448143)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Roger de Flor",
       "postal_code": "08013"
@@ -5194,6 +5593,7 @@
     "geom": "SRID=4326;POINT(2.172745125885269 41.39889739448143)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Roger de Flor",
       "postal_code": "08013"
@@ -5207,6 +5607,7 @@
     "geom": "SRID=4326;POINT(2.1395162995064676 41.37419897784206)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Priorat",
       "postal_code": "08014"
@@ -5220,6 +5621,7 @@
     "geom": "SRID=4326;POINT(2.1076675530987403 41.388273407433196)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Carreras",
       "postal_code": "08034"
@@ -5233,6 +5635,7 @@
     "geom": "SRID=4326;POINT(2.1698114685903156 41.38108881941955)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "address": "Hospital",
       "postal_code": "08001"
@@ -5246,6 +5649,7 @@
     "geom": "SRID=4326;POINT(2.138755877693606 41.38204129193082)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "address": "C Robrenyo",
       "postal_code": "08014"
@@ -5259,6 +5663,7 @@
     "geom": "SRID=4326;POINT(2.138755877693606 41.38204129193082)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "address": "C Robrenyo",
       "postal_code": "08014"
@@ -5272,6 +5677,7 @@
     "geom": "SRID=4326;POINT(2.1640304973285196 41.3865770289631)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "address": "G.V. Corts Catalanes",
       "postal_code": "08007"
@@ -5285,6 +5691,7 @@
     "geom": "SRID=4326;POINT(2.152843732558814 41.359762298488135)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "address": "Passeig del Migdia",
       "postal_code": "08038"
@@ -5298,6 +5705,7 @@
     "geom": "SRID=4326;POINT(2.1947462882133695 41.42778891067299)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "address": "Jardins d'Antònia Pich i Santasusanna",
       "postal_code": "08030"
@@ -5311,6 +5719,7 @@
     "geom": "SRID=4326;POINT(2.1764948489636664 41.4356803366201)",
     "geo_level_id": 3,
     "geo_id": 45,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de l'Escultor Ordóñez",
       "postal_code": "08016"
@@ -5324,6 +5733,7 @@
     "geom": "SRID=4326;POINT(2.189695240156673 41.398066414069156)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Pamplona",
       "postal_code": "08018"
@@ -5337,6 +5747,7 @@
     "geom": "SRID=4326;POINT(2.129453048650315 41.39990895350873)",
     "geo_level_id": 3,
     "geo_id": 24,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Doctor Carulla",
       "postal_code": "08017"
@@ -5350,6 +5761,7 @@
     "geom": "SRID=4326;POINT(2.1567855267692817 41.40611564569828)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de l'Alzina",
       "postal_code": "08024"
@@ -5363,6 +5775,7 @@
     "geom": "SRID=4326;POINT(2.135756464932366 41.36864743589308)",
     "geo_level_id": 3,
     "geo_id": 16,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Constitució",
       "postal_code": "08014"
@@ -5376,6 +5789,7 @@
     "geom": "SRID=4326;POINT(2.160351170118098 41.37637095451236)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Manso",
       "postal_code": "08015"
@@ -5389,6 +5803,7 @@
     "geom": "SRID=4326;POINT(2.160351170118098 41.37637095451236)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Manso",
       "postal_code": "08015"
@@ -5402,6 +5817,7 @@
     "geom": "SRID=4326;POINT(2.160351170118098 41.37637095451236)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Manso",
       "postal_code": "08015"
@@ -5415,6 +5831,7 @@
     "geom": "SRID=4326;POINT(2.1760573876381613 41.375981756802304)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "address": "Avinguda de les Drassanes",
       "postal_code": "08001"
@@ -5428,6 +5845,7 @@
     "geom": "SRID=4326;POINT(2.144192188013562 41.41277639924962)",
     "geo_level_id": 3,
     "geo_id": 28,
+    "city_id": 1,
     "properties": {
       "address": "Viaducte de Vallcarca",
       "postal_code": "08023"
@@ -5441,6 +5859,7 @@
     "geom": "SRID=4326;POINT(2.136318854001666 41.36492871730164)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "Pl Ildefons Cerdà",
       "postal_code": "08014"
@@ -5454,6 +5873,7 @@
     "geom": "SRID=4326;POINT(2.116514709515715 41.38890928588288)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Jordi Girona",
       "postal_code": "08034"
@@ -5467,6 +5887,7 @@
     "geom": "SRID=4326;POINT(2.1944982957894417 41.394220661461055)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Pamplona",
       "postal_code": "08005"
@@ -5480,6 +5901,7 @@
     "geom": "SRID=4326;POINT(2.196823493905987 41.39574486246493)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Àvila",
       "postal_code": "08005"
@@ -5493,6 +5915,7 @@
     "geom": "SRID=4326;POINT(2.1944830224777174 41.401588249139294)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "address": "Plaça de Dolors Piera",
       "postal_code": "08018"
@@ -5506,6 +5929,7 @@
     "geom": "SRID=4326;POINT(2.1944830224777174 41.401588249139294)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "address": "Plaça de Dolors Piera",
       "postal_code": "08018"
@@ -5519,6 +5943,7 @@
     "geom": "SRID=4326;POINT(2.197139511359567 41.39983869878987)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "address": "Passatge del Caminal",
       "postal_code": "08005"
@@ -5532,6 +5957,7 @@
     "geom": "SRID=4326;POINT(2.1540997147189493 41.42465679817855)",
     "geo_level_id": 3,
     "geo_id": 37,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Bernat Bransi",
       "postal_code": "08032"
@@ -5545,6 +5971,7 @@
     "geom": "SRID=4326;POINT(2.1540997147189493 41.42465679817855)",
     "geo_level_id": 3,
     "geo_id": 37,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Bernat Bransi",
       "postal_code": "08032"
@@ -5558,6 +5985,7 @@
     "geom": "SRID=4326;POINT(2.1786363112815685 41.41954953548071)",
     "geo_level_id": 3,
     "geo_id": 35,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Teodor Llorente",
       "postal_code": "08041"
@@ -5571,6 +5999,7 @@
     "geom": "SRID=4326;POINT(2.1786363112815685 41.41954953548071)",
     "geo_level_id": 3,
     "geo_id": 35,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Teodor Llorente",
       "postal_code": "08041"
@@ -5584,6 +6013,7 @@
     "geom": "SRID=4326;POINT(2.180830757652329 41.427327847267705)",
     "geo_level_id": 3,
     "geo_id": 62,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Vèlia",
       "postal_code": "08027"
@@ -5597,6 +6027,7 @@
     "geom": "SRID=4326;POINT(2.1373375480180576 41.40471566721626)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Arimon",
       "postal_code": "08022"
@@ -5610,6 +6041,7 @@
     "geom": "SRID=4326;POINT(2.1729174161996707 41.43264585432189)",
     "geo_level_id": 3,
     "geo_id": 46,
+    "city_id": 1,
     "properties": {
       "address": "Jardí de Pilar Espuña i Domènech",
       "postal_code": "08031"
@@ -5623,6 +6055,7 @@
     "geom": "SRID=4326;POINT(2.160358651511553 41.38063710862745)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Comte d'Urgell",
       "postal_code": "08011"
@@ -5636,6 +6069,7 @@
     "geom": "SRID=4326;POINT(2.160358651511553 41.38063710862745)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Comte d'Urgell",
       "postal_code": "08011"
@@ -5649,6 +6083,7 @@
     "geom": "SRID=4326;POINT(2.172302356653835 41.384428514776054)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "address": "Plaça de la Vila de Madrid",
       "postal_code": "08002"
@@ -5662,6 +6097,7 @@
     "geom": "SRID=4326;POINT(2.1528643306761417 41.4032590692805)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Rosa Puig-Rodon Pla",
       "postal_code": "08012"
@@ -5675,6 +6111,7 @@
     "geom": "SRID=4326;POINT(2.201814673831697 41.405503460405995)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "address": "Camí Antic de València",
       "postal_code": "08005"
@@ -5688,6 +6125,7 @@
     "geom": "SRID=4326;POINT(2.201814673831697 41.405503460405995)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "address": "Camí Antic de València",
       "postal_code": "08005"
@@ -5701,6 +6139,7 @@
     "geom": "SRID=4326;POINT(2.141712294076072 41.36117581347401)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "address": "Carrer dels Ferrocarrils Catalans",
       "postal_code": "08038"
@@ -5714,6 +6153,7 @@
     "geom": "SRID=4326;POINT(2.1932897936864344 41.40552505363336)",
     "geo_level_id": 3,
     "geo_id": 71,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Llacuna",
       "postal_code": "08018"
@@ -5727,6 +6167,7 @@
     "geom": "SRID=4326;POINT(2.155405856044141 41.422882829288326)",
     "geo_level_id": 3,
     "geo_id": 37,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Lugo",
       "postal_code": "08032"
@@ -5740,6 +6181,7 @@
     "geom": "SRID=4326;POINT(2.1936010646900845 41.41117685628542)",
     "geo_level_id": 3,
     "geo_id": 65,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Andrade",
       "postal_code": "08018"
@@ -5753,6 +6195,7 @@
     "geom": "SRID=4326;POINT(2.1437341979045534 41.41078278314846)",
     "geo_level_id": 3,
     "geo_id": 27,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de la Costa",
       "postal_code": "08023"
@@ -5766,6 +6209,7 @@
     "geom": "SRID=4326;POINT(2.1416730073529306 41.351628742955796)",
     "geo_level_id": 3,
     "geo_id": 12,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Pontils",
       "postal_code": "08038"
@@ -5779,6 +6223,7 @@
     "geom": "SRID=4326;POINT(2.164503270926181 41.4386913739371)",
     "geo_level_id": 3,
     "geo_id": 48,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Feliu i Codina",
       "postal_code": "08042"
@@ -5792,6 +6237,7 @@
     "geom": "SRID=4326;POINT(2.164503270926181 41.4386913739371)",
     "geo_level_id": 3,
     "geo_id": 48,
+    "city_id": 1,
     "properties": {
       "address": "Carrer de Feliu i Codina",
       "postal_code": "08042"
@@ -5805,6 +6251,7 @@
     "geom": "SRID=4326;POINT(2.140663296826962 41.41725196054327)",
     "geo_level_id": 3,
     "geo_id": 28,
+    "city_id": 1,
     "properties": {
       "address": "Jardins de Margaret Michaelis",
       "postal_code": "08023"
@@ -5818,6 +6265,7 @@
     "geom": "SRID=4326;POINT(2.1310895562917507 41.414133704362115)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "address": "Carrer d'Adrià Margarit",
       "postal_code": "08035"
@@ -5831,6 +6279,7 @@
     "geom": "SRID=4326;POINT(2.1329752557153703 41.366939417707854)",
     "geo_level_id": 3,
     "geo_id": 16,
+    "city_id": 1,
     "properties": {
       "address": "Carrer del Quetzal",
       "postal_code": "08014"
@@ -5844,6 +6293,7 @@
     "geom": "SRID=4326;POINT(2.1399929033111755 41.392385308608056)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "address": "Plaça de Wagner",
       "postal_code": "08021"
@@ -5857,6 +6307,7 @@
     "geom": "SRID=4326;POINT(2.163502 41.3788539)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "453",
       "equipment_type": "Sales de música en viu",
@@ -5872,6 +6323,7 @@
     "geom": "SRID=4326;POINT(2.18045 41.424768)",
     "geo_level_id": 3,
     "geo_id": 62,
+    "city_id": 1,
     "properties": {
       "register_id": "408",
       "equipment_type": "Ateneus",
@@ -5887,6 +6339,7 @@
     "geom": "SRID=4326;POINT(2.179969802282483 41.3877756552004)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "478",
       "equipment_type": "Ateneus",
@@ -5902,6 +6355,7 @@
     "geom": "SRID=4326;POINT(2.1621234 41.4056165)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "394",
       "equipment_type": "Sales de música en viu",
@@ -5917,6 +6371,7 @@
     "geom": "SRID=4326;POINT(2.1677698 41.4034215)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "393",
       "equipment_type": "Sales de música en viu",
@@ -5932,6 +6387,7 @@
     "geom": "SRID=4326;POINT(2.169191469 41.409960057)",
     "geo_level_id": 3,
     "geo_id": 33,
+    "city_id": 1,
     "properties": {
       "register_id": "332",
       "equipment_type": "Arxius de districte",
@@ -5947,6 +6403,7 @@
     "geom": "SRID=4326;POINT(2.168061867 41.382300324)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "323",
       "equipment_type": "Arxius de districte",
@@ -5962,6 +6419,7 @@
     "geom": "SRID=4326;POINT(2.149757391 41.407459816)",
     "geo_level_id": 3,
     "geo_id": 28,
+    "city_id": 1,
     "properties": {
       "register_id": "324",
       "equipment_type": "Arxius de districte",
@@ -5977,6 +6435,7 @@
     "geom": "SRID=4326;POINT(2.159247358 41.376643701)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "register_id": "325",
       "equipment_type": "Arxius de districte",
@@ -5992,6 +6451,7 @@
     "geom": "SRID=4326;POINT(2.129754111 41.385612855)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "register_id": "326",
       "equipment_type": "Arxius de districte",
@@ -6007,6 +6467,7 @@
     "geom": "SRID=4326;POINT(2.171212448 41.436813681)",
     "geo_level_id": 3,
     "geo_id": 48,
+    "city_id": 1,
     "properties": {
       "register_id": "327",
       "equipment_type": "Arxius de districte",
@@ -6022,6 +6483,7 @@
     "geom": "SRID=4326;POINT(2.192183512 41.436950581)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "328",
       "equipment_type": "Arxius de districte",
@@ -6037,6 +6499,7 @@
     "geom": "SRID=4326;POINT(2.197707021 41.392407372)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "register_id": "329",
       "equipment_type": "Arxius de districte",
@@ -6052,6 +6515,7 @@
     "geom": "SRID=4326;POINT(2.142256283 41.375377378)",
     "geo_level_id": 3,
     "geo_id": 15,
+    "city_id": 1,
     "properties": {
       "register_id": "330",
       "equipment_type": "Arxius de districte",
@@ -6067,6 +6531,7 @@
     "geom": "SRID=4326;POINT(2.121169107 41.393875129)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "register_id": "331",
       "equipment_type": "Arxius de districte",
@@ -6082,6 +6547,7 @@
     "geom": "SRID=4326;POINT(2.157912347982272 41.39052520368022)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "register_id": "479",
       "equipment_type": "Ateneus",
@@ -6097,6 +6563,7 @@
     "geom": "SRID=4326;POINT(2.175892194 41.387137228)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "137",
       "equipment_type": "Sales d'arts escèniques",
@@ -6112,6 +6579,7 @@
     "geom": "SRID=4326;POINT(2.169489768 41.374341941)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "182",
       "equipment_type": "Sales de música en viu",
@@ -6127,6 +6595,7 @@
     "geom": "SRID=4326;POINT(2.144701461 41.390208275)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "register_id": "245",
       "equipment_type": "Sales d'arts escèniques",
@@ -6142,6 +6611,7 @@
     "geom": "SRID=4326;POINT(2.149957276 41.376006901)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "register_id": "334",
       "equipment_type": "Cinemes",
@@ -6157,6 +6627,7 @@
     "geom": "SRID=4326;POINT(2.161367847 41.384561732)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "register_id": "364",
       "equipment_type": "Cinemes",
@@ -6172,6 +6643,7 @@
     "geom": "SRID=4326;POINT(2.1717826000000287 41.3846753)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "409",
       "equipment_type": "Ateneus",
@@ -6187,6 +6659,7 @@
     "geom": "SRID=4326;POINT(2.178068899999971 41.4218753)",
     "geo_level_id": 3,
     "geo_id": 65,
+    "city_id": 1,
     "properties": {
       "register_id": "410",
       "equipment_type": "Ateneus",
@@ -6202,6 +6675,7 @@
     "geom": "SRID=4326;POINT(2.1602420000000393 41.4301359)",
     "geo_level_id": 3,
     "geo_id": 43,
+    "city_id": 1,
     "properties": {
       "register_id": "411",
       "equipment_type": "Ateneus",
@@ -6217,6 +6691,7 @@
     "geom": "SRID=4326;POINT(2.180393289 41.448742312)",
     "geo_level_id": 3,
     "geo_id": 53,
+    "city_id": 1,
     "properties": {
       "register_id": "302",
       "equipment_type": "Fàbriques de Creació",
@@ -6232,6 +6707,7 @@
     "geom": "SRID=4326;POINT(2.1386014 41.4071804)",
     "geo_level_id": 3,
     "geo_id": 27,
+    "city_id": 1,
     "properties": {
       "register_id": "336",
       "equipment_type": "Cinemes",
@@ -6247,6 +6723,7 @@
     "geom": "SRID=4326;POINT(2.174826626 41.403188985)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "register_id": "52",
       "equipment_type": "Espais d'interès patrimonial",
@@ -6262,6 +6739,7 @@
     "geom": "SRID=4326;POINT(2.188854072 41.379201005)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 1,
     "properties": {
       "register_id": "77",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6277,6 +6755,7 @@
     "geom": "SRID=4326;POINT(2.204659876 41.435164144)",
     "geo_level_id": 3,
     "geo_id": 59,
+    "city_id": 1,
     "properties": {
       "register_id": "105",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6292,6 +6771,7 @@
     "geom": "SRID=4326;POINT(2.182280785 41.415766234)",
     "geo_level_id": 3,
     "geo_id": 64,
+    "city_id": 1,
     "properties": {
       "register_id": "224",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6307,6 +6787,7 @@
     "geom": "SRID=4326;POINT(2.164322669 41.443773486)",
     "geo_level_id": 3,
     "geo_id": 49,
+    "city_id": 1,
     "properties": {
       "register_id": "100",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6322,6 +6803,7 @@
     "geom": "SRID=4326;POINT(2.129455802 41.399909399)",
     "geo_level_id": 3,
     "geo_id": 24,
+    "city_id": 1,
     "properties": {
       "register_id": "92",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6337,6 +6819,7 @@
     "geom": "SRID=4326;POINT(2.1025287 41.415359022)",
     "geo_level_id": 3,
     "geo_id": 22,
+    "city_id": 1,
     "properties": {
       "register_id": "93",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6352,6 +6835,7 @@
     "geom": "SRID=4326;POINT(2.155286623 41.42110456)",
     "geo_level_id": 3,
     "geo_id": 37,
+    "city_id": 1,
     "properties": {
       "register_id": "96",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6367,6 +6851,7 @@
     "geom": "SRID=4326;POINT(2.188806 41.4019532)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "register_id": "239",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6382,6 +6867,7 @@
     "geom": "SRID=4326;POINT(2.1527896 41.3864488)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "register_id": "82",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6397,6 +6883,7 @@
     "geom": "SRID=4326;POINT(2.182447586 41.395555185)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "register_id": "81",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6412,6 +6899,7 @@
     "geom": "SRID=4326;POINT(2.136276613 41.361777512)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "register_id": "87",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6427,6 +6915,7 @@
     "geom": "SRID=4326;POINT(2.175789976 41.386936575)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "78",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6442,6 +6931,7 @@
     "geom": "SRID=4326;POINT(2.200328 41.41712)",
     "geo_level_id": 3,
     "geo_id": 72,
+    "city_id": 1,
     "properties": {
       "register_id": "470",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6457,6 +6947,7 @@
     "geom": "SRID=4326;POINT(2.175978504 41.378730324)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "79",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6472,6 +6963,7 @@
     "geom": "SRID=4326;POINT(2.165318095 41.414313258)",
     "geo_level_id": 3,
     "geo_id": 33,
+    "city_id": 1,
     "properties": {
       "register_id": "97",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6487,6 +6979,7 @@
     "geom": "SRID=4326;POINT(2.16073359 41.431105502)",
     "geo_level_id": 3,
     "geo_id": 43,
+    "city_id": 1,
     "properties": {
       "register_id": "98",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6502,6 +6995,7 @@
     "geom": "SRID=4326;POINT(2.190871493 41.43448145)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "107",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6517,6 +7011,7 @@
     "geom": "SRID=4326;POINT(2.149757498 41.407459888)",
     "geo_level_id": 3,
     "geo_id": 28,
+    "city_id": 1,
     "properties": {
       "register_id": "94",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6532,6 +7027,7 @@
     "geom": "SRID=4326;POINT(2.149230361 41.378816801)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "register_id": "83",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6547,6 +7043,7 @@
     "geom": "SRID=4326;POINT(2.193764263 41.425875519)",
     "geo_level_id": 3,
     "geo_id": 61,
+    "city_id": 1,
     "properties": {
       "register_id": "108",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6562,6 +7059,7 @@
     "geom": "SRID=4326;POINT(2.121760828 41.37777796)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "register_id": "91",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6577,6 +7075,7 @@
     "geom": "SRID=4326;POINT(2.177103706 41.445371792)",
     "geo_level_id": 3,
     "geo_id": 50,
+    "city_id": 1,
     "properties": {
       "register_id": "101",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6592,6 +7091,7 @@
     "geom": "SRID=4326;POINT(2.142195427 41.429553532)",
     "geo_level_id": 3,
     "geo_id": 40,
+    "city_id": 1,
     "properties": {
       "register_id": "99",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6607,6 +7107,7 @@
     "geom": "SRID=4326;POINT(2.1352722 41.383722)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "register_id": "403",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6622,6 +7123,7 @@
     "geom": "SRID=4326;POINT(2.171212448 41.436813681)",
     "geo_level_id": 3,
     "geo_id": 48,
+    "city_id": 1,
     "properties": {
       "register_id": "102",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6637,6 +7139,7 @@
     "geom": "SRID=4326;POINT(2.164025015 41.373921824)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "88",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6652,6 +7155,7 @@
     "geom": "SRID=4326;POINT(2.204525705 41.401373426)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "register_id": "109",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6667,6 +7171,7 @@
     "geom": "SRID=4326;POINT(2.21148328 41.416309274)",
     "geo_level_id": 3,
     "geo_id": 70,
+    "city_id": 1,
     "properties": {
       "register_id": "110",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6682,6 +7187,7 @@
     "geom": "SRID=4326;POINT(2.176118 41.4055771)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "register_id": "84",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6697,6 +7203,7 @@
     "geom": "SRID=4326;POINT(2.162778079 41.377384776)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "register_id": "85",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6712,6 +7219,7 @@
     "geom": "SRID=4326;POINT(2.136064 41.4059495)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "register_id": "365",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6727,6 +7235,7 @@
     "geom": "SRID=4326;POINT(2.169793857 41.381057326)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "80",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6742,6 +7251,7 @@
     "geom": "SRID=4326;POINT(2.1220936667666024 41.40005245777652)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "register_id": "498",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6757,6 +7267,7 @@
     "geom": "SRID=4326;POINT(2.17150448 41.394674294)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "86",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6772,6 +7283,7 @@
     "geom": "SRID=4326;POINT(2.190748711 41.449283144)",
     "geo_level_id": 3,
     "geo_id": 57,
+    "city_id": 1,
     "properties": {
       "register_id": "210",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6787,6 +7299,7 @@
     "geom": "SRID=4326;POINT(2.139657303 41.420008234)",
     "geo_level_id": 3,
     "geo_id": 28,
+    "city_id": 1,
     "properties": {
       "register_id": "195",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6802,6 +7315,7 @@
     "geom": "SRID=4326;POINT(2.134733614 41.376897256)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "register_id": "89",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6817,6 +7331,7 @@
     "geom": "SRID=4326;POINT(2.158213802 41.401467067)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "95",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6832,6 +7347,7 @@
     "geom": "SRID=4326;POINT(2.176452383 41.426885098)",
     "geo_level_id": 3,
     "geo_id": 44,
+    "city_id": 1,
     "properties": {
       "register_id": "103",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6847,6 +7363,7 @@
     "geom": "SRID=4326;POINT(2.197710107 41.392407385)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "register_id": "112",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6862,6 +7379,7 @@
     "geom": "SRID=4326;POINT(2.179875786 41.461237425)",
     "geo_level_id": 3,
     "geo_id": 54,
+    "city_id": 1,
     "properties": {
       "register_id": "104",
       "equipment_type": "Biblioteques de Barcelona",
@@ -6877,6 +7395,7 @@
     "geom": "SRID=4326;POINT(2.135380995 41.389714424)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "register_id": "168",
       "equipment_type": "Sales de música en viu",
@@ -6892,6 +7411,7 @@
     "geom": "SRID=4326;POINT(2.153688873 41.395305248)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "register_id": "337",
       "equipment_type": "Cinemes",
@@ -6907,6 +7427,7 @@
     "geom": "SRID=4326;POINT(2.151704124 41.40136605)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "338",
       "equipment_type": "Cinemes",
@@ -6922,6 +7443,7 @@
     "geom": "SRID=4326;POINT(2.149575441 41.371294526)",
     "geo_level_id": 3,
     "geo_id": 14,
+    "city_id": 1,
     "properties": {
       "register_id": "60",
       "equipment_type": "Centres d'exposicions",
@@ -6937,6 +7459,7 @@
     "geom": "SRID=4326;POINT(2.194947848 41.402912812)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "register_id": "39",
       "equipment_type": "Museus i col·leccions",
@@ -6952,6 +7475,7 @@
     "geom": "SRID=4326;POINT(2.16468108 41.3913381)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "448",
       "equipment_type": "Espais d'interès patrimonial",
@@ -6967,6 +7491,7 @@
     "geom": "SRID=4326;POINT(2.1649608 41.3916967)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "55",
       "equipment_type": "Espais d'interès patrimonial",
@@ -6982,6 +7507,7 @@
     "geom": "SRID=4326;POINT(2.155046761 41.414781293)",
     "geo_level_id": 3,
     "geo_id": 30,
+    "city_id": 1,
     "properties": {
       "register_id": "53",
       "equipment_type": "Espais d'interès patrimonial",
@@ -6997,6 +7523,7 @@
     "geom": "SRID=4326;POINT(2.1512308 41.4036093)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "437",
       "equipment_type": "Espais d'interès patrimonial",
@@ -7012,6 +7539,7 @@
     "geom": "SRID=4326;POINT(2.1864693999999645 41.4355276)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "412",
       "equipment_type": "Ateneus",
@@ -7027,6 +7555,7 @@
     "geom": "SRID=4326;POINT(2.203171999999995 41.3997932)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "register_id": "413",
       "equipment_type": "Ateneus",
@@ -7042,6 +7571,7 @@
     "geom": "SRID=4326;POINT(2.1685315 41.3675648)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "54",
       "equipment_type": "Museus i col·leccions",
@@ -7057,6 +7587,7 @@
     "geom": "SRID=4326;POINT(2.1911669 41.3969535)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "register_id": "452",
       "equipment_type": "Sales de música en viu",
@@ -7072,6 +7603,7 @@
     "geom": "SRID=4326;POINT(2.1544427 41.4023522)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "430",
       "equipment_type": "Sales de música en viu",
@@ -7087,6 +7619,7 @@
     "geom": "SRID=4326;POINT(2.1348557999999684 41.3743832)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "register_id": "414",
       "equipment_type": "Ateneus",
@@ -7102,6 +7635,7 @@
     "geom": "SRID=4326;POINT(2.182446362 41.395557419)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "register_id": "255",
       "equipment_type": "Centres cívics",
@@ -7117,6 +7651,7 @@
     "geom": "SRID=4326;POINT(2.19230079 41.380269123)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 1,
     "properties": {
       "register_id": "187",
       "equipment_type": "Centres cívics",
@@ -7132,6 +7667,7 @@
     "geom": "SRID=4326;POINT(2.199921143 41.448391924)",
     "geo_level_id": 3,
     "geo_id": 58,
+    "city_id": 1,
     "properties": {
       "register_id": "291",
       "equipment_type": "Centres cívics",
@@ -7147,6 +7683,7 @@
     "geom": "SRID=4326;POINT(2.204911796 41.434780211)",
     "geo_level_id": 3,
     "geo_id": 59,
+    "city_id": 1,
     "properties": {
       "register_id": "292",
       "equipment_type": "Centres cívics",
@@ -7162,6 +7699,7 @@
     "geom": "SRID=4326;POINT(2.173212158 41.430458546)",
     "geo_level_id": 3,
     "geo_id": 46,
+    "city_id": 1,
     "properties": {
       "register_id": "287",
       "equipment_type": "Centres cívics",
@@ -7177,6 +7715,7 @@
     "geom": "SRID=4326;POINT(2.14016297 41.399005576)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "register_id": "272",
       "equipment_type": "Centres cívics",
@@ -7192,6 +7731,7 @@
     "geom": "SRID=4326;POINT(2.178412 41.4275181)",
     "geo_level_id": 3,
     "geo_id": 62,
+    "city_id": 1,
     "properties": {
       "register_id": "429",
       "equipment_type": "Centres cívics",
@@ -7207,6 +7747,7 @@
     "geom": "SRID=4326;POINT(2.132502076 41.386760961)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "register_id": "268",
       "equipment_type": "Centres cívics",
@@ -7222,6 +7763,7 @@
     "geom": "SRID=4326;POINT(2.201386526 41.404013272)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "register_id": "297",
       "equipment_type": "Centres cívics",
@@ -7237,6 +7779,7 @@
     "geom": "SRID=4326;POINT(2.179080278 41.433977414)",
     "geo_level_id": 3,
     "geo_id": 45,
+    "city_id": 1,
     "properties": {
       "register_id": "288",
       "equipment_type": "Centres cívics",
@@ -7252,6 +7795,7 @@
     "geom": "SRID=4326;POINT(2.141389922 41.357544067)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "register_id": "261",
       "equipment_type": "Centres cívics",
@@ -7267,6 +7811,7 @@
     "geom": "SRID=4326;POINT(2.156392101 41.380813341)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "register_id": "256",
       "equipment_type": "Centres cívics",
@@ -7282,6 +7827,7 @@
     "geom": "SRID=4326;POINT(2.137450112 41.42686342)",
     "geo_level_id": 3,
     "geo_id": 39,
+    "city_id": 1,
     "properties": {
       "register_id": "282",
       "equipment_type": "Centres cívics",
@@ -7297,6 +7843,7 @@
     "geom": "SRID=4326;POINT(2.124656447 41.398330273)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "register_id": "273",
       "equipment_type": "Centres cívics",
@@ -7312,6 +7859,7 @@
     "geom": "SRID=4326;POINT(2.143204273 41.377824558)",
     "geo_level_id": 3,
     "geo_id": 15,
+    "city_id": 1,
     "properties": {
       "register_id": "262",
       "equipment_type": "Centres cívics",
@@ -7327,6 +7875,7 @@
     "geom": "SRID=4326;POINT(2.181711349 41.387391384)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "252",
       "equipment_type": "Centres cívics",
@@ -7342,6 +7891,7 @@
     "geom": "SRID=4326;POINT(2.163176076 41.375908694)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "register_id": "257",
       "equipment_type": "Centres cívics",
@@ -7357,6 +7907,7 @@
     "geom": "SRID=4326;POINT(2.136876024 41.375264199)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "register_id": "263",
       "equipment_type": "Centres cívics",
@@ -7372,6 +7923,7 @@
     "geom": "SRID=4326;POINT(2.211478868 41.416306001)",
     "geo_level_id": 3,
     "geo_id": 70,
+    "city_id": 1,
     "properties": {
       "register_id": "298",
       "equipment_type": "Centres cívics",
@@ -7387,6 +7939,7 @@
     "geom": "SRID=4326;POINT(2.172852395 41.377644996)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "253",
       "equipment_type": "Centres cívics",
@@ -7402,6 +7955,7 @@
     "geom": "SRID=4326;POINT(2.151191237 41.420263994)",
     "geo_level_id": 3,
     "geo_id": 37,
+    "city_id": 1,
     "properties": {
       "register_id": "283",
       "equipment_type": "Centres cívics",
@@ -7417,6 +7971,7 @@
     "geom": "SRID=4326;POINT(2.149896871 41.418579055)",
     "geo_level_id": 3,
     "geo_id": 29,
+    "city_id": 1,
     "properties": {
       "register_id": "280",
       "equipment_type": "Centres cívics",
@@ -7432,6 +7987,7 @@
     "geom": "SRID=4326;POINT(2.162531728 41.372066797)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "264",
       "equipment_type": "Centres cívics",
@@ -7447,6 +8003,7 @@
     "geom": "SRID=4326;POINT(2.147508546 41.370560397)",
     "geo_level_id": 3,
     "geo_id": 14,
+    "city_id": 1,
     "properties": {
       "register_id": "265",
       "equipment_type": "Centres cívics",
@@ -7462,6 +8019,7 @@
     "geom": "SRID=4326;POINT(2.173322891 41.416056397)",
     "geo_level_id": 3,
     "geo_id": 35,
+    "city_id": 1,
     "properties": {
       "register_id": "284",
       "equipment_type": "Centres cívics",
@@ -7477,6 +8035,7 @@
     "geom": "SRID=4326;POINT(2.127757703 41.379302926)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "register_id": "269",
       "equipment_type": "Centres cívics",
@@ -7492,6 +8051,7 @@
     "geom": "SRID=4326;POINT(2.121762772 41.377780128)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "register_id": "271",
       "equipment_type": "Centres cívics",
@@ -7507,6 +8067,7 @@
     "geom": "SRID=4326;POINT(2.097871834 41.41913796)",
     "geo_level_id": 3,
     "geo_id": 22,
+    "city_id": 1,
     "properties": {
       "register_id": "275",
       "equipment_type": "Centres cívics",
@@ -7522,6 +8083,7 @@
     "geom": "SRID=4326;POINT(2.139067245 41.364156288)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "register_id": "266",
       "equipment_type": "Centres cívics",
@@ -7537,6 +8099,7 @@
     "geom": "SRID=4326;POINT(2.189139414 41.423942321)",
     "geo_level_id": 3,
     "geo_id": 61,
+    "city_id": 1,
     "properties": {
       "register_id": "293",
       "equipment_type": "Centres cívics",
@@ -7552,6 +8115,7 @@
     "geom": "SRID=4326;POINT(2.167665468 41.40554894)",
     "geo_level_id": 3,
     "geo_id": 32,
+    "city_id": 1,
     "properties": {
       "register_id": "281",
       "equipment_type": "Centres cívics",
@@ -7567,6 +8131,7 @@
     "geom": "SRID=4326;POINT(2.160711473 41.432755073)",
     "geo_level_id": 3,
     "geo_id": 43,
+    "city_id": 1,
     "properties": {
       "register_id": "286",
       "equipment_type": "Centres cívics",
@@ -7582,6 +8147,7 @@
     "geom": "SRID=4326;POINT(2.184919133 41.416904706)",
     "geo_level_id": 3,
     "geo_id": 63,
+    "city_id": 1,
     "properties": {
       "register_id": "294",
       "equipment_type": "Centres cívics",
@@ -7597,6 +8163,7 @@
     "geom": "SRID=4326;POINT(2.184755119 41.391718569)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "register_id": "299",
       "equipment_type": "Centres cívics",
@@ -7612,6 +8179,7 @@
     "geom": "SRID=4326;POINT(2.179176281 41.381635545)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "254",
       "equipment_type": "Centres cívics",
@@ -7627,6 +8195,7 @@
     "geom": "SRID=4326;POINT(2.131302875 41.403181601)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "register_id": "276",
       "equipment_type": "Centres cívics",
@@ -7642,6 +8211,7 @@
     "geom": "SRID=4326;POINT(2.176760148 41.405380126)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "register_id": "259",
       "equipment_type": "Centres cívics",
@@ -7657,6 +8227,7 @@
     "geom": "SRID=4326;POINT(2.189400581 41.430852888)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "295",
       "equipment_type": "Centres cívics",
@@ -7672,6 +8243,7 @@
     "geom": "SRID=4326;POINT(2.198563813 41.416622171)",
     "geo_level_id": 3,
     "geo_id": 72,
+    "city_id": 1,
     "properties": {
       "register_id": "300",
       "equipment_type": "Centres cívics",
@@ -7687,6 +8259,7 @@
     "geom": "SRID=4326;POINT(2.121163587 41.393871979)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "register_id": "277",
       "equipment_type": "Centres cívics",
@@ -7702,6 +8275,7 @@
     "geom": "SRID=4326;POINT(2.144554558 41.422637884)",
     "geo_level_id": 3,
     "geo_id": 38,
+    "city_id": 1,
     "properties": {
       "register_id": "285",
       "equipment_type": "Centres cívics",
@@ -7717,6 +8291,7 @@
     "geom": "SRID=4326;POINT(2.128318397 41.384783744)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "register_id": "270",
       "equipment_type": "Centres cívics",
@@ -7732,6 +8307,7 @@
     "geom": "SRID=4326;POINT(2.173951442 41.426896898)",
     "geo_level_id": 3,
     "geo_id": 44,
+    "city_id": 1,
     "properties": {
       "register_id": "289",
       "equipment_type": "Centres cívics",
@@ -7747,6 +8323,7 @@
     "geom": "SRID=4326;POINT(2.1911896 41.451618627)",
     "geo_level_id": 3,
     "geo_id": 57,
+    "city_id": 1,
     "properties": {
       "register_id": "296",
       "equipment_type": "Centres cívics",
@@ -7762,6 +8339,7 @@
     "geom": "SRID=4326;POINT(2.152032146 41.386861397)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "register_id": "260",
       "equipment_type": "Centres cívics",
@@ -7777,6 +8355,7 @@
     "geom": "SRID=4326;POINT(2.102530794 41.415364217)",
     "geo_level_id": 3,
     "geo_id": 22,
+    "city_id": 1,
     "properties": {
       "register_id": "278",
       "equipment_type": "Centres cívics",
@@ -7792,6 +8371,7 @@
     "geom": "SRID=4326;POINT(2.135294028 41.40533741)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "register_id": "279",
       "equipment_type": "Centres cívics",
@@ -7807,6 +8387,7 @@
     "geom": "SRID=4326;POINT(2.14276 41.3986429)",
     "geo_level_id": 3,
     "geo_id": 27,
+    "city_id": 1,
     "properties": {
       "register_id": "447",
       "equipment_type": "Centres cívics",
@@ -7822,6 +8403,7 @@
     "geom": "SRID=4326;POINT(2.177397304 41.461113806)",
     "geo_level_id": 3,
     "geo_id": 55,
+    "city_id": 1,
     "properties": {
       "register_id": "290",
       "equipment_type": "Centres cívics",
@@ -7837,6 +8419,7 @@
     "geom": "SRID=4326;POINT(2.1646697 41.3863747)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "449",
       "equipment_type": "Ateneus",
@@ -7852,6 +8435,7 @@
     "geom": "SRID=4326;POINT(2.173269239 41.373999934)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "267",
       "equipment_type": "Centres cívics",
@@ -7867,6 +8451,7 @@
     "geom": "SRID=4326;POINT(2.1913912 41.432009)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "438",
       "equipment_type": "Ateneus",
@@ -7882,6 +8467,7 @@
     "geom": "SRID=4326;POINT(2.1789977 41.4452378)",
     "geo_level_id": 3,
     "geo_id": 51,
+    "city_id": 1,
     "properties": {
       "register_id": "428",
       "equipment_type": "Ateneus",
@@ -7897,6 +8483,7 @@
     "geom": "SRID=4326;POINT(2.165880676 41.394483818)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "258",
       "equipment_type": "Centres cívics",
@@ -7912,6 +8499,7 @@
     "geom": "SRID=4326;POINT(2.188442671 41.404913599)",
     "geo_level_id": 3,
     "geo_id": 65,
+    "city_id": 1,
     "properties": {
       "register_id": "301",
       "equipment_type": "Centres cívics",
@@ -7927,6 +8515,7 @@
     "geom": "SRID=4326;POINT(2.1207044000000224 41.400585)",
     "geo_level_id": 3,
     "geo_id": 23,
+    "city_id": 1,
     "properties": {
       "register_id": "415",
       "equipment_type": "Ateneus",
@@ -7942,6 +8531,7 @@
     "geom": "SRID=4326;POINT(2.2045472261774126 41.40157412252128)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "register_id": "461",
       "equipment_type": "Cases de la Festa",
@@ -7957,6 +8547,7 @@
     "geom": "SRID=4326;POINT(2.166795152 41.383883057)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "57",
       "equipment_type": "Centres d'exposicions",
@@ -7972,6 +8563,7 @@
     "geom": "SRID=4326;POINT(2.1877800550148336 41.440796263112944)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "460",
       "equipment_type": "Cases de la Festa",
@@ -7987,6 +8579,7 @@
     "geom": "SRID=4326;POINT(2.200169800000026 41.401115)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "register_id": "416",
       "equipment_type": "Ateneus",
@@ -8002,6 +8595,7 @@
     "geom": "SRID=4326;POINT(2.15471320000006 41.4010837)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "417",
       "equipment_type": "Ateneus",
@@ -8017,6 +8611,7 @@
     "geom": "SRID=4326;POINT(2.1762837999999647 41.3881272)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "418",
       "equipment_type": "Ateneus",
@@ -8032,6 +8627,7 @@
     "geom": "SRID=4326;POINT(2.152953000000025 41.4037318)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "419",
       "equipment_type": "Ateneus",
@@ -8047,6 +8643,7 @@
     "geom": "SRID=4326;POINT(2.17314987 41.383570271)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "339",
       "equipment_type": "Cinemes",
@@ -8062,6 +8659,7 @@
     "geom": "SRID=4326;POINT(2.164612168 41.399596039)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "340",
       "equipment_type": "Cinemes",
@@ -8077,6 +8675,7 @@
     "geom": "SRID=4326;POINT(2.137358643 41.39426894)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "register_id": "343",
       "equipment_type": "Cinemes",
@@ -8092,6 +8691,7 @@
     "geom": "SRID=4326;POINT(2.218580826 41.4109744)",
     "geo_level_id": 3,
     "geo_id": 69,
+    "city_id": 1,
     "properties": {
       "register_id": "344",
       "equipment_type": "Cinemes",
@@ -8107,6 +8707,7 @@
     "geom": "SRID=4326;POINT(2.200222125 41.442744917)",
     "geo_level_id": 3,
     "geo_id": 59,
+    "city_id": 1,
     "properties": {
       "register_id": "342",
       "equipment_type": "Cinemes",
@@ -8122,6 +8723,7 @@
     "geom": "SRID=4326;POINT(2.18078 41.43544)",
     "geo_level_id": 3,
     "geo_id": 45,
+    "city_id": 1,
     "properties": {
       "register_id": "471",
       "equipment_type": "Cinemes",
@@ -8137,6 +8739,7 @@
     "geom": "SRID=4326;POINT(2.166088 41.388275)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "123",
       "equipment_type": "Sales d'arts escèniques",
@@ -8152,6 +8755,7 @@
     "geom": "SRID=4326;POINT(2.130658424 41.413267367)",
     "geo_level_id": 3,
     "geo_id": 25,
+    "city_id": 1,
     "properties": {
       "register_id": "47",
       "equipment_type": "Museus i col·leccions",
@@ -8167,6 +8771,7 @@
     "geom": "SRID=4326;POINT(2.1648109 41.3713037)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "457",
       "equipment_type": "Sales d'arts escèniques",
@@ -8182,6 +8787,7 @@
     "geom": "SRID=4326;POINT(2.1880652060461467 41.4025295461622)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "register_id": "4",
       "equipment_type": "Museus i col·leccions",
@@ -8197,6 +8803,7 @@
     "geom": "SRID=4326;POINT(2.190335733 41.44094462)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "200",
       "equipment_type": "Museus i col·leccions",
@@ -8212,6 +8819,7 @@
     "geom": "SRID=4326;POINT(2.185382 41.3855443)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "396",
       "equipment_type": "Sales de música en viu",
@@ -8227,6 +8835,7 @@
     "geom": "SRID=4326;POINT(2.155808 41.385343)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "register_id": "125",
       "equipment_type": "Sales d'arts escèniques",
@@ -8242,6 +8851,7 @@
     "geom": "SRID=4326;POINT(2.183568044 41.385641483)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "238",
       "equipment_type": "Museus i col·leccions",
@@ -8257,6 +8867,7 @@
     "geom": "SRID=4326;POINT(2.17314987 41.383570271)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "140",
       "equipment_type": "Sales d'arts escèniques",
@@ -8272,6 +8883,7 @@
     "geom": "SRID=4326;POINT(2.167227381695062 41.374517759963254)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "124",
       "equipment_type": "Sales de música en viu",
@@ -8287,6 +8899,7 @@
     "geom": "SRID=4326;POINT(2.1767686 41.3819109)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "443",
       "equipment_type": "Sales de música en viu",
@@ -8302,6 +8915,7 @@
     "geom": "SRID=4326;POINT(2.169244522 41.374778065)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "135",
       "equipment_type": "Sales d'arts escèniques",
@@ -8317,6 +8931,7 @@
     "geom": "SRID=4326;POINT(2.156592268505591 41.406272949756136)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "462",
       "equipment_type": "Cases de la Festa",
@@ -8332,6 +8947,7 @@
     "geom": "SRID=4326;POINT(2.1543788 41.373639)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "386",
       "equipment_type": "Museus i col·leccions",
@@ -8347,6 +8963,7 @@
     "geom": "SRID=4326;POINT(2.15617 41.37373)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "482",
       "equipment_type": "Sales de música en viu",
@@ -8362,6 +8979,7 @@
     "geom": "SRID=4326;POINT(2.163669 41.402039)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "383",
       "equipment_type": "Cinemes",
@@ -8377,6 +8995,7 @@
     "geom": "SRID=4326;POINT(2.175293998 41.390963134)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "231",
       "equipment_type": "Centres d'exposicions",
@@ -8392,6 +9011,7 @@
     "geom": "SRID=4326;POINT(2.1819542 41.3845051)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "397",
       "equipment_type": "Sales de música en viu",
@@ -8407,6 +9027,7 @@
     "geom": "SRID=4326;POINT(2.190815632 41.433762956)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "226",
       "equipment_type": "Centres d'exposicions",
@@ -8422,6 +9043,7 @@
     "geom": "SRID=4326;POINT(2.191379525 41.4335588)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "303",
       "equipment_type": "Fàbriques de Creació",
@@ -8437,6 +9059,7 @@
     "geom": "SRID=4326;POINT(2.1712328 41.3784206)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "363",
       "equipment_type": "Cinemes",
@@ -8452,6 +9075,7 @@
     "geom": "SRID=4326;POINT(2.1594603999999435 41.4309732)",
     "geo_level_id": 3,
     "geo_id": 43,
+    "city_id": 1,
     "properties": {
       "register_id": "420",
       "equipment_type": "Ateneus",
@@ -8467,6 +9091,7 @@
     "geom": "SRID=4326;POINT(2.182719499999962 41.4104593)",
     "geo_level_id": 3,
     "geo_id": 64,
+    "city_id": 1,
     "properties": {
       "register_id": "421",
       "equipment_type": "Ateneus",
@@ -8482,6 +9107,7 @@
     "geom": "SRID=4326;POINT(2.1670145 41.3772894)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "432",
       "equipment_type": "Sales de música en viu",
@@ -8497,6 +9123,7 @@
     "geom": "SRID=4326;POINT(2.1827391 41.3876349)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "232",
       "equipment_type": "Museus i col·leccions",
@@ -8512,6 +9139,7 @@
     "geom": "SRID=4326;POINT(2.147697935147927 41.368986024213875)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "38",
       "equipment_type": "Museus i col·leccions",
@@ -8527,6 +9155,7 @@
     "geom": "SRID=4326;POINT(2.182361375 41.385217359)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "307",
       "equipment_type": "Fàbriques de Creació",
@@ -8542,6 +9171,7 @@
     "geom": "SRID=4326;POINT(2.159851 41.36863)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "29",
       "equipment_type": "Museus i col·leccions",
@@ -8557,6 +9187,7 @@
     "geom": "SRID=4326;POINT(2.147035912539778 41.39656898913028)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "register_id": "494",
       "equipment_type": "Espais d'interès patrimonial",
@@ -8572,6 +9203,7 @@
     "geom": "SRID=4326;POINT(2.1262746 41.3826167)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "register_id": "40",
       "equipment_type": "Museus i col·leccions",
@@ -8587,6 +9219,7 @@
     "geom": "SRID=4326;POINT(2.16072 41.39727)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "483",
       "equipment_type": "Sales de música en viu",
@@ -8602,6 +9235,7 @@
     "geom": "SRID=4326;POINT(2.15142 41.39637)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "register_id": "484",
       "equipment_type": "Sales de música en viu",
@@ -8617,6 +9251,7 @@
     "geom": "SRID=4326;POINT(2.192504086 41.404944395)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "register_id": "349",
       "equipment_type": "Cinemes",
@@ -8632,6 +9267,7 @@
     "geom": "SRID=4326;POINT(2.16140486 41.406091398)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "136",
       "equipment_type": "Sales d'arts escèniques",
@@ -8647,6 +9283,7 @@
     "geom": "SRID=4326;POINT(2.133194754 41.393832748)",
     "geo_level_id": 3,
     "geo_id": 24,
+    "city_id": 1,
     "properties": {
       "register_id": "350",
       "equipment_type": "Cinemes",
@@ -8662,6 +9299,7 @@
     "geom": "SRID=4326;POINT(2.173329003 41.380115249)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "191",
       "equipment_type": "Grans auditoris",
@@ -8677,6 +9315,7 @@
     "geom": "SRID=4326;POINT(2.135956703 41.361492275)",
     "geo_level_id": 3,
     "geo_id": 13,
+    "city_id": 1,
     "properties": {
       "register_id": "241",
       "equipment_type": "Fàbriques de Creació",
@@ -8692,6 +9331,7 @@
     "geom": "SRID=4326;POINT(2.18368 41.38532)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "485",
       "equipment_type": "Sales de música en viu",
@@ -8707,6 +9347,7 @@
     "geom": "SRID=4326;POINT(2.198792 41.407975)",
     "geo_level_id": 3,
     "geo_id": 71,
+    "city_id": 1,
     "properties": {
       "register_id": "305",
       "equipment_type": "Fàbriques de Creació",
@@ -8722,6 +9363,7 @@
     "geom": "SRID=4326;POINT(2.178407934 41.38114275)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "169",
       "equipment_type": "Sales de música en viu",
@@ -8737,6 +9379,7 @@
     "geom": "SRID=4326;POINT(2.180139311 41.380783393)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "229",
       "equipment_type": "Museus i col·leccions",
@@ -8752,6 +9395,7 @@
     "geom": "SRID=4326;POINT(2.128854605845001 41.373158866065175)",
     "geo_level_id": 3,
     "geo_id": 17,
+    "city_id": 1,
     "properties": {
       "register_id": "496",
       "equipment_type": "Sales d'arts escèniques",
@@ -8767,6 +9411,7 @@
     "geom": "SRID=4326;POINT(2.16018 41.40352)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "170",
       "equipment_type": "Sales de música en viu",
@@ -8782,6 +9427,7 @@
     "geom": "SRID=4326;POINT(2.20267 41.39795)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "register_id": "474",
       "equipment_type": "Centres d'exposicions",
@@ -8797,6 +9443,7 @@
     "geom": "SRID=4326;POINT(2.175268003 41.379703771)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "181",
       "equipment_type": "Sales de música en viu",
@@ -8812,6 +9459,7 @@
     "geom": "SRID=4326;POINT(2.164072884 41.379806535)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "171",
       "equipment_type": "Sales de música en viu",
@@ -8827,6 +9475,7 @@
     "geom": "SRID=4326;POINT(2.156149548 41.396845566)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "126",
       "equipment_type": "Sales d'arts escèniques",
@@ -8842,6 +9491,7 @@
     "geom": "SRID=4326;POINT(2.1960494 41.388415)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "register_id": "456",
       "equipment_type": "Centres d'exposicions",
@@ -8857,6 +9507,7 @@
     "geom": "SRID=4326;POINT(2.184560919 41.376477557)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "48",
       "equipment_type": "Museus i col·leccions",
@@ -8872,6 +9523,7 @@
     "geom": "SRID=4326;POINT(2.185141717 41.398741043)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "register_id": "193",
       "equipment_type": "Grans auditoris",
@@ -8887,6 +9539,7 @@
     "geom": "SRID=4326;POINT(2.15707 41.40543)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "246",
       "equipment_type": "Sales d'arts escèniques",
@@ -8902,6 +9555,7 @@
     "geom": "SRID=4326;POINT(2.16160013 41.40329835)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "435",
       "equipment_type": "Sales d'arts escèniques",
@@ -8917,6 +9571,7 @@
     "geom": "SRID=4326;POINT(2.1286503999999695 41.3841617)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "register_id": "385",
       "equipment_type": "Fàbriques de Creació",
@@ -8932,6 +9587,7 @@
     "geom": "SRID=4326;POINT(2.169793857 41.381057326)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "56",
       "equipment_type": "Centres d'exposicions",
@@ -8947,6 +9603,7 @@
     "geom": "SRID=4326;POINT(2.179949590611282 41.38783942673868)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "466",
       "equipment_type": "Cases de la Festa",
@@ -8962,6 +9619,7 @@
     "geom": "SRID=4326;POINT(2.176880190594856 41.38612232109628)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "463",
       "equipment_type": "Cases de la Festa",
@@ -8977,6 +9635,7 @@
     "geom": "SRID=4326;POINT(2.22647 41.411256)",
     "geo_level_id": 3,
     "geo_id": 70,
+    "city_id": 1,
     "properties": {
       "register_id": "306",
       "equipment_type": "Fàbriques de Creació",
@@ -8992,6 +9651,7 @@
     "geom": "SRID=4326;POINT(2.13239 41.37602)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "register_id": "486",
       "equipment_type": "Sales de música en viu",
@@ -9007,6 +9667,7 @@
     "geom": "SRID=4326;POINT(2.203826943 41.411243983)",
     "geo_level_id": 3,
     "geo_id": 71,
+    "city_id": 1,
     "properties": {
       "register_id": "304",
       "equipment_type": "Fàbriques de Creació",
@@ -9022,6 +9683,7 @@
     "geom": "SRID=4326;POINT(2.146046 41.403173)",
     "geo_level_id": 3,
     "geo_id": 27,
+    "city_id": 1,
     "properties": {
       "register_id": "405",
       "equipment_type": "Sales d'arts escèniques",
@@ -9037,6 +9699,7 @@
     "geom": "SRID=4326;POINT(2.1447265959593116 41.38313067790676)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "register_id": "493",
       "equipment_type": "Espais d'interès patrimonial",
@@ -9052,6 +9715,7 @@
     "geom": "SRID=4326;POINT(2.197051 41.3942712)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "register_id": "445",
       "equipment_type": "Sales de música en viu",
@@ -9067,6 +9731,7 @@
     "geom": "SRID=4326;POINT(2.168091 41.403961)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "469",
       "equipment_type": "Sales d'arts escèniques",
@@ -9082,6 +9747,7 @@
     "geom": "SRID=4326;POINT(2.162043384 41.395316302)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "61",
       "equipment_type": "Espais d'interès patrimonial",
@@ -9097,6 +9763,7 @@
     "geom": "SRID=4326;POINT(2.18126153 41.386779395)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "214",
       "equipment_type": "Sales d'arts escèniques",
@@ -9112,6 +9779,7 @@
     "geom": "SRID=4326;POINT(2.1550105 41.3984803)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "398",
       "equipment_type": "Sales de música en viu",
@@ -9127,6 +9795,7 @@
     "geom": "SRID=4326;POINT(2.19194277891886 41.4238631194619)",
     "geo_level_id": 3,
     "geo_id": 61,
+    "city_id": 1,
     "properties": {
       "register_id": "468",
       "equipment_type": "Cases de la Festa",
@@ -9142,6 +9811,7 @@
     "geom": "SRID=4326;POINT(2.157499403 41.384515128)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "register_id": "127",
       "equipment_type": "Sales d'arts escèniques",
@@ -9157,6 +9827,7 @@
     "geom": "SRID=4326;POINT(2.156228797341406 41.4009781058417)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "464",
       "equipment_type": "Cases de la Festa",
@@ -9172,6 +9843,7 @@
     "geom": "SRID=4326;POINT(2.17170863 41.382498322)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "26",
       "equipment_type": "Centres d'exposicions",
@@ -9187,6 +9859,7 @@
     "geom": "SRID=4326;POINT(2.170002 41.373737)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "451",
       "equipment_type": "Sales de música en viu",
@@ -9202,6 +9875,7 @@
     "geom": "SRID=4326;POINT(2.1737371 41.3780104)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "399",
       "equipment_type": "Sales de música en viu",
@@ -9217,6 +9891,7 @@
     "geom": "SRID=4326;POINT(2.1602766999999403 41.432317)",
     "geo_level_id": 3,
     "geo_id": 43,
+    "city_id": 1,
     "properties": {
       "register_id": "423",
       "equipment_type": "Ateneus",
@@ -9232,6 +9907,7 @@
     "geom": "SRID=4326;POINT(2.1556355000000167 41.4072721)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "422",
       "equipment_type": "Ateneus",
@@ -9247,6 +9923,7 @@
     "geom": "SRID=4326;POINT(2.149045108 41.394592939)",
     "geo_level_id": 3,
     "geo_id": 26,
+    "city_id": 1,
     "properties": {
       "register_id": "172",
       "equipment_type": "Sales de música en viu",
@@ -9262,6 +9939,7 @@
     "geom": "SRID=4326;POINT(2.1734 41.38506)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "243",
       "equipment_type": "Sales de música en viu",
@@ -9277,6 +9955,7 @@
     "geom": "SRID=4326;POINT(2.18420736739626 41.38740215667359)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "22",
       "equipment_type": "Museus i col·leccions",
@@ -9292,6 +9971,7 @@
     "geom": "SRID=4326;POINT(2.1838981259092702 41.38773393328249)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "499",
       "equipment_type": "Museus i col·leccions",
@@ -9307,6 +9987,7 @@
     "geom": "SRID=4326;POINT(2.152670465 41.361147184)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "23",
       "equipment_type": "Museus i col·leccions",
@@ -9322,6 +10003,7 @@
     "geom": "SRID=4326;POINT(2.1547425 41.3691019)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "477",
       "equipment_type": "Museus i col·leccions",
@@ -9337,6 +10019,7 @@
     "geom": "SRID=4326;POINT(2.1570425220800273 41.37122403290831)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "199",
       "equipment_type": "Sales d'arts escèniques",
@@ -9352,6 +10035,7 @@
     "geom": "SRID=4326;POINT(2.167476 41.371866)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "450",
       "equipment_type": "Sales de música en viu",
@@ -9367,6 +10051,7 @@
     "geom": "SRID=4326;POINT(2.1676775 41.3872273)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "219",
       "equipment_type": "Sales de música en viu",
@@ -9382,6 +10067,7 @@
     "geom": "SRID=4326;POINT(2.18153 41.38487)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "475",
       "equipment_type": "Museus i col·leccions",
@@ -9397,6 +10083,7 @@
     "geom": "SRID=4326;POINT(2.1750813 41.377989)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "173",
       "equipment_type": "Sales de música en viu",
@@ -9412,6 +10099,7 @@
     "geom": "SRID=4326;POINT(2.155983304 41.36906211)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "369",
       "equipment_type": "Museus i col·leccions",
@@ -9427,6 +10115,7 @@
     "geom": "SRID=4326;POINT(2.20592659645363 41.437479521398274)",
     "geo_level_id": 3,
     "geo_id": 59,
+    "city_id": 1,
     "properties": {
       "register_id": "404",
       "equipment_type": "Museus i col·leccions",
@@ -9442,6 +10131,7 @@
     "geom": "SRID=4326;POINT(2.18753684 41.45358945)",
     "geo_level_id": 3,
     "geo_id": 53,
+    "city_id": 1,
     "properties": {
       "register_id": "188",
       "equipment_type": "Museus i col·leccions",
@@ -9457,6 +10147,7 @@
     "geom": "SRID=4326;POINT(2.1766719 41.3811464)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "389",
       "equipment_type": "Museus i col·leccions",
@@ -9472,6 +10163,7 @@
     "geom": "SRID=4326;POINT(2.175869 41.383007)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "16",
       "equipment_type": "Museus i col·leccions",
@@ -9487,6 +10179,7 @@
     "geom": "SRID=4326;POINT(2.183568044 41.385641483)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "497",
       "equipment_type": "Museus i col·leccions",
@@ -9502,6 +10195,7 @@
     "geom": "SRID=4326;POINT(2.175397 41.383012)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "15",
       "equipment_type": "Museus i col·leccions",
@@ -9517,6 +10211,7 @@
     "geom": "SRID=4326;POINT(2.1915119 41.4336755)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "390",
       "equipment_type": "Museus i col·leccions",
@@ -9532,6 +10227,7 @@
     "geom": "SRID=4326;POINT(2.201517 41.4083335)",
     "geo_level_id": 3,
     "geo_id": 71,
+    "city_id": 1,
     "properties": {
       "register_id": "388",
       "equipment_type": "Museus i col·leccions",
@@ -9547,6 +10243,7 @@
     "geom": "SRID=4326;POINT(2.153109601 41.413478226)",
     "geo_level_id": 3,
     "geo_id": 30,
+    "city_id": 1,
     "properties": {
       "register_id": "12",
       "equipment_type": "Museus i col·leccions",
@@ -9562,6 +10259,7 @@
     "geom": "SRID=4326;POINT(2.1791487 41.3814606)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "444",
       "equipment_type": "Museus i col·leccions",
@@ -9577,6 +10275,7 @@
     "geom": "SRID=4326;POINT(2.16647 41.371817)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "14",
       "equipment_type": "Museus i col·leccions",
@@ -9592,6 +10291,7 @@
     "geom": "SRID=4326;POINT(2.1637004 41.4194856)",
     "geo_level_id": 3,
     "geo_id": 34,
+    "city_id": 1,
     "properties": {
       "register_id": "387",
       "equipment_type": "Museus i col·leccions",
@@ -9607,6 +10307,7 @@
     "geom": "SRID=4326;POINT(2.172543 41.384719)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "17",
       "equipment_type": "Museus i col·leccions",
@@ -9622,6 +10323,7 @@
     "geom": "SRID=4326;POINT(2.099737 41.419737)",
     "geo_level_id": 3,
     "geo_id": 22,
+    "city_id": 1,
     "properties": {
       "register_id": "11",
       "equipment_type": "Museus i col·leccions",
@@ -9637,6 +10339,7 @@
     "geom": "SRID=4326;POINT(2.178572 41.386264)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "13",
       "equipment_type": "Espais d'interès patrimonial",
@@ -9652,6 +10355,7 @@
     "geom": "SRID=4326;POINT(2.177521 41.384316)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "190",
       "equipment_type": "Espais d'interès patrimonial",
@@ -9667,6 +10371,7 @@
     "geom": "SRID=4326;POINT(2.157646024 41.370153865)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "36",
       "equipment_type": "Museus i col·leccions",
@@ -9682,6 +10387,7 @@
     "geom": "SRID=4326;POINT(2.167830774 41.383145956)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "28",
       "equipment_type": "Museus i col·leccions",
@@ -9697,6 +10403,7 @@
     "geom": "SRID=4326;POINT(2.177521 41.384316)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "8",
       "equipment_type": "Museus i col·leccions",
@@ -9712,6 +10419,7 @@
     "geom": "SRID=4326;POINT(2.18550348 41.380668608)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 1,
     "properties": {
       "register_id": "37",
       "equipment_type": "Museus i col·leccions",
@@ -9727,6 +10435,7 @@
     "geom": "SRID=4326;POINT(2.177442932 41.377099024)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "45",
       "equipment_type": "Museus i col·leccions",
@@ -9742,6 +10451,7 @@
     "geom": "SRID=4326;POINT(2.220482541 41.410779883)",
     "geo_level_id": 3,
     "geo_id": 70,
+    "city_id": 1,
     "properties": {
       "register_id": "19",
       "equipment_type": "Museus i col·leccions",
@@ -9757,6 +10467,7 @@
     "geom": "SRID=4326;POINT(2.172714946 41.382282529)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "46",
       "equipment_type": "Museus i col·leccions",
@@ -9772,6 +10483,7 @@
     "geom": "SRID=4326;POINT(2.184867722 41.398366625)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "register_id": "31",
       "equipment_type": "Museus i col·leccions",
@@ -9787,6 +10499,7 @@
     "geom": "SRID=4326;POINT(2.181708405 41.387387733)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "42",
       "equipment_type": "Museus i col·leccions",
@@ -9802,6 +10515,7 @@
     "geom": "SRID=4326;POINT(2.120267204 41.379059282)",
     "geo_level_id": 3,
     "geo_id": 20,
+    "city_id": 1,
     "properties": {
       "register_id": "44",
       "equipment_type": "Museus i col·leccions",
@@ -9817,6 +10531,7 @@
     "geom": "SRID=4326;POINT(2.163384936 41.388876027)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "41",
       "equipment_type": "Museus i col·leccions",
@@ -9832,6 +10547,7 @@
     "geom": "SRID=4326;POINT(2.11979347 41.42174827)",
     "geo_level_id": 3,
     "geo_id": 22,
+    "city_id": 1,
     "properties": {
       "register_id": "35",
       "equipment_type": "Museus i col·leccions",
@@ -9847,6 +10563,7 @@
     "geom": "SRID=4326;POINT(2.164736478 41.393626242)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "43",
       "equipment_type": "Museus i col·leccions",
@@ -9862,6 +10579,7 @@
     "geom": "SRID=4326;POINT(2.155983304 41.36906211)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "370",
       "equipment_type": "Museus i col·leccions",
@@ -9877,6 +10595,7 @@
     "geom": "SRID=4326;POINT(2.180305787 41.384912046)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "227",
       "equipment_type": "Museus i col·leccions",
@@ -9892,6 +10611,7 @@
     "geom": "SRID=4326;POINT(2.176939205 41.384173998)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "2",
       "equipment_type": "Museus i col·leccions",
@@ -9907,6 +10627,7 @@
     "geom": "SRID=4326;POINT(2.176041471 41.375949813)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "32",
       "equipment_type": "Museus i col·leccions",
@@ -9922,6 +10643,7 @@
     "geom": "SRID=4326;POINT(2.153363173 41.368853566)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "27",
       "equipment_type": "Museus i col·leccions",
@@ -9937,6 +10659,7 @@
     "geom": "SRID=4326;POINT(2.157076095 41.366249336)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "33",
       "equipment_type": "Museus i col·leccions",
@@ -9952,6 +10675,7 @@
     "geom": "SRID=4326;POINT(2.180834795 41.385152312)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "1",
       "equipment_type": "Museus i col·leccions",
@@ -9967,6 +10691,7 @@
     "geom": "SRID=4326;POINT(2.163757744 41.391522171)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "30",
       "equipment_type": "Museus i col·leccions",
@@ -9982,6 +10707,7 @@
     "geom": "SRID=4326;POINT(2.18984937 41.420017781)",
     "geo_level_id": 3,
     "geo_id": 61,
+    "city_id": 1,
     "properties": {
       "register_id": "141",
       "equipment_type": "Fàbriques de Creació",
@@ -9997,6 +10723,7 @@
     "geom": "SRID=4326;POINT(2.1491929 41.4031012)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "441",
       "equipment_type": "Sales de música en viu",
@@ -10012,6 +10739,7 @@
     "geom": "SRID=4326;POINT(2.1865715000000137 41.4070588)",
     "geo_level_id": 3,
     "geo_id": 65,
+    "city_id": 1,
     "properties": {
       "register_id": "424",
       "equipment_type": "Ateneus",
@@ -10027,6 +10755,7 @@
     "geom": "SRID=4326;POINT(2.17515778 41.387331649)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "194",
       "equipment_type": "Grans auditoris",
@@ -10042,6 +10771,7 @@
     "geom": "SRID=4326;POINT(2.1744127 41.3791747)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "51",
       "equipment_type": "Espais d'interès patrimonial",
@@ -10057,6 +10787,7 @@
     "geom": "SRID=4326;POINT(2.159514266 41.396100952)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "59",
       "equipment_type": "Centres d'exposicions",
@@ -10072,6 +10803,7 @@
     "geom": "SRID=4326;POINT(2.169583037 41.375154356)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "495",
       "equipment_type": "Sales de música en viu",
@@ -10087,6 +10819,7 @@
     "geom": "SRID=4326;POINT(2.1531849 41.4134251)",
     "geo_level_id": 3,
     "geo_id": 30,
+    "city_id": 1,
     "properties": {
       "register_id": "382",
       "equipment_type": "Espais d'interès patrimonial",
@@ -10102,6 +10835,7 @@
     "geom": "SRID=4326;POINT(2.149491 41.370666)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "50",
       "equipment_type": "Espais d'interès patrimonial",
@@ -10117,6 +10851,7 @@
     "geom": "SRID=4326;POINT(2.171725 41.409098)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "register_id": "384",
       "equipment_type": "Cinemes",
@@ -10132,6 +10867,7 @@
     "geom": "SRID=4326;POINT(2.191080074 41.397724772)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "register_id": "174",
       "equipment_type": "Sales de música en viu",
@@ -10147,6 +10883,7 @@
     "geom": "SRID=4326;POINT(2.1744033 41.4118413)",
     "geo_level_id": 3,
     "geo_id": 35,
+    "city_id": 1,
     "properties": {
       "register_id": "368",
       "equipment_type": "Espais d'interès patrimonial",
@@ -10162,6 +10899,7 @@
     "geom": "SRID=4326;POINT(2.174380000000042 41.3846867)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "425",
       "equipment_type": "Ateneus",
@@ -10177,6 +10915,7 @@
     "geom": "SRID=4326;POINT(2.112056853 41.395574166)",
     "geo_level_id": 3,
     "geo_id": 21,
+    "city_id": 1,
     "properties": {
       "register_id": "230",
       "equipment_type": "Museus i col·leccions",
@@ -10192,6 +10931,7 @@
     "geom": "SRID=4326;POINT(2.162556081 41.381679719)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "register_id": "358",
       "equipment_type": "Cinemes",
@@ -10207,6 +10947,7 @@
     "geom": "SRID=4326;POINT(2.16164 41.38469)",
     "geo_level_id": 3,
     "geo_id": 10,
+    "city_id": 1,
     "properties": {
       "register_id": "481",
       "equipment_type": "Sales d'arts escèniques",
@@ -10222,6 +10963,7 @@
     "geom": "SRID=4326;POINT(2.1738805 41.3884888)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "439",
       "equipment_type": "Sales d'arts escèniques",
@@ -10237,6 +10979,7 @@
     "geom": "SRID=4326;POINT(2.173739616 41.397263538)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "217",
       "equipment_type": "Sales d'arts escèniques",
@@ -10252,6 +10995,7 @@
     "geom": "SRID=4326;POINT(2.14876 41.39534)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "492",
       "equipment_type": "Sales de música en viu",
@@ -10267,6 +11011,7 @@
     "geom": "SRID=4326;POINT(2.199518 41.404734)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "register_id": "142",
       "equipment_type": "Fàbriques de Creació",
@@ -10282,6 +11027,7 @@
     "geom": "SRID=4326;POINT(2.2000804 41.3984275)",
     "geo_level_id": 3,
     "geo_id": 68,
+    "city_id": 1,
     "properties": {
       "register_id": "401",
       "equipment_type": "Sales de música en viu",
@@ -10297,6 +11043,7 @@
     "geom": "SRID=4326;POINT(2.168321533 41.387709904)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "220",
       "equipment_type": "Sales de música en viu",
@@ -10312,6 +11059,7 @@
     "geom": "SRID=4326;POINT(2.1690638 41.3777431)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "374",
       "equipment_type": "Sales d'arts escèniques",
@@ -10327,6 +11075,7 @@
     "geom": "SRID=4326;POINT(2.1408658 41.371816)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "register_id": "375",
       "equipment_type": "Sales d'arts escèniques",
@@ -10342,6 +11091,7 @@
     "geom": "SRID=4326;POINT(2.168014 41.3728804)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "400",
       "equipment_type": "Sales de música en viu",
@@ -10357,6 +11107,7 @@
     "geom": "SRID=4326;POINT(2.1374 41.37369)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "register_id": "458",
       "equipment_type": "Sales de música en viu",
@@ -10372,6 +11123,7 @@
     "geom": "SRID=4326;POINT(2.1470439 41.3694671)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "446",
       "equipment_type": "Sales de música en viu",
@@ -10387,6 +11139,7 @@
     "geom": "SRID=4326;POINT(2.183906477 41.402080107)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "register_id": "147",
       "equipment_type": "Sales d'arts escèniques",
@@ -10402,6 +11155,7 @@
     "geom": "SRID=4326;POINT(2.175597264 41.377227254)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "58",
       "equipment_type": "Centres d'exposicions",
@@ -10417,6 +11171,7 @@
     "geom": "SRID=4326;POINT(2.188904165 41.430583231)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "192",
       "equipment_type": "Sales d'arts escèniques",
@@ -10432,6 +11187,7 @@
     "geom": "SRID=4326;POINT(2.175174697 41.380544047)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "178",
       "equipment_type": "Sales de música en viu",
@@ -10447,6 +11203,7 @@
     "geom": "SRID=4326;POINT(2.13593 41.381)",
     "geo_level_id": 3,
     "geo_id": 18,
+    "city_id": 1,
     "properties": {
       "register_id": "487",
       "equipment_type": "Sales de música en viu",
@@ -10462,6 +11219,7 @@
     "geom": "SRID=4326;POINT(2.1533629 41.3935824)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "register_id": "402",
       "equipment_type": "Sales de música en viu",
@@ -10477,6 +11235,7 @@
     "geom": "SRID=4326;POINT(2.1332087000000683 41.3879959)",
     "geo_level_id": 3,
     "geo_id": 19,
+    "city_id": 1,
     "properties": {
       "register_id": "426",
       "equipment_type": "Ateneus",
@@ -10492,6 +11251,7 @@
     "geom": "SRID=4326;POINT(2.1886806999999635 41.4330659)",
     "geo_level_id": 3,
     "geo_id": 60,
+    "city_id": 1,
     "properties": {
       "register_id": "427",
       "equipment_type": "Ateneus",
@@ -10507,6 +11267,7 @@
     "geom": "SRID=4326;POINT(2.1567985 41.4031899)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "442",
       "equipment_type": "Sales de música en viu",
@@ -10522,6 +11283,7 @@
     "geom": "SRID=4326;POINT(2.14885 41.36907)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "488",
       "equipment_type": "Sales de música en viu",
@@ -10537,6 +11299,7 @@
     "geom": "SRID=4326;POINT(2.17478 41.37975)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "489",
       "equipment_type": "Sales de música en viu",
@@ -10552,6 +11315,7 @@
     "geom": "SRID=4326;POINT(2.16413 41.38011)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "491",
       "equipment_type": "Sales de música en viu",
@@ -10567,6 +11331,7 @@
     "geom": "SRID=4326;POINT(2.175268003 41.379703771)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 1,
     "properties": {
       "register_id": "179",
       "equipment_type": "Sales de música en viu",
@@ -10582,6 +11347,7 @@
     "geom": "SRID=4326;POINT(2.147273481 41.392700831)",
     "geo_level_id": 3,
     "geo_id": 8,
+    "city_id": 1,
     "properties": {
       "register_id": "233",
       "equipment_type": "Sales d'arts escèniques",
@@ -10597,6 +11363,7 @@
     "geom": "SRID=4326;POINT(2.170308608 41.374764425)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "128",
       "equipment_type": "Sales d'arts escèniques",
@@ -10612,6 +11379,7 @@
     "geom": "SRID=4326;POINT(2.17359927 41.388856627)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "129",
       "equipment_type": "Sales d'arts escèniques",
@@ -10627,6 +11395,7 @@
     "geom": "SRID=4326;POINT(2.164709963 41.3747758)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "130",
       "equipment_type": "Sales d'arts escèniques",
@@ -10642,6 +11411,7 @@
     "geom": "SRID=4326;POINT(2.1491028097093614 41.37520013735237)",
     "geo_level_id": 3,
     "geo_id": 9,
+    "city_id": 1,
     "properties": {
       "register_id": "216",
       "equipment_type": "Sales d'arts escèniques",
@@ -10657,6 +11427,7 @@
     "geom": "SRID=4326;POINT(2.165215007 41.379373252)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "144",
       "equipment_type": "Sales d'arts escèniques",
@@ -10672,6 +11443,7 @@
     "geom": "SRID=4326;POINT(2.17637066 41.39241326)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "436",
       "equipment_type": "Sales d'arts escèniques",
@@ -10687,6 +11459,7 @@
     "geom": "SRID=4326;POINT(2.169502763 41.407429352)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 1,
     "properties": {
       "register_id": "165",
       "equipment_type": "Sales d'arts escèniques",
@@ -10702,6 +11475,7 @@
     "geom": "SRID=4326;POINT(2.16467162 41.384184369)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "131",
       "equipment_type": "Sales d'arts escèniques",
@@ -10717,6 +11491,7 @@
     "geom": "SRID=4326;POINT(2.1598196 41.3695356)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "221",
       "equipment_type": "Sales d'arts escèniques",
@@ -10732,6 +11507,7 @@
     "geom": "SRID=4326;POINT(2.1700774 41.3807945)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "455",
       "equipment_type": "Sales d'arts escèniques",
@@ -10747,6 +11523,7 @@
     "geom": "SRID=4326;POINT(2.157431333 41.370647908)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "204",
       "equipment_type": "Sales d'arts escèniques",
@@ -10762,6 +11539,7 @@
     "geom": "SRID=4326;POINT(2.156013379 41.40272988)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "202",
       "equipment_type": "Sales d'arts escèniques",
@@ -10777,6 +11555,7 @@
     "geom": "SRID=4326;POINT(2.1645457980840037 41.37414008982946)",
     "geo_level_id": 3,
     "geo_id": 11,
+    "city_id": 1,
     "properties": {
       "register_id": "480",
       "equipment_type": "Sales d'arts escèniques",
@@ -10792,6 +11571,7 @@
     "geom": "SRID=4326;POINT(2.186087865 41.399686263)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 1,
     "properties": {
       "register_id": "153",
       "equipment_type": "Sales d'arts escèniques",
@@ -10807,6 +11587,7 @@
     "geom": "SRID=4326;POINT(2.17072315 41.384144463)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "132",
       "equipment_type": "Sales d'arts escèniques",
@@ -10822,6 +11603,7 @@
     "geom": "SRID=4326;POINT(2.171064836 41.380553512)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "133",
       "equipment_type": "Sales d'arts escèniques",
@@ -10837,6 +11619,7 @@
     "geom": "SRID=4326;POINT(2.16736111 41.375938056)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 1,
     "properties": {
       "register_id": "247",
       "equipment_type": "Fàbriques de Creació",
@@ -10852,6 +11635,7 @@
     "geom": "SRID=4326;POINT(2.170720909 41.389052665)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "134",
       "equipment_type": "Sales d'arts escèniques",
@@ -10867,6 +11651,7 @@
     "geom": "SRID=4326;POINT(2.158562702 41.4032522)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "156",
       "equipment_type": "Sales d'arts escèniques",
@@ -10882,6 +11667,7 @@
     "geom": "SRID=4326;POINT(2.157212897 41.404163336)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "356",
       "equipment_type": "Cinemes",
@@ -10897,6 +11683,7 @@
     "geom": "SRID=4326;POINT(2.157664213 41.404433026)",
     "geo_level_id": 3,
     "geo_id": 31,
+    "city_id": 1,
     "properties": {
       "register_id": "360",
       "equipment_type": "Cinemes",
@@ -10912,6 +11699,7 @@
     "geom": "SRID=4326;POINT(2.191159281 41.399440359)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "register_id": "180",
       "equipment_type": "Sales de música en viu",
@@ -10927,6 +11715,7 @@
     "geom": "SRID=4326;POINT(2.1886 41.39609)",
     "geo_level_id": 3,
     "geo_id": 66,
+    "city_id": 1,
     "properties": {
       "register_id": "490",
       "equipment_type": "Sales de música en viu",
@@ -10942,6 +11731,7 @@
     "geom": "SRID=4326;POINT(2.16768 41.38975)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 1,
     "properties": {
       "register_id": "472",
       "equipment_type": "Cinemes",
@@ -10957,6 +11747,7 @@
     "geom": "SRID=4326;POINT(2.197851326 41.390895879)",
     "geo_level_id": 3,
     "geo_id": 67,
+    "city_id": 1,
     "properties": {
       "register_id": "361",
       "equipment_type": "Cinemes",
@@ -10972,6 +11763,7 @@
     "geom": "SRID=4326;POINT(2.190346 41.386823)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 1,
     "properties": {
       "register_id": "34",
       "equipment_type": "Museus i col·leccions",
@@ -10987,6 +11779,7 @@
     "geom": "SRID=4326;POINT(2.14504 41.37736)",
     "geo_level_id": 3,
     "geo_id": 15,
+    "city_id": 1,
     "properties": {
       "register_id": "362",
       "equipment_type": "Cinemes",

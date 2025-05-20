@@ -7,6 +7,7 @@
     "geom": "SRID=4326;POINT(-3.68793370943788 40.4196408741276)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 2,
     "properties": {
       "PK": "5896013",
       "DESCRIPCION-ENTIDAD": "El Parque del Buen Retiro, conocido simplemente como El Retiro, es uno de los lugares más emblemáticos de Madrid y un oasis verde en el corazón de la ciudad. Con una extensión de 125 hectáreas, este parque histórico ha sido durante siglos un punto de encuentro para madrileños y visitantes. Creado en el siglo XVII como un espacio de recreo para la realeza española, El Retiro ofrece una impresionante mezcla de jardines paisajísticos, fuentes, estanques y monumentos históricos. Con sus amplias avenidas y rincones tranquilos, es un espacio perfecto tanto para actividades recreativas como para pasear y relajarse.   Historia del Parque:  El Parque del Buen Retiro fue construido en 1630 por orden del Conde-Duque de Olivares, como parte del Real Sitio del Buen Retiro, un palacio y jardines destinados al ocio de Felipe IV. Originalmente fue un jardín privado de la corte española, pero con el tiempo, y tras la destrucción del palacio en el siglo XIX, fue abierto al público y pasó a ser gestionado por el Ayuntamiento de Madrid.  Principales Atractivos   Estanque Grande: El Retiro alberga un estanque monumental donde se pueden alquilar barcas de remo. Alrededor del estanque se encuentra el majestuoso Monumento a Alfonso XII, con su imponente columnata y esculturas que ofrecen vistas espectaculares del parque.  Palacio de Cristal: Uno de los edificios más impresionantes del parque es este pabellón de hierro y vidrio, construido en 1887 para albergar una exposición de plantas exóticas. Actualmente, se utiliza como espacio de exhibiciones temporales de arte contemporáneo.  Paseo de las Estatuas: A lo largo de este paseo, conocido también como Paseo de la Argentina, se encuentran las estatuas de los reyes de España, que originalmente estaban destinadas a decorar el Palacio Real.  Jardines y Espacios Naturales  El parque cuenta con una gran variedad de jardines que enriquecen la experiencia de los visitantes:  La Rosaleda: Un hermoso jardín de rosas, inspirado en otros famosos rosedales europeos, como el de Bagatelle en París.  Jardines de Cecilio Rodríguez: Este espacio cerrado y más íntimo está decorado con fuentes, setos geométricos y pabellones, y alberga una colección de pavos reales.  Bosque del Recuerdo: Un espacio conmemorativo en honor a las víctimas de los atentados del 11 de marzo de 2004 en Madrid, donde se plantaron 192 árboles, uno por cada víctima.  Actividades y Eventos  El Retiro es un punto neurálgico para actividades culturales y recreativas. Cada año se celebran la Feria del Libro y otros eventos culturales al aire libre. Este parque cuenta también con amplias zonas para correr, andar en bicicleta y practicar yoga, es un lugar ideal para los entusiastas del deporte. Este parque se incluye entre las visitas recomendadas a turistas que visitan la ciudad, según la web oficial de turismo de Madrid.  Otras denominaciones: Parque del Retiro. El Retiro",
@@ -33,6 +34,7 @@
     "geom": "SRID=4326;POINT(-3.67583331713166 40.4119284199715)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 2,
     "properties": {
       "PK": "5962985",
       "DESCRIPCION-ENTIDAD": "El Parque Anunciación es un espacio modesto, pero ideal para que los niños jueguen y se diviertan en un entorno seguro y acogedor. El parque cuenta con diversas instalaciones de juego, como toboganes, columpios y estructuras para escalar, todas diseñadas para fomentar la creatividad y la actividad física de los más pequeños. Además, está rodeado de zonas verdes y árboles, lo que contribuye a crear un ambiente fresco y agradable. Entre su arbolado, destacan los majestuosos cedros de gran porte que embellecen el entorno.",
@@ -56,6 +58,7 @@
     "geom": "SRID=4326;POINT(-3.67430914572838 40.3855677438146)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 2,
     "properties": {
       "PK": "5978304",
       "DESCRIPCION-ENTIDAD": "Zona verde con distintos desniveles y zonas estanciales con diferentes usos para los ciudadanos.   Dispone de praderas con riego automático en las zonas próximas a la Calle Concejo de Teverga.",
@@ -80,6 +83,7 @@
     "geom": "SRID=4326;POINT(-3.70918800795985 40.41776291784375)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 2,
     "properties": {
       "PK": "6019032",
       "DESCRIPCION-ENTIDAD": "A diez metros bajo la plaza de Isabel II, la estación de Metro Ópera (L2, L5 y Ramal Norte) alberga la recreación museística de la histórica fuente de los Caños del Peral. La visita nos permite conocer la fuente que recogía el agua de manantial junto al arroyo del Arenal durante la segunda mitad del sigloXVI, y que tenía en origen 34 metros de longitud; la galería de abastecimiento en bóveda de cañón y la alcantarilla de la zona; y el acueducto que, salvando al barranco del arroyo del Arenal, surtió de agua al Palacio Real desde el siglo XVII hasta prácticamente el siglo XX.  Más información.",
@@ -105,6 +109,7 @@
     "geom": "SRID=4326;POINT(-3.69257053914393 40.43525811195212)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 2,
     "properties": {
       "PK": "4997114",
       "HORARIO": "De martes a sábado: de 9:30 a 20 horas. Domingos y festivos: de 10 a 15 horas. Cerrado: todos los lunes del año, 1 y 6 de enero, 1 de mayo, 9 noviembre, 24, 25 y 31 de diciembre.",
@@ -129,6 +134,7 @@
     "geom": "SRID=4326;POINT(-3.64667257750353 40.4757168810306)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 2,
     "properties": {
       "PK": "1750",
       "DESCRIPCION-ENTIDAD": "Su antecedente fue una pequeÒa biblioteca que habÌa en la calle de Santa Virgilia y dependÌa de la Junta de Distrito. En enero de 1987 se inaugura el centro actual dentro del parque Huerta de la Salud, situado en los terrenos de una antigua quinta cuyos orÌgenes se remontan al siglo XVIII. Esta quinta fue a principios del siglo XX un prÛspero negocio agropecuario con nuevos y originales elementos arquitectÛnicos, entre los que destacaba el silo, ahora emblema de Hortaleza. CaÌda la quinta en el abandono poco antes de la Guerra Civil, se derribaron a principios de los aÒos ochenta algunas de sus construcciones, como el mirador o palomar y el granero, y solo quedaron, al menos en parte, tres edificaciones. La biblioteca ocupÛ la estructura rehabilitada de uno de ellos, donde habÌan estado los establos del recinto, compartiendo espacio con el Centro Cultural Huerta de la Salud. En 1995, se traslada a otra construcciÛn de la antigua quinta, donde se encuentra actualmente. El edificio -conocido como el corredor- habÌa servido para guardar arados y herramientas y para dormir parte del personal. En 2006 y 2007 se realiza una profunda reforma y adquiere su actual fisonomÌa. Por su historia, el edificio de la biblioteca conserva cierto aire arquitectÛnico rural. En octubre de 2018, su suerte se uniÛ a la tercera construcciÛn histÛrica del conjunto: el Silo, al que se habÌa aÒadido un magnÌfico mirador a principios del siglo XXI y donde se realizan algunas actividades de la biblioteca.     Canal de WhatsApp",
@@ -156,6 +162,7 @@
     "geom": "SRID=4326;POINT(-3.70278869828606 40.3672644783703)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 2,
     "properties": {
       "PK": "6575",
       "TRANSPORTE": "Bus: 78, 116  CercanÌas Renfe: Orcasitas (lÌnea C5)",
@@ -181,6 +188,7 @@
     "geom": "SRID=4326;POINT(-3.71321783045369 40.4733995746587)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 2,
     "properties": {
       "PK": "6590",
       "TRANSPORTE": "Metro: PeÒagrande (lÌnea 7)  Bus: 42, 49, 126, 128",
@@ -205,6 +213,7 @@
     "geom": "SRID=4326;POINT(-3.67291277265501 40.4086211107875)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 2,
     "properties": {
       "PK": "5355",
       "EQUIPAMIENTO": "Transporte - Comedor - Horario ampliado",
@@ -231,6 +240,7 @@
     "geom": "SRID=4326;POINT(-3.76537731059854 40.394676568549)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 2,
     "properties": {
       "PK": "5379",
       "EQUIPAMIENTO": "Comedor - Transporte - Horario ampliado",
@@ -256,6 +266,7 @@
     "geom": "SRID=4326;POINT(-3.64889135757206 40.4341279095179)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 2,
     "properties": {
       "PK": "5529",
       "EQUIPAMIENTO": "Comedor - Horario ampliado",
@@ -281,6 +292,7 @@
     "geom": "SRID=4326;POINT(-3.62842399788048 40.4037362986099)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 2,
     "properties": {
       "PK": "62443",
       "TRANSPORTE": "METRO: Pavones BUS: 8 , 71 , 100 , 140",
@@ -306,6 +318,7 @@
     "geom": "SRID=4326;POINT(-3.68312381488991 40.4487054725916)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 2,
     "properties": {
       "PK": "5369",
       "EQUIPAMIENTO": "Comedor - Transporte",
@@ -331,6 +344,7 @@
     "geom": "SRID=4326;POINT(-3.63945054239953 40.4331985303319)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 2,
     "properties": {
       "PK": "5501",
       "EQUIPAMIENTO": "Comedor - Transporte - Horario ampliado",
@@ -357,6 +371,7 @@
     "geom": "SRID=4326;POINT(-3.71273423116722 40.4341303087298)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 2,
     "properties": {
       "PK": "5760",
       "TRANSPORTE": "METRO: Arg&amp;uuml;elles BUS: 2 , 16 , 61 , 202",
@@ -381,6 +396,7 @@
     "geom": "SRID=4326;POINT(-3.72226686792607 40.4458263807311)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 2,
     "properties": {
       "PK": "6520",
       "EQUIPAMIENTO": "Tipo masculino.",
@@ -406,6 +422,7 @@
     "geom": "SRID=4326;POINT(-3.73568351648087 40.392472894901)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 2,
     "properties": {
       "PK": "5807",
       "EQUIPAMIENTO": "Horario ampliado - Comedor",
@@ -432,6 +449,7 @@
     "geom": "SRID=4326;POINT(-3.68893277065388 40.4944095022211)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 2,
     "properties": {
       "PK": "5490",
       "EQUIPAMIENTO": "Transporte",
@@ -458,6 +476,7 @@
     "geom": "SRID=4326;POINT(-3.70396903286025 40.4551029136426)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 2,
     "properties": {
       "PK": "6077",
       "EQUIPAMIENTO": "Comedor - Horario ampliado",
@@ -484,6 +503,7 @@
     "geom": "SRID=4326;POINT(-3.67287468758612 40.4603871884683)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 2,
     "properties": {
       "PK": "5422",
       "EQUIPAMIENTO": "Comedor",
@@ -508,6 +528,7 @@
     "geom": "SRID=4326;POINT(-3.67936088084437 40.4614753711108)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 2,
     "properties": {
       "PK": "5424",
       "EQUIPAMIENTO": "Comedor",
@@ -534,6 +555,7 @@
     "geom": "SRID=4326;POINT(-3.68025132597766 40.4536926952497)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 2,
     "properties": {
       "PK": "7407746",
       "EQUIPAMIENTO": "Diplomaturas y cursos de cine y televisiÛn.",
@@ -558,6 +580,7 @@
     "geom": "SRID=4326;POINT(-3.69707170132092 40.4381717602289)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 2,
     "properties": {
       "PK": "18578",
       "TRANSPORTE": "Metro: Alonso Cano (lÌnea 7)  Bus: 5, 12  Bicimad: EstaciÛn 129 (calle JosÈ Abascal, 33)",
@@ -581,6 +604,7 @@
     "geom": "SRID=4326;POINT(-3.56395523629787 40.4038128710492)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 2,
     "properties": {
       "PK": "11020690",
       "DESCRIPCION": "EnseÒanza: EducaciÛn infantil (Primer ciclo)",
@@ -604,6 +628,7 @@
     "geom": "SRID=4326;POINT(-3.72974413799101 40.3880240114461)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 2,
     "properties": {
       "PK": "4689875",
       "TRANSPORTE": "Bus: 34, 35, 108, 118, 55  Metro: Oporto",
@@ -629,6 +654,7 @@
     "geom": "SRID=4326;POINT(-3.65093456975311 40.392908966371)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 2,
     "properties": {
       "PK": "5066",
       "EQUIPAMIENTO": "Horario ampliado. Comedor.",
@@ -654,6 +680,7 @@
     "geom": "SRID=4326;POINT(-3.57730873193774 40.4445255951462)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 2,
     "properties": {
       "PK": "181029",
       "DESCRIPCION": "ENSE—ANZA: EducaciÛn infantil (primer ciclo )",
@@ -679,6 +706,7 @@
     "geom": "SRID=4326;POINT(-3.69236159607705 40.3973800848242)",
     "geo_level_id": 3,
     "geo_id": 5,
+    "city_id": 2,
     "properties": {
       "PK": "5563",
       "EQUIPAMIENTO": "Comedor",
@@ -703,6 +731,7 @@
     "geom": "SRID=4326;POINT(-3.75436948267991 40.3955146784698)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 2,
     "properties": {
       "PK": "5972",
       "EQUIPAMIENTO": "Comedor",
@@ -726,6 +755,7 @@
     "geom": "SRID=4326;POINT(-3.71925073743178 40.3972880228517)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 2,
     "properties": {
       "PK": "52573",
       "EQUIPAMIENTO": "Horario ampliado. Comedor.",
@@ -751,6 +781,7 @@
     "geom": "SRID=4326;POINT(-3.71680763852872 40.4690870117094)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 2,
     "properties": {
       "PK": "134230",
       "TRANSPORTE": "METRO: Antonio Machado BUS: 126 , 132",
@@ -774,6 +805,7 @@
     "geom": "SRID=4326;POINT(-3.65113765464697 40.4298810328244)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 2,
     "properties": {
       "PK": "5907",
       "TRANSPORTE": "METRO: El Carmen, Quintana BUS: 15 , 106 , 113",
@@ -798,6 +830,7 @@
     "geom": "SRID=4326;POINT(-3.76073331347524 40.3987342627498)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 2,
     "properties": {
       "PK": "134351",
       "TRANSPORTE": "METRO: Campamento &amp;#13;BUS: 25 , 36 , 39 , 138",
@@ -820,6 +853,7 @@
     "geom": "SRID=4326;POINT(-3.62038557307297 40.4953303405269)",
     "geo_level_id": 3,
     "geo_id": 6,
+    "city_id": 2,
     "properties": {
       "PK": "10957943",
       "EQUIPAMIENTO": "Horario ampliado. Comedor.",
@@ -845,6 +879,7 @@
     "geom": "SRID=4326;POINT(-3.69037444346592 40.3412381223434)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 2,
     "properties": {
       "PK": "5340",
       "EQUIPAMIENTO": "Horario ampliado. Comedor.",
@@ -870,6 +905,7 @@
     "geom": "SRID=4326;POINT(-3.64517735570686 40.4464460140533)",
     "geo_level_id": 3,
     "geo_id": 4,
+    "city_id": 2,
     "properties": {
       "PK": "5398853",
       "TRANSPORTE": "Bus: 21, 70, 114",
@@ -895,6 +931,7 @@
     "geom": "SRID=4326;POINT(-3.64629607235588 40.4622865989921)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 2,
     "properties": {
       "PK": "5399140",
       "TRANSPORTE": "Bus: 73",
@@ -920,6 +957,7 @@
     "geom": "SRID=4326;POINT(-3.78772856122925 40.4612561058229)",
     "geo_level_id": 3,
     "geo_id": 7,
+    "city_id": 2,
     "properties": {
       "PK": "190209",
       "TRANSPORTE": "BUS: 84",
@@ -942,6 +980,7 @@
     "geom": "SRID=4326;POINT(-3.65039948759136 40.4597140380188)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 2,
     "properties": {
       "PK": "5677",
       "EQUIPAMIENTO": "Comedor",
@@ -968,6 +1007,7 @@
     "geom": "SRID=4326;POINT(-3.70278869828606 40.3672644783703)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 2,
     "properties": {
       "PK": "6650",
       "TRANSPORTE": "CercanÌas Renfe: Orcasitas (lÌnea C5)",
@@ -991,6 +1031,7 @@
     "geom": "SRID=4326;POINT(-3.63309996975464 40.3984314645906)",
     "geo_level_id": 3,
     "geo_id": 1,
+    "city_id": 2,
     "properties": {
       "PK": "6132",
       "EQUIPAMIENTO": "IntegraciÛn (Preferentemente motÛricos)",
@@ -1017,6 +1058,7 @@
     "geom": "SRID=4326;POINT(-3.63183396936613 40.4218259459634)",
     "geo_level_id": 3,
     "geo_id": 2,
+    "city_id": 2,
     "properties": {
       "PK": "6130",
       "TRANSPORTE": "BUS: 70 , 106",
@@ -1042,6 +1084,7 @@
     "geom": "SRID=4326;POINT(-3.60141148450391 40.4021808588039)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 2,
     "properties": {
       "PK": "12205090",
       "HORARIO": "De lunes a viernes de 9 a 21 horas. S·bados, domingos y festivos* de 9:30 a 20:30 horas.  Horario ininterrumpido.  *Salvo los dÌas 24, 25, 31 de diciembre y 1, 6 de enero, que el centro permanecer· cerrado.",
@@ -1066,6 +1109,7 @@
     "geom": "SRID=4326;POINT(-3.72544215024058 40.4505900896372)",
     "geo_level_id": 3,
     "geo_id": 3,
+    "city_id": 2,
     "properties": {
       "PK": "6308",
       "TRANSPORTE": "Metro: Ciudad Universitaria (lÌnea 6).",

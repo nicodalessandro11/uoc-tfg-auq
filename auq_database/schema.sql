@@ -100,17 +100,25 @@ CREATE TABLE feature_definitions (
 -- === Table: point_features ===
 CREATE TABLE point_features (
     id SERIAL PRIMARY KEY,
-    feature_definition_id INTEGER REFERENCES feature_definitions(id) ON DELETE SET NULL,
-    name TEXT,
-    latitude DECIMAL NOT NULL,
-    longitude DECIMAL NOT NULL,
-    geom GEOMETRY(POINT, 4326),
-    geo_level_id INTEGER REFERENCES geographical_levels(id),
+    name TEXT NOT NULL,
+    description TEXT,
+    category TEXT NOT NULL,
+    subcategory TEXT,
+    latitude DOUBLE PRECISION NOT NULL,
+    longitude DOUBLE PRECISION NOT NULL,
+    geo_level_id INTEGER NOT NULL REFERENCES geo_levels(id),
     geo_id INTEGER NOT NULL,
-    properties JSONB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    city_id INTEGER NOT NULL REFERENCES cities(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(name, category, latitude, longitude)
 );
+
+-- Create indexes
+CREATE INDEX idx_point_features_geo_level ON point_features (geo_level_id);
+CREATE INDEX idx_point_features_geo_id ON point_features (geo_id);
+CREATE INDEX idx_point_features_category ON point_features (category);
+CREATE INDEX idx_point_features_city ON point_features (city_id);
 
 -- === 3. Indexes ===
 CREATE INDEX idx_indicators_geo ON indicators (geo_level_id, geo_id);

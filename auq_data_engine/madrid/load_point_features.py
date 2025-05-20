@@ -47,6 +47,9 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 
+# Constants
+CITY_ID = 2  # Madrid city ID
+
 # Geographical level IDs
 GEO_LEVELS = {
     "City": 1,
@@ -152,16 +155,25 @@ def clean_coordinate(coord_str: str, is_longitude: bool = False) -> float:
     Returns:
         float: The cleaned coordinate value
     """
+    if not coord_str:
+        return None
+        
     # Save the sign if present
     is_negative = coord_str.startswith('-')
     coord_str = coord_str.replace('-', '')
     
-    # Remove dots (they are thousand separators)
-    coord_str = coord_str.replace('.', '')
-    
-    # Convert to float and scale down
     try:
-        coord = float(coord_str) / 1e14  # Scale down by dividing by 100 trillion
+        # If the string already has a decimal point and looks like a proper coordinate
+        if '.' in coord_str and len(coord_str.split('.')[0]) == 2:
+            coord = float(coord_str)
+        else:
+            # Remove all dots (they are thousand separators)
+            coord_str = coord_str.replace('.', '')
+            
+            # Convert to float and scale down
+            # The original coordinates are in a format where the decimal point is implicit
+            # For example: 4044793196689410 should be 40.44793196689410
+            coord = float(coord_str) / 1e14  # Scale down by dividing by 100 trillion
         
         # Restore negative sign if needed
         if is_negative:
@@ -281,6 +293,7 @@ def process_parques_jardines(data: List[Dict]) -> List[Dict]:
                 "geom": f"SRID=4326;POINT({lon_float} {lat_float})",  # Note: longitude first in WKT
                 "geo_level_id": GEO_LEVELS["Neighbourhood"],
                 "geo_id": neighborhood_code_int,
+                "city_id": CITY_ID,
                 "properties": {
                     key: value for key, value in row.items()
                     if key not in ['NOMBRE', 'LATITUD', 'LONGITUD', 'COD-BARRIO', 'BARRIO', 'COD-DISTRITO', 'DISTRITO', 
@@ -349,6 +362,7 @@ def process_museos(data: List[Dict]) -> List[Dict]:
                 "geom": f"SRID=4326;POINT({lon_float} {lat_float})",  # Note: longitude first in WKT
                 "geo_level_id": GEO_LEVELS["Neighbourhood"],
                 "geo_id": neighborhood_code_int,
+                "city_id": CITY_ID,
                 "properties": {
                     key: value for key, value in row.items()
                     if key not in ['NOMBRE', 'LATITUD', 'LONGITUD', 'COD-BARRIO', 'BARRIO', 'COD-DISTRITO', 'DISTRITO', 
@@ -417,6 +431,7 @@ def process_bibliotecas(data: List[Dict]) -> List[Dict]:
                 "geom": f"SRID=4326;POINT({lon_float} {lat_float})",  # Note: longitude first in WKT
                 "geo_level_id": GEO_LEVELS["Neighbourhood"],
                 "geo_id": neighborhood_code_int,
+                "city_id": CITY_ID,
                 "properties": {
                     key: value for key, value in row.items()
                     if key not in ['NOMBRE', 'LATITUD', 'LONGITUD', 'COD-BARRIO', 'BARRIO', 'COD-DISTRITO', 'DISTRITO', 
@@ -485,6 +500,7 @@ def process_centros_educativos(data: List[Dict]) -> List[Dict]:
                 "geom": f"SRID=4326;POINT({lon_float} {lat_float})",  # Note: longitude first in WKT
                 "geo_level_id": GEO_LEVELS["Neighbourhood"],
                 "geo_id": neighborhood_code_int,
+                "city_id": CITY_ID,
                 "properties": {
                     key: value for key, value in row.items()
                     if key not in ['NOMBRE', 'LATITUD', 'LONGITUD', 'COD-BARRIO', 'BARRIO', 'COD-DISTRITO', 'DISTRITO', 
@@ -553,6 +569,7 @@ def process_mercados(data: List[Dict]) -> List[Dict]:
                 "geom": f"SRID=4326;POINT({lon_float} {lat_float})",  # Note: longitude first in WKT
                 "geo_level_id": GEO_LEVELS["Neighbourhood"],
                 "geo_id": neighborhood_code_int,
+                "city_id": CITY_ID,
                 "properties": {
                     key: value for key, value in row.items()
                     if key not in ['NOMBRE', 'LATITUD', 'LONGITUD', 'COD-BARRIO', 'BARRIO', 'COD-DISTRITO', 'DISTRITO', 

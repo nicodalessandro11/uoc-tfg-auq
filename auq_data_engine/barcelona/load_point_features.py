@@ -47,6 +47,9 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 
+# Constants
+CITY_ID = 1  # Barcelona city ID
+
 # Geographical level IDs
 GEO_LEVELS = {
     "City": 1,
@@ -303,6 +306,7 @@ def process_parcs_jardins(data: List[Dict]) -> List[Dict]:
                 'geom': f"SRID=4326;POINT({lon} {lat})",  # Note: longitude first in WKT
                 'geo_level_id': GEO_LEVELS['Neighbourhood'],
                 'geo_id': neighborhood_id_int,
+                'city_id': CITY_ID,
                 'properties': {
                     'address': row.get('addresses_road_name'),
                     'postal_code': row.get('addresses_zip_code'),
@@ -393,6 +397,7 @@ def process_mercats(data: List[Dict]) -> List[Dict]:
                     'geom': f"SRID=4326;POINT({lon} {lat})",
                     'geo_level_id': GEO_LEVELS['Neighbourhood'],
                     'geo_id': record['addresses_neighborhood_id'],
+                    'city_id': CITY_ID,
                     'properties': properties
                 })
         except Exception as e:
@@ -497,6 +502,7 @@ def process_equipaments(data: List[Dict]) -> List[Dict]:
                 "geom": f"SRID=4326;POINT({lon} {lat})",  # Note: longitude first in WKT
                 "geo_level_id": GEO_LEVELS["Neighbourhood"],
                 "geo_id": neighborhood_code_int,
+                "city_id": CITY_ID,
                 "properties": properties
             }
             
