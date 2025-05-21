@@ -36,7 +36,7 @@ export default function LeafletMap({
   const geoJsonLayerRef = useRef(null)
   const markersLayerRef = useRef(null)
   const tileLayerRef = useRef(null)
-  const { setMapInitialized, loadGeoJSON, setSelectedArea } = useMapContext()
+  const { setMapInitialized, loadGeoJSON, setSelectedArea, filters, dynamicFilters } = useMapContext()
   const mapInstanceRef = useRef(null)
   const [selectedAreaState, setSelectedAreaState] = useState(null)
   const [isMapReady, setIsMapReady] = useState(false)
@@ -271,6 +271,18 @@ export default function LeafletMap({
       return
     }
 
+    // === FILTRADO DE FEATURES SEGÚN LOS SLIDERS DINÁMICOS ===
+    const filteredFeatures = currentGeoJSON.features.filter((feature) => {
+      const props = feature.properties
+      // Para cada filtro dinámico, verifica que el valor esté dentro del rango
+      for (const filter of dynamicFilters) {
+        const value = props[filter.key]
+        if (typeof value !== 'number') return false
+        if (value < filter.value[0] || value > filter.value[1]) return false
+      }
+      return true
+    })
+
     // Style function for GeoJSON
     const getAreaStyle = (feature) => {
       const isSelected = selectedAreaState?.id === feature.properties.id
@@ -305,7 +317,7 @@ export default function LeafletMap({
 
     try {
       // Validate GeoJSON data before rendering
-      const validFeatures = currentGeoJSON.features.filter((feature) => {
+      const validFeatures = filteredFeatures.filter((feature) => {
         // Check if feature has valid geometry
         if (!feature.geometry || !feature.geometry.coordinates) {
           console.warn("Feature missing geometry or coordinates:", feature)
@@ -397,7 +409,7 @@ export default function LeafletMap({
       console.error("Error rendering GeoJSON:", geoJsonError)
       setDefaultCityView(map, selectedCity)
     }
-  }, [currentGeoJSON, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady])
+  }, [currentGeoJSON, dynamicFilters, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady])
 
   // Update markers when point features change
   useEffect(() => {
@@ -548,15 +560,15 @@ export default function LeafletMap({
               <div class="modern-tooltip-title">${feature.name}</div>
               <div class="modern-tooltip-type">${featureTypeName}</div>
               ${Object.entries(feature.properties || {})
-                .map(
-                  ([key, value]) => `
+              .map(
+                ([key, value]) => `
                   <div class="modern-tooltip-info">
                     <span class="modern-tooltip-label">${key.replace(/_/g, " ").charAt(0).toUpperCase() + key.replace(/_/g, " ").slice(1)}:</span>
                     <span class="modern-tooltip-value">${value}</span>
                   </div>
                 `,
-                )
-                .join("")}
+              )
+              .join("")}
             </div>
           `
 

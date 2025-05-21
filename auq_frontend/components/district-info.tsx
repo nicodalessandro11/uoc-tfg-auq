@@ -1,8 +1,8 @@
 "use client"
 
-import { getIndicatorValue } from "../lib/supabase-client"
+import { getIndicatorValue, getCityIndicators, getIndicatorDefinitions } from "../lib/supabase-client"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Users, DollarSign, Wallet, Map } from "lucide-react"
+import { MapPin, Users, DollarSign, Wallet, Map, Ruler, Euro } from "lucide-react"
 import { useMapContext } from "@/contexts/map-context"
 import { useEffect, useState } from "react"
 
@@ -17,92 +17,84 @@ type AreaInfoProps = {
   }
 }
 
+// Icon mapping for indicator names
+const indicatorIcons: Record<string, JSX.Element> = {
+  population: <Users className="h-5 w-5 text-blue-600" />,
+  surface: <Map className="h-5 w-5 text-green-600" />,
+  "average gross taxable income per person": <DollarSign className="h-5 w-5 text-yellow-600" />,
+  "disposable income per capita": <Wallet className="h-5 w-5 text-emerald-600" />,
+  "population density": <Ruler className="h-5 w-5 text-purple-600" />,
+  "education level": <Badge className="h-5 w-5 text-pink-600" />,
+  "unemployment rate": <Euro className="h-5 w-5 text-red-600" />,
+}
+
 export function DistrictInfo({ area }: AreaInfoProps) {
-  const { selectedGranularity } = useMapContext()
-  const [surface, setSurface] = useState<number | null>(null)
-  const [disposableIncome, setDisposableIncome] = useState<number | null>(null)
+  const { selectedGranularity, selectedCity } = useMapContext()
+  const [indicatorValues, setIndicatorValues] = useState<{ [indicatorName: string]: number | null }>({})
+  const [indicatorDefs, setIndicatorDefs] = useState<any[]>([])
 
   useEffect(() => {
-    // Fetch real indicator data
-    async function fetchIndicators() {
-      const surfaceValue = await getIndicatorValue(area.id, 2, selectedGranularity.level)
-      const disposableIncomeValue = await getIndicatorValue(area.id, 4, selectedGranularity.level)
-
-      setSurface(surfaceValue)
-      setDisposableIncome(disposableIncomeValue)
+    async function fetchAllIndicators() {
+      if (!selectedGranularity || !selectedCity) return
+      try {
+        // Get all indicator definitions
+        const defs = await getIndicatorDefinitions()
+        setIndicatorDefs(defs)
+        // Get all indicators for this city and level
+        const indicators = await getCityIndicators(selectedCity.id, selectedGranularity.level)
+        // Find all indicators for this area
+        const values: { [indicatorName: string]: number | null } = {}
+        defs.forEach(def => {
+          const found = indicators.find(ind => ind.indicator_def_id === def.id && ind.geo_id === area.id)
+          values[def.name] = found ? found.value : null
+        })
+        setIndicatorValues(values)
+      } catch (error) {
+        console.error("Error fetching indicators:", error)
+      }
     }
+    fetchAllIndicators()
+  }, [area.id, selectedGranularity, selectedCity])
 
-    fetchIndicators()
-  }, [area.id, selectedGranularity.level])
+  if (!selectedGranularity) {
+    return null
+  }
 
   return (
     <div className="space-y-4">
       <div className="modern-card bg-primary text-primary-foreground">
         <div className="flex items-center gap-2 mb-1">
           <MapPin className="h-5 w-5" />
-          <h3 className="text-xl font-bold tracking-tight">{area.name}</h3>
+          <h3 className="text-xl font-bold tracking-tight text-black">{area.name}</h3>
         </div>
         <p className="text-sm text-primary-foreground/80">
           {selectedGranularity.level === "district" ? "District Profile" : "Neighborhood Profile"}
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="modern-card">
-          <div className="flex flex-col items-center">
-            <div className="bg-primary/10 p-2 rounded-full mb-2">
-              <Users className="h-5 w-5 text-primary" />
-            </div>
-            <div className="data-value">{area.population.toLocaleString()}</div>
-            <div className="data-label">Population</div>
-          </div>
-        </div>
-
-        <div className="modern-card">
-          <div className="flex flex-col items-center">
-            <div className="bg-primary/10 p-2 rounded-full mb-2">
-              <DollarSign className="h-5 w-5 text-primary" />
-            </div>
-            <div className="data-value">{area.avgIncome.toLocaleString()} €</div>
-            <div className="data-label">Avg. Income</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="modern-card">
-        <h4 className="text-sm font-medium mb-3 flex items-center">
-          <Map className="h-4 w-4 mr-2 text-primary" />
-          Additional Indicators
-        </h4>
-        <div className="space-y-3">
-          {surface !== null && (
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <div className="bg-primary/10 p-1 rounded-md">
-                  <Map className="h-3.5 w-3.5 text-primary" />
+      <div className="grid gap-4">
+        {indicatorDefs.map(def => (
+          indicatorValues[def.name] !== null && (
+            <div
+              className="rounded-xl border bg-white/80 shadow-sm p-4 flex flex-col gap-2 hover:shadow-md transition-all"
+              key={def.id}
+            >
+              <div className="flex items-center gap-3 mb-1">
+                {indicatorIcons[def.name.toLowerCase()] || <Badge className="h-5 w-5 text-gray-400" />}
+                <div>
+                  <h4 className="text-base font-semibold text-gray-900">{def.name}{def.unit ? ` (${def.unit})` : ''}</h4>
+                  {def.description && (
+                    <p className="text-xs text-gray-500 mt-0.5">{def.description}</p>
+                  )}
                 </div>
-                <span className="text-sm">Surface</span>
               </div>
-              <Badge variant="outline" className="font-medium">
-                {surface} km²
-              </Badge>
+              <p className="text-xl font-bold text-primary-700">
+                {indicatorValues[def.name]?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                {def.unit && !isNaN(Number(indicatorValues[def.name])) && ` ${def.unit}`}
+              </p>
             </div>
-          )}
-
-          {disposableIncome !== null && (
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <div className="bg-primary/10 p-1 rounded-md">
-                  <Wallet className="h-3.5 w-3.5 text-primary" />
-                </div>
-                <span className="text-sm">Disposable Income</span>
-              </div>
-              <Badge variant="outline" className="font-medium">
-                {disposableIncome.toLocaleString()} €
-              </Badge>
-            </div>
-          )}
-        </div>
+          )
+        ))}
       </div>
     </div>
   )

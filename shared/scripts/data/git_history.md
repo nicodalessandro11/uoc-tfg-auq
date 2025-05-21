@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-21 | Enhanced map visualization and filtering
+
+- Updated district-info.tsx, filter-panel.tsx, leaflet-map.jsx, and visualize-view.tsx to improve map visualization and filtering
+- Changes were made to address user feedback about difficulty in using the map and filtering options
+- Leveraged the Supabase client in supabase-client.ts and made necessary API changes in api-service.ts and api-types.ts
+
+This commit significantly improves the user experience of the map feature by making it more intuitive and responsive. The filtering options are now more robust and easier to use.
+
 ## 📦 Feature | 2025-05-21 | Enhanced data loading and upload functionality
 
 - Modified the load_indicators.py scripts for both Barcelona and Madrid in the auq_data_engine directory to improve data loading efficiency

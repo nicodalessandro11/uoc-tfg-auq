@@ -51,6 +51,16 @@ type FilterRanges = {
 // Map type (for tile layer)
 type MapType = "osm" | "satellite" | "grayscale" | "terrain" | "dark" | "watercolor"
 
+// Nuevo tipo para filtros dinámicos
+export type DynamicFilter = {
+  key: string
+  name: string
+  unit?: string
+  min: number
+  max: number
+  value: [number, number]
+}
+
 type MapContextType = {
   selectedCity: City | null
   setSelectedCity: (city: City | null) => void
@@ -80,6 +90,8 @@ type MapContextType = {
   mapType: MapType
   setMapType: (type: MapType) => void
   clearPointFeaturesCache: (cityId?: number) => void
+  dynamicFilters: DynamicFilter[]
+  setDynamicFilters: (filters: DynamicFilter[]) => void
 }
 
 export const MapContext = createContext<MapContextType | undefined>(undefined)
@@ -178,6 +190,9 @@ export function MapProvider({ children }: { children: ReactNode }) {
   const prevCityIdRef = useRef<number | null>(null)
   const prevGranularityLevelRef = useRef<string | null>(null)
   const filterRangesLoadedRef = useRef<boolean>(false)
+
+  // Nuevo estado para filtros dinámicos
+  const [dynamicFilters, setDynamicFilters] = useState<DynamicFilter[]>([])
 
   // Update the loadAvailableAreas function to use direct Supabase data
   const loadAvailableAreas = useCallback(async (cityId: number, granularityLevel: string) => {
@@ -622,6 +637,33 @@ export function MapProvider({ children }: { children: ReactNode }) {
     loadGranularityLevels()
   }, [selectedGranularity, setSelectedGranularity])
 
+  // Detectar indicadores y rangos dinámicamente al cargar el GeoJSON
+  useEffect(() => {
+    if (!currentGeoJSON || !currentGeoJSON.features || currentGeoJSON.features.length === 0) {
+      setDynamicFilters([])
+      return
+    }
+    // Tomar todas las keys numéricas de las propiedades del primer feature
+    const sampleProps = currentGeoJSON.features[0].properties
+    const indicatorKeys = Object.keys(sampleProps).filter(
+      (key) => typeof sampleProps[key] === 'number' && key !== 'id' && key !== 'district_code' && key !== 'city_id' && key !== 'neighbourhood_code' && key !== 'district_id'
+    )
+    // Para cada indicador, calcular min y max
+    const filters: DynamicFilter[] = indicatorKeys.map((key) => {
+      const values = currentGeoJSON.features.map(f => f.properties[key]).filter(v => typeof v === 'number')
+      const min = Math.min(...values)
+      const max = Math.max(...values)
+      return {
+        key,
+        name: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        min,
+        max,
+        value: [min, max],
+      }
+    })
+    setDynamicFilters(filters)
+  }, [currentGeoJSON])
+
   return (
     <MapContext.Provider
       value={{
@@ -653,6 +695,8 @@ export function MapProvider({ children }: { children: ReactNode }) {
         mapType,
         setMapType,
         clearPointFeaturesCache,
+        dynamicFilters,
+        setDynamicFilters,
       }}
     >
       {children}

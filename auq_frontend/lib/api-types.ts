@@ -122,3 +122,13 @@ export type ComparisonResponse = {
 }
 
 export type FilterResponse = Array<District | Neighborhood>
+
+export type Area = {
+  id: number
+  name: string
+  cityId: number
+  population: number
+  avgIncome: number
+  surface: number
+  disposableIncome: number
+}

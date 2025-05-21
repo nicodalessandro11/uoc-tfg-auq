@@ -24,6 +24,7 @@ import {
   getCityIndicators as getSupabaseCityIndicators,
   getGeographicalLevels as getSupabaseGeographicalLevels,
   getGeographicalUnits as getSupabaseGeographicalUnits,
+  getEnrichedGeoJSON,
 } from "./supabase-client"
 
 // Flag to determine whether to use Supabase or API
@@ -129,20 +130,7 @@ export async function getGeographicalUnits(cityId: number, level: string): Promi
  * Get GeoJSON data for a city at a specific level
  */
 export async function getGeoJSON(cityId: number, level: string): Promise<GeoJSONResponse> {
-  return getCachedData(`geojson_${cityId}_${level}`, async () => {
-    if (USE_SUPABASE) {
-      if (level === "district") {
-        return await getDistrictPolygons(cityId)
-      } else if (level === "neighborhood" || level === "neighbourhood") {
-        return await getNeighborhoodPolygons(cityId)
-      } else {
-        throw new Error(`Invalid level: ${level}`)
-      }
-    } else {
-      const endpoint = buildEndpoint(`/api/cities/${cityId}/geojson`, { level })
-      return await fetchAPI(endpoint)
-    }
-  })
+  return getEnrichedGeoJSON(cityId, level)
 }
 
 /**

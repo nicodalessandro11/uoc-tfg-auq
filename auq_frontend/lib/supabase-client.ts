@@ -354,40 +354,57 @@ export async function getIndicatorDefinitions(): Promise<IndicatorDefinition[]> 
  */
 export async function getCityIndicators(cityId: number, level: string, year?: number): Promise<Indicator[]> {
   if (!USE_SUPABASE || !supabase) {
+    console.error('Supabase client not available or disabled')
     throw new Error("Supabase client not available or disabled")
   }
 
   const geoLevelId = level === "district" ? 2 : level === "neighborhood" || level === "neighbourhood" ? 3 : level === "city" ? 1 : null
 
   if (geoLevelId === null) {
+    console.error(`Invalid geographical level: ${level}`)
     throw new Error(`Invalid geographical level: ${level}`)
   }
 
+  console.log(`Fetching indicators for city ${cityId}, level ${level} (geo_level_id: ${geoLevelId})`)
+
   return getCachedData(`indicators_${cityId}_${level}_${year || "latest"}`, async () => {
-    // Get indicators from the view for the specified level
-    const { data, error } = await supabase
-      .from("current_indicators_view")
-      .select("*")
-      .eq("city_id", cityId)
-      .eq("geo_level_id", geoLevelId)
+    try {
+      // Get indicators for the specified city and level
+      const { data, error } = await supabase
+        .from("current_indicators_view")
+        .select("*")
+        .eq("city_id", cityId)
+        .eq("geo_level_id", geoLevelId)
 
-    if (error) {
-      throw new Error(`Error fetching indicators: ${error.message}`)
+      if (error) {
+        console.error('Error fetching indicators:', error)
+        throw new Error(`Error fetching indicators: ${error.message}`)
+      }
+
+      console.log('Fetched indicators:', data)
+
+      if (!data || data.length === 0) {
+        console.log('No indicators found for the specified criteria')
+        return []
+      }
+
+      // Transform the data to match the Indicator type
+      const transformedData = data.map(item => ({
+        id: Number(item.id) || 0,
+        indicator_def_id: Number(item.indicator_def_id),
+        geo_level_id: Number(item.geo_level_id),
+        geo_id: Number(item.geo_id),
+        year: Number(item.year),
+        value: Number(item.value),
+        created_at: item.created_at
+      }))
+
+      console.log('Transformed indicators:', transformedData)
+      return transformedData
+    } catch (error) {
+      console.error('Error in getCityIndicators:', error)
+      throw error
     }
-
-    if (!data || data.length === 0) {
-      throw new Error(`No indicators found for city ${cityId} at level ${level}`)
-    }
-
-    // Transform to Indicator type
-    return data.map(indicator => ({
-      id: 0, // Placeholder ID since we're using the view
-      indicator_def_id: indicator.indicator_def_id,
-      geo_level_id: indicator.geo_level_id,
-      geo_id: indicator.geo_id,
-      year: indicator.year,
-      value: indicator.value
-    }))
   })
 }
 
@@ -480,8 +497,7 @@ export async function getIndicatorValue(areaId: number, indicatorId: number, lev
     }
 
     if (!data || data.length === 0) {
-      console.error(`No indicator value found for area ${areaId}, indicator ${indicatorId}, level ${level}`)
-      return null
+      return null // Return null without logging error for missing indicators
     }
 
     // Get the first (and should be only) result
@@ -501,4 +517,93 @@ export async function getIndicatorValue(areaId: number, indicatorId: number, lev
  */
 export function clearIndicatorCache(): void {
   indicatorCache.clear()
+}
+
+/**
+ * Get enriched GeoJSON (polygons + indicators) for a city and level
+ */
+export async function getEnrichedGeoJSON(cityId: number, level: string): Promise<any> {
+  if (!USE_SUPABASE || !supabase) {
+    throw new Error("Supabase client not available or disabled")
+  }
+
+  const cacheKey = `enriched_geojson_${cityId}_${level}`
+  return getCachedData(cacheKey, async () => {
+    // Build the SQL query string
+    let sql = ''
+    if (level === 'district') {
+      sql = `
+        SELECT jsonb_build_object(
+          'type', 'FeatureCollection',
+          'features', jsonb_agg(
+            jsonb_build_object(
+              'type', 'Feature',
+              'geometry', ST_AsGeoJSON(d.geom)::jsonb,
+              'properties', jsonb_build_object(
+                'id', d.id,
+                'name', d.name,
+                'district_code', d.district_code,
+                'city_id', d.city_id
+              ) || (
+                SELECT jsonb_object_agg(ind.indicator_name, ind.value)
+                FROM (
+                  SELECT civ.indicator_name, civ.value
+                  FROM current_indicators_view civ
+                  WHERE civ.geo_level_id = 2
+                    AND civ.city_id = d.city_id
+                    AND civ.geo_id = d.id
+                ) ind
+              )
+            )
+          )
+        ) AS geojson
+        FROM districts d
+        WHERE d.city_id = ${cityId}
+      `
+    } else if (level === 'neighborhood' || level === 'neighbourhood') {
+      sql = `
+        SELECT jsonb_build_object(
+          'type', 'FeatureCollection',
+          'features', jsonb_agg(
+            jsonb_build_object(
+              'type', 'Feature',
+              'geometry', ST_AsGeoJSON(n.geom)::jsonb,
+              'properties', jsonb_build_object(
+                'id', n.id,
+                'name', n.name,
+                'neighbourhood_code', n.neighbourhood_code,
+                'district_id', n.district_id,
+                'city_id', n.city_id
+              ) || (
+                SELECT jsonb_object_agg(ind.indicator_name, ind.value)
+                FROM (
+                  SELECT civ.indicator_name, civ.value
+                  FROM current_indicators_view civ
+                  WHERE civ.geo_level_id = 3
+                    AND civ.city_id = n.city_id
+                    AND civ.geo_id = n.id
+                ) ind
+              )
+            )
+          )
+        ) AS geojson
+        FROM neighbourhoods n
+        WHERE n.city_id = ${cityId}
+      `
+    } else {
+      throw new Error(`Unsupported level: ${level}`)
+    }
+
+    // Call the execute_sql function via Supabase RPC
+    const { data, error } = await supabase.rpc('execute_sql', { sql_query: sql })
+    if (error) {
+      throw new Error(`Error fetching enriched GeoJSON: ${error.message}`)
+    }
+    // The result is an array with one object containing the geojson
+    const geojson = data && data[0] && data[0].geojson ? data[0].geojson : null
+    if (!geojson) {
+      throw new Error('No enriched GeoJSON returned from database')
+    }
+    return geojson
+  })
 }
