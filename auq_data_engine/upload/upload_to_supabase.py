@@ -6,6 +6,7 @@ ETL Script: Upload Processed Geo Data to Supabase
 - Loads processed district, neighbourhood, point feature, and indicator data from disk
 - Uploads records to corresponding Supabase tables
 - Provides CLI-based execution with logging and error handling
+- Includes validation to ensure data consistency
 
 Author: Nico D'Alessandro Calderon
 Email: nicodalessandro11@gmail.com
@@ -33,6 +34,36 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+# Expected counts for validation
+EXPECTED_COUNTS = {
+    "bcn": {
+        "districts": 10,
+        "neighbourhoods": 73,
+        "point_features": 0,  # Set this based on your expected count
+        "indicators": 0  # Set this based on your expected count
+    },
+    "madrid": {
+        "districts": 21,
+        "neighbourhoods": 131,
+        "point_features": 0,  # Set this based on your expected count
+        "indicators": 0  # Set this based on your expected count
+    }
+}
+
+# ==================
+# Validation Utilities
+# ==================
+def validate_data(data: list, city: str, data_type: str) -> bool:
+    """Validate data before upload to ensure completeness."""
+    expected_count = EXPECTED_COUNTS[city][data_type]
+    if expected_count > 0 and len(data) < expected_count:
+        error(f"Expected {expected_count} {data_type} for {city} but found only {len(data)}. Aborting upload.")
+        return False
+    return True
+
+def get_city_from_filename(filename: str) -> str:
+    """Extract city name from filename."""
+    return "bcn" if "bcn" in filename else "madrid"
 
 # ==================
 # Core Utilities
@@ -45,10 +76,13 @@ def load_json_data(file_path: Path):
         error(f"Failed to read file {file_path}: {e}")
         return []
 
-def upload(table_name: str, records: list[dict]):
+def upload(table_name: str, records: list[dict], city: str):
     if not records:
-        warning(f"No records to upload to '{table_name}'")
-        return
+        warning(f"No records to upload to '{table_name}' for {city}")
+        return False
+
+    if not validate_data(records, city, table_name):
+        return False
 
     try:
         # Use upsert with on_conflict parameter to handle duplicates
@@ -59,11 +93,14 @@ def upload(table_name: str, records: list[dict]):
         if hasattr(response, "status_code"):
             info(f"[{table_name}] Status: {response.status_code}")
         if hasattr(response, "data") and response.data:
-            success(f"Uploaded {len(response.data)} records to '{table_name}'")
+            success(f"Uploaded {len(response.data)} records to '{table_name}' for {city}")
+            return True
         else:
-            warning(f"No data returned after uploading to '{table_name}'. Check Supabase logs.")
+            warning(f"No data returned after uploading to '{table_name}' for {city}. Check Supabase logs.")
+            return False
     except Exception as e:
-        error(f"Error during upload to '{table_name}': {e}")
+        error(f"Error during upload to '{table_name}' for {city}: {e}")
+        return False
 
 # ================== 
 # Execution Blocks
@@ -74,9 +111,13 @@ def run_district_upload():
         ("districts", PROCESSED_DIR / "insert_ready_districts_bcn.json"),
         ("districts", PROCESSED_DIR / "insert_ready_districts_madrid.json"),
     ]
+    success = True
     for table, path in files:
         data = load_json_data(path)
-        upload(table, data)
+        city = get_city_from_filename(path.name)
+        if not upload(table, data, city):
+            success = False
+    return success
 
 def run_neighbourhood_upload():
     info("Uploading neighbourhoods...")
@@ -84,9 +125,13 @@ def run_neighbourhood_upload():
         ("neighbourhoods", PROCESSED_DIR / "insert_ready_neighbourhoods_bcn.json"),
         ("neighbourhoods", PROCESSED_DIR / "insert_ready_neighbourhoods_madrid.json"),
     ]
+    success = True
     for table, path in files:
         data = load_json_data(path)
-        upload(table, data)
+        city = get_city_from_filename(path.name)
+        if not upload(table, data, city):
+            success = False
+    return success
 
 def run_point_feature_upload():
     info("Uploading point features...")
@@ -94,9 +139,13 @@ def run_point_feature_upload():
         ("point_features", PROCESSED_DIR / "insert_ready_point_features_bcn.json"),
         ("point_features", PROCESSED_DIR / "insert_ready_point_features_madrid.json"),
     ]
+    success = True
     for table, path in files:
         data = load_json_data(path)
-        upload(table, data)
+        city = get_city_from_filename(path.name)
+        if not upload(table, data, city):
+            success = False
+    return success
 
 def run_indicator_upload():
     info("Uploading indicators...")
@@ -104,17 +153,36 @@ def run_indicator_upload():
         ("indicators", PROCESSED_DIR / "insert_ready_indicators_bcn.json"),
         ("indicators", PROCESSED_DIR / "insert_ready_indicators_madrid.json"),
     ]
+    success = True
     for table, path in files:
         data = load_json_data(path)
-        upload(table, data)
+        city = get_city_from_filename(path.name)
+        if not upload(table, data, city):
+            success = False
+    return success
 
 def run_all_uploads():
     info("Starting full Supabase upload flow...")
-    run_district_upload()
-    run_neighbourhood_upload()
-    run_point_feature_upload()
-    run_indicator_upload()
+    
+    # Execute in correct order with validation
+    if not run_district_upload():
+        error("District upload failed. Aborting remaining uploads.")
+        return False
+        
+    if not run_neighbourhood_upload():
+        error("Neighbourhood upload failed. Aborting remaining uploads.")
+        return False
+        
+    if not run_point_feature_upload():
+        error("Point feature upload failed. Aborting remaining uploads.")
+        return False
+        
+    if not run_indicator_upload():
+        error("Indicator upload failed.")
+        return False
+        
     success("All uploads completed successfully.")
+    return True
 
 # ==================
 # CLI Support

@@ -116,7 +116,7 @@ def get_neighborhood_ids(supabase: Client) -> Dict[str, int]:
         supabase: Supabase client
         
     Returns:
-        Dictionary mapping neighborhood codes to their IDs
+        Dictionary mapping composite keys (city_id|neighborhood_code) to their IDs
     """
     neighborhood_ids = {}
     
@@ -140,12 +140,14 @@ def get_neighborhood_ids(supabase: Client) -> Dict[str, int]:
         info(f"Using column '{code_column}' for neighborhood codes")
         
         # Query all neighborhoods
-        response = supabase.table("neighbourhoods").select(f"id, {code_column}").execute()
+        response = supabase.table("neighbourhoods").select(f"id, {code_column}, city_id").execute()
         
         if response.data:
             for item in response.data:
                 if item.get(code_column):  # Only add if code exists
-                    neighborhood_ids[str(item[code_column])] = item["id"]
+                    # Create composite key: city_id|neighborhood_code
+                    composite_key = f"{item['city_id']}|{int(item[code_column])}"
+                    neighborhood_ids[composite_key] = item["id"]
                 
         info(f"Retrieved {len(neighborhood_ids)} neighborhood IDs from Supabase")
     except Exception as e:
@@ -175,6 +177,41 @@ def download_csv_from_url(url: str) -> pd.DataFrame:
         error(f"Failed to download CSV from {url}: {str(e)}")
         return pd.DataFrame()
 
+def diagnose_neighborhood_codes(supabase: Client) -> None:
+    """
+    Diagnostic function to check neighborhood codes in Supabase for Madrid
+    
+    Args:
+        supabase: Supabase client
+    """
+    info("Running neighborhood code diagnosis for Madrid...")
+    
+    try:
+        # Query all Madrid neighborhoods
+        response = supabase.table("neighbourhoods") \
+            .select("id, neighbourhood_code, city_id, name") \
+            .eq("city_id", CITY_ID) \
+            .execute()
+            
+        if not response.data:
+            error("No neighborhoods found for Madrid")
+            return
+            
+        # Sort by code for easier comparison
+        neighborhoods = sorted(response.data, key=lambda r: r['neighbourhood_code'])
+        
+        info(f"Found {len(neighborhoods)} neighborhoods in Supabase for Madrid")
+        info("First 5 neighborhoods:")
+        for n in neighborhoods[:5]:
+            info(f"Code: {n['neighbourhood_code']} -> ID: {n['id']} -> Name: {n['name']}")
+            
+        info("Last 5 neighborhoods:")
+        for n in neighborhoods[-5:]:
+            info(f"Code: {n['neighbourhood_code']} -> ID: {n['id']} -> Name: {n['name']}")
+            
+    except Exception as e:
+        error(f"Failed to run diagnosis: {str(e)}")
+
 def process_indicator_file(url: str, indicator_name: str, indicator_def_ids: Dict[str, int], neighborhood_ids: Dict[str, int]) -> List[Dict[str, Any]]:
     """
     Process a single indicator CSV file and return a list of indicator records
@@ -183,12 +220,14 @@ def process_indicator_file(url: str, indicator_name: str, indicator_def_ids: Dic
         url: URL of the CSV file
         indicator_name: Name of the indicator (used to map to indicator_def_id)
         indicator_def_ids: Dictionary mapping indicator names to their IDs
-        neighborhood_ids: Dictionary mapping neighborhood codes to their IDs
+        neighborhood_ids: Dictionary mapping composite keys (city_id|neighborhood_code) to their IDs
         
     Returns:
         List of indicator records
     """
     results = []
+    missing_geo_ids = 0
+    total_rows = 0
     
     try:
         # Download and read CSV file
@@ -222,8 +261,18 @@ def process_indicator_file(url: str, indicator_name: str, indicator_def_ids: Dic
             # Process each row for this period panel
             for _, row in panel_df.iterrows():
                 try:
-                    # Extract values using column indices
-                    neighborhood_code = str(row[MADRID_COLUMNS['neighborhood_code']])
+                    total_rows += 1
+                    
+                    # Extract and clean neighborhood code
+                    raw_code = str(row[MADRID_COLUMNS['neighborhood_code']]).strip()
+                    try:
+                        # Handle potential float values and convert to int
+                        neighborhood_code = str(int(float(raw_code)))
+                    except (ValueError, TypeError):
+                        warning(f"Invalid neighborhood code format: {raw_code}")
+                        missing_geo_ids += 1
+                        continue
+                        
                     value_str = str(row[MADRID_COLUMNS['value']]).strip()
                     
                     # Handle value conversion
@@ -237,13 +286,16 @@ def process_indicator_file(url: str, indicator_name: str, indicator_def_ids: Dic
                     
                     if not neighborhood_code or pd.isna(neighborhood_code):
                         warning(f"Missing neighborhood code in row")
+                        missing_geo_ids += 1
                         continue
                         
-                    # Get neighborhood ID by code
-                    geo_id = neighborhood_ids.get(neighborhood_code)
+                    # Get neighborhood ID using composite key
+                    composite_key = f"{CITY_ID}|{neighborhood_code}"
+                    geo_id = neighborhood_ids.get(composite_key)
                     
                     if not geo_id:
-                        warning(f"No neighborhood ID found for code: {neighborhood_code}")
+                        warning(f"No neighborhood ID found for composite key: {composite_key}")
+                        missing_geo_ids += 1
                         continue
                         
                     # Create indicator record using period_panel as the year
@@ -259,11 +311,17 @@ def process_indicator_file(url: str, indicator_name: str, indicator_def_ids: Dic
                     results.append(indicator)
                 except (IndexError, ValueError) as e:
                     warning(f"Error processing row: {str(e)}")
+                    missing_geo_ids += 1
                     continue
             
             # Log the number of records for this period panel
             records_count = len([r for r in results if r['year'] == int(period_panel) and r['indicator_def_id'] == indicator_def_id])
             info(f"Processed {records_count} records for {indicator_name} in period panel {period_panel}")
+            
+        # Log summary of missing geo_ids
+        if missing_geo_ids > 0:
+            warning(f"Total rows processed: {total_rows}")
+            warning(f"Rows with missing geo_ids: {missing_geo_ids} ({(missing_geo_ids/total_rows)*100:.1f}%)")
             
     except Exception as e:
         error(f"Error processing file {url}: {str(e)}")
@@ -285,6 +343,9 @@ def run(manifest_path: Path = MANIFEST_PATH, output_path: Path = DEFAULT_OUTPUT_
     if not supabase:
         error("Failed to initialize Supabase client. Exiting.")
         return
+    
+    # Run diagnosis first
+    diagnose_neighborhood_codes(supabase)
     
     # Get indicator definition IDs and neighborhood IDs
     indicator_def_ids = get_indicator_def_ids(supabase)

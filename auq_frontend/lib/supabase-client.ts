@@ -357,149 +357,37 @@ export async function getCityIndicators(cityId: number, level: string, year?: nu
     throw new Error("Supabase client not available or disabled")
   }
 
-  const geoLevelId = level === "district" ? 2 : level === "neighborhood" || level === "neighbourhood" ? 3 : null
+  const geoLevelId = level === "district" ? 2 : level === "neighborhood" || level === "neighbourhood" ? 3 : level === "city" ? 1 : null
 
   if (geoLevelId === null) {
     throw new Error(`Invalid geographical level: ${level}`)
   }
 
   return getCachedData(`indicators_${cityId}_${level}_${year || "latest"}`, async () => {
-    // If year is not specified, get the latest year
-    let latestYear = year
+    // Get indicators from the view for the specified level
+    const { data, error } = await supabase
+      .from("current_indicators_view")
+      .select("*")
+      .eq("city_id", cityId)
+      .eq("geo_level_id", geoLevelId)
 
-    if (!latestYear) {
-      const { data: yearData, error: yearError } = await supabase
-        .from("indicators")
-        .select("year")
-        .order("year", { ascending: false })
-        .limit(1)
-
-      if (yearError) {
-        throw new Error(`Error fetching latest year: ${yearError.message}`)
-      }
-
-      if (!yearData || yearData.length === 0) {
-        throw new Error("No indicator data found")
-      }
-
-      latestYear = yearData[0].year
+    if (error) {
+      throw new Error(`Error fetching indicators: ${error.message}`)
     }
 
-    let indicators: Indicator[]
-
-    if (geoLevelId === 3) {
-      // For neighborhoods, fetch directly
-      const { data, error } = await supabase
-        .from("indicators")
-        .select(`
-          id,
-          indicator_def_id,
-          geo_level_id,
-          geo_id,
-          year,
-          value
-        `)
-        .eq("geo_level_id", geoLevelId)
-        .eq("year", latestYear)
-        .order("indicator_def_id")
-
-      if (error) {
-        throw new Error(`Error fetching neighborhood indicators: ${error.message}`)
-      }
-
-      if (!data || data.length === 0) {
-        throw new Error(`No neighborhood indicators found for year ${latestYear}`)
-      }
-
-      // Filter to only include neighborhoods in the specified city
-      const neighborhoods = await getGeographicalUnits(cityId, "neighborhood")
-      const neighborhoodIds = neighborhoods.map((n) => n.geo_id)
-
-      indicators = data.filter((indicator) => neighborhoodIds.includes(indicator.geo_id))
-
-      if (indicators.length === 0) {
-        throw new Error(`No neighborhood indicators found for city ${cityId} in year ${latestYear}`)
-      }
-    } else {
-      // For districts, aggregate from neighborhoods
-      // First, get all districts in the city
-      const districts = await getGeographicalUnits(cityId, "district")
-
-      if (!districts || districts.length === 0) {
-        throw new Error(`No districts found for city ${cityId}`)
-      }
-
-      // For each district, get all its neighborhoods
-      const districtIndicators: Indicator[] = []
-
-      for (const district of districts) {
-        // Get neighborhoods for this district
-        const { data: neighborhoodData, error: neighborhoodError } = await supabase
-          .from("neighbourhoods")
-          .select("id")
-          .eq("district_id", district.geo_id)
-
-        if (neighborhoodError) {
-          throw new Error(`Error fetching neighborhoods for district ${district.geo_id}: ${neighborhoodError.message}`)
-        }
-
-        if (!neighborhoodData || neighborhoodData.length === 0) {
-          continue // Skip districts with no neighborhoods
-        }
-
-        const neighborhoodIds = neighborhoodData.map((n) => n.id)
-
-        // Get indicators for these neighborhoods
-        const { data: indicatorData, error: indicatorError } = await supabase
-          .from("indicators")
-          .select(`
-            indicator_def_id,
-            value
-          `)
-          .eq("geo_level_id", 3) // Neighborhood level
-          .eq("year", latestYear)
-          .in("geo_id", neighborhoodIds)
-
-        if (indicatorError) {
-          throw new Error(`Error fetching indicators for neighborhoods: ${indicatorError.message}`)
-        }
-
-        if (!indicatorData || indicatorData.length === 0) {
-          continue // Skip if no indicators found
-        }
-
-        // Group by indicator_def_id and calculate average
-        const indicatorMap = new Map<number, { sum: number; count: number }>()
-
-        indicatorData.forEach((indicator) => {
-          const current = indicatorMap.get(indicator.indicator_def_id) || { sum: 0, count: 0 }
-          indicatorMap.set(indicator.indicator_def_id, {
-            sum: current.sum + indicator.value,
-            count: current.count + 1,
-          })
-        })
-
-        // Create district indicators from aggregated values
-        indicatorMap.forEach((value, indicator_def_id) => {
-          districtIndicators.push({
-            id: 0, // Placeholder ID
-            indicator_def_id,
-            geo_level_id: 2, // District level
-            geo_id: district.geo_id,
-            year: latestYear,
-            value: value.sum / value.count, // Average value
-          })
-        })
-      }
-
-      if (districtIndicators.length === 0) {
-        throw new Error(`No district indicators could be calculated for city ${cityId} in year ${latestYear}`)
-      }
-
-      indicators = districtIndicators
+    if (!data || data.length === 0) {
+      throw new Error(`No indicators found for city ${cityId} at level ${level}`)
     }
 
-    return indicators
+    // Transform to Indicator type
+    return data.map(indicator => ({
+      id: 0, // Placeholder ID since we're using the view
+      indicator_def_id: indicator.indicator_def_id,
+      geo_level_id: indicator.geo_level_id,
+      geo_id: indicator.geo_id,
+      year: indicator.year,
+      value: indicator.value
+    }))
   })
 }
 
@@ -570,13 +458,13 @@ export async function getIndicatorValue(areaId: number, indicatorId: number, lev
 
   try {
     // Convert level to geo_level_id
-    const geoLevelId = level === "district" ? 2 : level === "neighborhood" || level === "neighbourhood" ? 3 : null
+    const geoLevelId = level === "district" ? 2 : level === "neighborhood" || level === "neighbourhood" ? 3 : level === "city" ? 1 : null
 
     if (geoLevelId === null) {
       throw new Error(`Invalid geographical level: ${level}`)
     }
 
-    // Get current indicator value from the view, ordered by year descending to get the latest
+    // Get indicator value from the view, using the appropriate geo_level_id
     const { data, error } = await supabase
       .from("current_indicators_view")
       .select("value, year")
@@ -585,7 +473,6 @@ export async function getIndicatorValue(areaId: number, indicatorId: number, lev
       .eq("geo_id", areaId)
       .order("year", { ascending: false })
       .limit(1)
-      .returns<{ value: number; year: number }[]>()
 
     if (error) {
       console.error(`Error fetching indicator value: ${error.message}`)
@@ -597,9 +484,12 @@ export async function getIndicatorValue(areaId: number, indicatorId: number, lev
       return null
     }
 
+    // Get the first (and should be only) result
+    const value = data[0].value
+
     // Cache the result
-    indicatorCache.set(cacheKey, { data: data[0].value, timestamp: now })
-    return data[0].value
+    indicatorCache.set(cacheKey, { data: value, timestamp: now })
+    return value
   } catch (error) {
     console.error(`Error getting indicator value: ${error}`)
     return null

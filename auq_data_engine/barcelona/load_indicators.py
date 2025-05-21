@@ -117,7 +117,7 @@ def get_neighborhood_ids(supabase: Client) -> Dict[str, int]:
         supabase: Supabase client
         
     Returns:
-        Dictionary mapping neighborhood codes to their IDs
+        Dictionary mapping composite keys (city_id|neighborhood_code) to their IDs
     """
     neighborhood_ids = {}
     
@@ -141,12 +141,14 @@ def get_neighborhood_ids(supabase: Client) -> Dict[str, int]:
         info(f"Using column '{code_column}' for neighborhood codes")
         
         # Query all neighborhoods
-        response = supabase.table("neighbourhoods").select(f"id, {code_column}").execute()
+        response = supabase.table("neighbourhoods").select(f"id, {code_column}, city_id").execute()
         
         if response.data:
             for item in response.data:
                 if item.get(code_column):  # Only add if code exists
-                    neighborhood_ids[str(item[code_column])] = item["id"]
+                    # Create composite key: city_id|neighborhood_code
+                    composite_key = f"{item['city_id']}|{int(item[code_column])}"
+                    neighborhood_ids[composite_key] = item["id"]
                 
         info(f"Retrieved {len(neighborhood_ids)} neighborhood IDs from Supabase")
     except Exception as e:
@@ -272,7 +274,7 @@ def process_indicator_file(url: str, year: int, indicator_name: str, indicator_d
         year: Year of the data
         indicator_name: Name of the indicator (used to map to indicator_def_id)
         indicator_def_ids: Dictionary mapping indicator names to their IDs
-        neighborhood_ids: Dictionary mapping neighborhood codes to their IDs
+        neighborhood_ids: Dictionary mapping composite keys (city_id|neighborhood_code) to their IDs
         
     Returns:
         List of indicator records
@@ -314,11 +316,12 @@ def process_indicator_file(url: str, year: int, indicator_name: str, indicator_d
                 warning(f"Missing neighborhood code in row: {row}")
                 continue
                 
-            # Get neighborhood ID by code
-            geo_id = neighborhood_ids.get(neighborhood_code)
+            # Get neighborhood ID using composite key
+            composite_key = f"{CITY_ID}|{int(neighborhood_code)}"
+            geo_id = neighborhood_ids.get(composite_key)
             
             if not geo_id:
-                warning(f"No neighborhood ID found for code: {neighborhood_code}")
+                warning(f"No neighborhood ID found for composite key: {composite_key}")
                 continue
                 
             # Create indicator record

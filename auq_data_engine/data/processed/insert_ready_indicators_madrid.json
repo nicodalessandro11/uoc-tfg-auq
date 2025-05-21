@@ -306,7 +306,7 @@
   {
     "indicator_def_id": 1,
     "geo_level_id": 3,
-    "geo_id": 72,
+    "geo_id": 112,
     "city_id": 2,
     "year": 2020,
     "value": 24455.0
@@ -314,7 +314,7 @@
   {
     "indicator_def_id": 1,
     "geo_level_id": 3,
-    "geo_id": 73,
+    "geo_id": 113,
     "city_id": 2,
     "year": 2020,
     "value": 24696.0
@@ -1354,7 +1354,7 @@
   {
     "indicator_def_id": 1,
     "geo_level_id": 3,
-    "geo_id": 72,
+    "geo_id": 112,
     "city_id": 2,
     "year": 2021,
     "value": 24377.0
@@ -1362,7 +1362,7 @@
   {
     "indicator_def_id": 1,
     "geo_level_id": 3,
-    "geo_id": 73,
+    "geo_id": 113,
     "city_id": 2,
     "year": 2021,
     "value": 24752.0
@@ -2402,7 +2402,7 @@
   {
     "indicator_def_id": 1,
     "geo_level_id": 3,
-    "geo_id": 72,
+    "geo_id": 112,
     "city_id": 2,
     "year": 2022,
     "value": 23972.0
@@ -2410,7 +2410,7 @@
   {
     "indicator_def_id": 1,
     "geo_level_id": 3,
-    "geo_id": 73,
+    "geo_id": 113,
     "city_id": 2,
     "year": 2022,
     "value": 24495.0
@@ -3450,7 +3450,7 @@
   {
     "indicator_def_id": 1,
     "geo_level_id": 3,
-    "geo_id": 72,
+    "geo_id": 112,
     "city_id": 2,
     "year": 2023,
     "value": 24190.0
@@ -3458,7 +3458,7 @@
   {
     "indicator_def_id": 1,
     "geo_level_id": 3,
-    "geo_id": 73,
+    "geo_id": 113,
     "city_id": 2,
     "year": 2023,
     "value": 24621.0
@@ -4498,7 +4498,7 @@
   {
     "indicator_def_id": 1,
     "geo_level_id": 3,
-    "geo_id": 72,
+    "geo_id": 112,
     "city_id": 2,
     "year": 2024,
     "value": 24931.0
@@ -4506,7 +4506,7 @@
   {
     "indicator_def_id": 1,
     "geo_level_id": 3,
-    "geo_id": 73,
+    "geo_id": 113,
     "city_id": 2,
     "year": 2024,
     "value": 25328.0
@@ -5546,7 +5546,7 @@
   {
     "indicator_def_id": 2,
     "geo_level_id": 3,
-    "geo_id": 72,
+    "geo_id": 112,
     "city_id": 2,
     "year": 2020,
     "value": 58.0
@@ -5554,7 +5554,7 @@
   {
     "indicator_def_id": 2,
     "geo_level_id": 3,
-    "geo_id": 73,
+    "geo_id": 113,
     "city_id": 2,
     "year": 2020,
     "value": 61.0
@@ -6594,7 +6594,7 @@
   {
     "indicator_def_id": 2,
     "geo_level_id": 3,
-    "geo_id": 72,
+    "geo_id": 112,
     "city_id": 2,
     "year": 2021,
     "value": 58.0
@@ -6602,7 +6602,7 @@
   {
     "indicator_def_id": 2,
     "geo_level_id": 3,
-    "geo_id": 73,
+    "geo_id": 113,
     "city_id": 2,
     "year": 2021,
     "value": 61.0
@@ -7642,7 +7642,7 @@
   {
     "indicator_def_id": 2,
     "geo_level_id": 3,
-    "geo_id": 72,
+    "geo_id": 112,
     "city_id": 2,
     "year": 2022,
     "value": 58.0
@@ -7650,7 +7650,7 @@
   {
     "indicator_def_id": 2,
     "geo_level_id": 3,
-    "geo_id": 73,
+    "geo_id": 113,
     "city_id": 2,
     "year": 2022,
     "value": 61.0
@@ -8690,7 +8690,7 @@
   {
     "indicator_def_id": 2,
     "geo_level_id": 3,
-    "geo_id": 72,
+    "geo_id": 112,
     "city_id": 2,
     "year": 2023,
     "value": 57.82
@@ -8698,7 +8698,7 @@
   {
     "indicator_def_id": 2,
     "geo_level_id": 3,
-    "geo_id": 73,
+    "geo_id": 113,
     "city_id": 2,
     "year": 2023,
     "value": 61.19
@@ -9738,7 +9738,7 @@
   {
     "indicator_def_id": 2,
     "geo_level_id": 3,
-    "geo_id": 72,
+    "geo_id": 112,
     "city_id": 2,
     "year": 2024,
     "value": 57.82
@@ -9746,7 +9746,7 @@
   {
     "indicator_def_id": 2,
     "geo_level_id": 3,
-    "geo_id": 73,
+    "geo_id": 113,
     "city_id": 2,
     "year": 2024,
     "value": 61.19

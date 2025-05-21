@@ -1,5 +1,17 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-21 | Enhanced data loading and upload functionality
+
+- Modified the load_indicators.py scripts for both Barcelona and Madrid in the auq_data_engine directory to improve data loading efficiency
+- Updated the insert_ready_indicators_bcn.json and insert_ready_indicators_madrid.json files in the auq_data_engine/data/processed directory to align with the new data loading approach
+- Renamed the data.ipynb file to manual-testing.ipynb in the auq_data_engine/data/processed directory for clearer file purpose
+- Adjusted the upload_to_supabase.py script in the auq_data_engine/upload directory to ensure seamless data upload to the database
+- Added a new migration file (011_replace_current_indicators_view.sql) in the auq_database/migrations directory to replace the current indicators view
+- Updated the schema.sql files in both the auq_database and auq_frontend/supabase directories to reflect the latest database structure
+- Tweaked the supabase-client.ts file in the auq_frontend/lib directory for better database interaction
+
+This commit enhances the overall data loading and upload process, ensuring more efficient data handling and a smoother user experience.
+
 ## 📦 Feature | 2025-05-21 | Major update on data engine, database, and frontend components
 
 - Updated various files in auq_data_engine, auq_database, and auq_frontend directories, reflecting changes in data processing, database schema, and frontend components
