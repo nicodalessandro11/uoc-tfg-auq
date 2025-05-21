@@ -41,6 +41,9 @@ DEFAULT_OUTPUT_PATH = BASE_DIR / "data/processed" / OUTPUT_FILENAME
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 
+# Constants
+CITY_ID = 1  # Barcelona city ID
+
 # Indicator mapping from files to database names
 INDICATOR_MAPPING = {
     "average_gross_taxable_income": "Average gross taxable income per person",
@@ -323,6 +326,7 @@ def process_indicator_file(url: str, year: int, indicator_name: str, indicator_d
                 "indicator_def_id": indicator_def_id,
                 "geo_level_id": 3,  # Always 3 for neighborhood
                 "geo_id": geo_id,
+                "city_id": CITY_ID,
                 "year": year,
                 "value": float(row.get('Valor', 0))
             }

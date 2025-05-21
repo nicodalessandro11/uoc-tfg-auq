@@ -177,19 +177,9 @@ export async function getIndicatorDefinitions(): Promise<IndicatorDefinition[]> 
 export async function getCityPointFeatures(cityId: number): Promise<PointFeature[]> {
   return getCachedData(`point_features_${cityId}`, async () => {
     if (USE_SUPABASE) {
-      try {
-        return await getSupabaseCityPointFeatures(cityId)
-      } catch (error) {
-        console.warn(`Error fetching point features from Supabase for city ${cityId}:`, error)
-        return [] // Return empty array instead of propagating the error
-      }
+      return await getSupabaseCityPointFeatures(cityId)
     } else {
-      try {
-        return await fetchAPI(`/api/cities/${cityId}/point-features`)
-      } catch (error) {
-        console.warn(`Error fetching point features from API for city ${cityId}:`, error)
-        return [] // Return empty array instead of propagating the error
-      }
+      return await fetchAPI(`/api/cities/${cityId}/point-features`)
     }
   })
 }

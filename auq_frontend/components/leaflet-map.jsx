@@ -49,34 +49,6 @@ export default function LeafletMap({
     return colors[index % colors.length]
   }
 
-  // Add this helper function after the getColorFromPalette function
-  const bringMarkersToFront = () => {
-    const markersLayer = markersLayerRef.current
-    if (!markersLayer || !markersLayer.getLayers || !mapInstanceRef.current || !mapInstanceRef.current.getZoom) {
-      console.log("No se pueden traer los marcadores al frente: mapa o capa no inicializados")
-      return
-    }
-
-    try {
-      // For LayerGroups, we need to bring each individual marker to front
-      const layers = markersLayer.getLayers()
-      layers.forEach((layer) => {
-        if (layer.bringToFront) {
-          layer.bringToFront()
-        }
-      })
-
-      // Also bring the entire markers layer to front
-      if (markersLayer.bringToFront) {
-        markersLayer.bringToFront()
-      }
-
-      console.log("Markers brought to front")
-    } catch (error) {
-      console.warn("Error bringing markers to front:", error)
-    }
-  }
-
   // Initialize the map
   useEffect(() => {
     // Add Leaflet CSS
@@ -107,11 +79,6 @@ export default function LeafletMap({
         center: [40, -4], // Initial view of Spain
         zoom: 5,
         zoomControl: false,
-      })
-
-      // Add event to keep markers on top after zoom/pan
-      map.on("zoomend moveend", () => {
-        bringMarkersToFront()
       })
 
       // Get the initial map type configuration
@@ -299,12 +266,7 @@ export default function LeafletMap({
     if (!L) return
 
     // Check if we have valid GeoJSON data
-    if (
-      !currentGeoJSON ||
-      !currentGeoJSON.features ||
-      !Array.isArray(currentGeoJSON.features) ||
-      currentGeoJSON.features.length === 0
-    ) {
+    if (!currentGeoJSON || !currentGeoJSON.features || currentGeoJSON.features.length === 0) {
       console.log("No valid GeoJSON data to render")
       return
     }
@@ -344,19 +306,7 @@ export default function LeafletMap({
     try {
       // Validate GeoJSON data before rendering
       const validFeatures = currentGeoJSON.features.filter((feature) => {
-        // First check if feature exists
-        if (!feature) {
-          console.warn("Feature is undefined or null")
-          return false
-        }
-
-        // Check if feature has valid properties
-        if (!feature.properties) {
-          console.warn("Feature missing properties:", feature)
-          return false
-        }
-
-        // Check if feature has valid geometry or coordinates
+        // Check if feature has valid geometry
         if (!feature.geometry || !feature.geometry.coordinates) {
           console.warn("Feature missing geometry or coordinates:", feature)
           return false
@@ -411,25 +361,10 @@ export default function LeafletMap({
       const geoJson = L.geoJSON(validGeoJSON, {
         style: getAreaStyle,
         onEachFeature: (feature, layer) => {
-          if (!feature || !feature.properties) {
-            console.warn("Invalid feature or missing properties:", feature)
-            return
-          }
-
           layer.on({
             click: (e) => {
-              // Stop propagation to prevent the map click handler from firing
-              L.DomEvent.stopPropagation(e)
-
               const areaId = feature.properties.id
               const areaName = feature.properties.name
-
-              if (areaId === undefined || areaName === undefined) {
-                console.warn("Feature missing required properties:", feature.properties)
-                return
-              }
-
-              // Create area object with all necessary properties
               const area = {
                 id: areaId,
                 name: areaName,
@@ -442,48 +377,11 @@ export default function LeafletMap({
                   districtId: feature.properties.district_id || feature.properties.districtId || 0,
                 }),
               }
-
-              console.log("Area selected:", area)
               setSelectedAreaState(area)
               setSelectedArea(area)
-
-              // Update the style of the clicked feature
-              const layers = geoJsonLayer._layers
-              Object.values(layers).forEach((l) => {
-                if (l && l.setStyle) {
-                  if (l === layer) {
-                    l.setStyle({
-                      fillColor: "#3b82f6",
-                      weight: 2,
-                      opacity: 1,
-                      color: "#1d4ed8",
-                      fillOpacity: 0.7,
-                    })
-                  } else {
-                    const idx = l.feature?.properties?.index || 0
-                    const total = currentGeoJSON?.features ? currentGeoJSON.features.length : 0
-                    l.setStyle({
-                      fillColor: getColorFromPalette(idx, total),
-                      weight: 1,
-                      opacity: 1,
-                      color: "#60a5fa",
-                      fillOpacity: 0.6,
-                    })
-                  }
-                }
-              })
-
-              // Use setTimeout to ensure markers are brought to front after the area selection is complete
-              setTimeout(() => {
-                bringMarkersToFront()
-              }, 50)
             },
           })
-
-          // Only bind tooltip if name exists
-          if (feature.properties.name) {
-            layer.bindTooltip(feature.properties.name)
-          }
+          layer.bindTooltip(feature.properties.name)
         },
       })
 
@@ -491,67 +389,21 @@ export default function LeafletMap({
       if (geoJson) {
         geoJson.addTo(geoJsonLayer)
 
-        // Add click handler on map background to deselect area
-        map.on("click", (e) => {
-          // Check if geoJsonLayer exists and has _layers
-          if (!geoJsonLayer || !geoJsonLayer._layers) {
-            return
-          }
-
-          // Check if the click was directly on the map (not on a feature)
-          const clickedOnFeature = Object.values(geoJsonLayer._layers).some((layer) => {
-            if (layer && layer.contains && layer.contains(e.latlng)) {
-              return true
-            }
-            return false
-          })
-
-          // If clicked outside any feature, deselect the area
-          if (!clickedOnFeature) {
-            setSelectedAreaState(null)
-            setSelectedArea(null)
-
-            // Redraw all features with non-selected style
-            Object.values(geoJsonLayer._layers).forEach((layer) => {
-              if (layer && layer.setStyle && layer.feature) {
-                layer.setStyle({
-                  fillColor: getColorFromPalette(
-                    layer.feature.properties?.index || 0,
-                    currentGeoJSON?.features ? currentGeoJSON.features.length : 0,
-                  ),
-                  weight: 1,
-                  opacity: 1,
-                  color: "#60a5fa",
-                  fillOpacity: 0.6,
-                })
-              }
-            })
-
-            // Ensure markers stay on top
-            bringMarkersToFront()
-          }
-        })
+        // We don't need to fit bounds every time GeoJSON changes
+        // The map view is already set when the city changes
+        // This prevents unnecessary errors and map jumps
       }
     } catch (geoJsonError) {
       console.error("Error rendering GeoJSON:", geoJsonError)
       setDefaultCityView(map, selectedCity)
     }
-
-    // At the end of the effect, add:
-    // Ensure markers stay on top after GeoJSON is updated
-    setTimeout(() => {
-      bringMarkersToFront()
-    }, 300)
   }, [currentGeoJSON, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady])
 
   // Update markers when point features change
   useEffect(() => {
     const map = mapInstanceRef.current
     const markersLayer = markersLayerRef.current
-    if (!map || !markersLayer || !isMapReady || !map.getZoom) {
-      console.log("Mapa no inicializado completamente, posponiendo la adición de marcadores")
-      return
-    }
+    if (!map || !markersLayer || !isMapReady) return
 
     // Clear previous markers
     try {
@@ -573,76 +425,103 @@ export default function LeafletMap({
 
     console.log(`Rendering ${pointFeatures.length} markers for ${selectedCity?.name}`)
 
-    // Define marker colors based on feature type - MODERN, VIBRANT, WELL-DIFFERENTIATED
-    const markerColors = {
-      library: "#3b82f6", // Blue (vibrant)
-      cultural_center: "#ef4444", // Red (vibrant)
-      auditorium: "#f97316", // Orange
-      heritage_space: "#10b981", // Emerald
-      creation_factory: "#8b5cf6", // Purple
-      museum: "#ec4899", // Pink
-      cinema: "#6366f1", // Indigo
-      exhibition_center: "#14b8a6", // Teal
-      archive: "#f59e0b", // Amber
-      live_music_venue: "#e11d48", // Rose
-      performing_arts_venue: "#06b6d4", // Cyan
-      municipal_market: "#84cc16", // Lime
-      park_and_garden: "#22c55e", // Green
-      educational_center: "#eab308", // Yellow
-
-      // Plural aliases
-      libraries: "#3b82f6",
-      cultural_centers: "#ef4444",
-      auditoriums: "#f97316",
-      heritage_spaces: "#10b981",
-      creation_factories: "#8b5cf6",
-      museums: "#ec4899",
-      cinemas: "#6366f1",
-      exhibition_centers: "#14b8a6",
-      archives: "#f59e0b",
-      live_music_venues: "#e11d48",
-      performing_arts_venues: "#06b6d4",
-      municipal_markets: "#84cc16",
-      parks_and_gardens: "#22c55e",
-      educational_centers: "#eab308",
-
-      default: "#9ca3af", // Neutral Gray
+    // Special logging for Madrid
+    if (selectedCity?.id === 2) {
+      console.group("🗺️ Madrid Markers Creation")
+      console.log(`Attempting to render ${pointFeatures.length} Madrid markers`)
+      console.table(
+        pointFeatures.map((f) => ({
+          name: f.name,
+          lat: f.latitude,
+          lng: f.longitude,
+          type: f.featureType || f.feature_definition_id,
+        })),
+      )
+      console.groupEnd()
     }
 
-    // Add numeric IDs to the color map
-    Object.entries(featureTypeMap).forEach(([id, type]) => {
-      markerColors[id] = markerColors[type] || markerColors.default
+    // Create icon - Fix for marker icon issue
+    const defaultIcon = L.icon({
+      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
     })
 
-    // Debug log all marker colors
-    console.log("Marker colors mapping:", markerColors)
+    // Custom tooltip class for modern styling
+    L.Tooltip.prototype.options.className = "modern-tooltip"
+
+    // Add custom tooltip styles to the document
+    if (!document.getElementById("modern-tooltip-styles")) {
+      const styleElement = document.createElement("style")
+      styleElement.id = "modern-tooltip-styles"
+      styleElement.textContent = `
+        .modern-tooltip {
+          background-color: rgba(255, 255, 255, 0.95);
+          border: none;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          padding: 12px;
+          font-family: var(--font-manrope), sans-serif;
+          max-width: 300px;
+          backdrop-filter: blur(4px);
+        }
+        .modern-tooltip .leaflet-tooltip-content {
+          padding: 0;
+        }
+        .modern-tooltip-title {
+          font-weight: 600;
+          font-size: 16px;
+          color: hsl(var(--foreground));
+          margin-bottom: 8px;
+          border-bottom: 1px solid hsl(var(--border));
+          padding-bottom: 6px;
+        }
+        .modern-tooltip-type {
+          font-size: 14px;
+          color: hsl(var(--primary));
+          margin-bottom: 8px;
+          font-weight: 500;
+        }
+        .modern-tooltip-info {
+          font-size: 13px;
+          color: hsl(var(--muted-foreground));
+          margin-bottom: 4px;
+          display: flex;
+        }
+        .modern-tooltip-label {
+          font-weight: 500;
+          margin-right: 4px;
+        }
+        .modern-tooltip-value {
+          flex: 1;
+        }
+        .leaflet-tooltip-pane {
+          z-index: 1000;
+        }
+        .leaflet-tooltip.modern-tooltip::before {
+          border-right-color: rgba(255, 255, 255, 0.95);
+        }
+        .leaflet-tooltip-left.modern-tooltip::before {
+          border-left-color: rgba(255, 255, 255, 0.95);
+        }
+      `
+      document.head.appendChild(styleElement)
+    }
 
     // Add markers
     let markersAdded = 0
-    const madridMarkersAdded = 0
+    let madridMarkersAdded = 0
     const newRenderedMarkers = {}
 
     pointFeatures.forEach((feature) => {
       if (feature.latitude && feature.longitude) {
         try {
-          // Validación más estricta de coordenadas
+          // Validate coordinates
           const lat = Number.parseFloat(feature.latitude)
           const lng = Number.parseFloat(feature.longitude)
-
-          // Verificar que las coordenadas son números válidos y están dentro de rangos razonables
-          if (
-            isNaN(lat) ||
-            isNaN(lng) ||
-            !isFinite(lat) ||
-            !isFinite(lng) ||
-            lat < -90 ||
-            lat > 90 ||
-            lng < -180 ||
-            lng > 180
-          ) {
-            console.warn(`Coordenadas inválidas para el punto ${feature.name}: [${lat}, ${lng}]`)
-            return // Saltar este punto
-          }
 
           // Special logging for Madrid features
           const isMadridFeature = selectedCity?.id === 2
@@ -656,119 +535,55 @@ export default function LeafletMap({
             return
           }
 
-          // Determine the feature type with detailed logging
-          let featureType = null
-
-          // Try to get feature type from the featureType property
-          if (feature.featureType) {
-            featureType = feature.featureType
-            console.log(`Feature ${feature.name} has explicit featureType: ${featureType}`)
-          }
-          // Try to get feature type from feature_definition_id
-          else if (feature.feature_definition_id) {
-            const id = feature.feature_definition_id.toString()
-            featureType = featureTypeMap[id] || id
-            console.log(`Feature ${feature.name} has feature_definition_id: ${id}, mapped to: ${featureType}`)
-          }
-          // Default to "default" if no type found
-          else {
-            featureType = "default"
-            console.log(`Feature ${feature.name} has no type information, using default`)
-          }
-
-          // Get color for this feature type with logging
-          // First try the exact feature type, then try singular/plural variants
-          let markerColor = markerColors[featureType]
-
-          // If no color found, try removing trailing 's' if it exists (singular form)
-          if (!markerColor && featureType.endsWith("s")) {
-            const singularType = featureType.slice(0, -1)
-            markerColor = markerColors[singularType]
-            console.log(`Trying singular form: ${singularType}, color: ${markerColor || "not found"}`)
-          }
-
-          // If still no color, try adding 's' (plural form)
-          if (!markerColor && !featureType.endsWith("s")) {
-            const pluralType = featureType + "s"
-            markerColor = markerColors[pluralType]
-            console.log(`Trying plural form: ${pluralType}, color: ${markerColor || "not found"}`)
-          }
-
-          // Fall back to default if still no color
-          if (!markerColor) {
-            markerColor = markerColors.default
-          }
-
-          console.log(`Feature ${feature.name} (type: ${featureType}) gets color: ${markerColor}`)
-
           // Format feature type for display
-          const featureTypeName = (featureType || "Point of Interest")
+          const featureTypeName = (feature.featureType || "Point of Interest")
             .replace(/_/g, " ")
             .split(" ")
             .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ")
 
-          // Create modern tooltip content with proper text wrapping
+          // Create modern tooltip content
           const tooltipContent = `
-  <div style="width: 200px; white-space: normal; word-wrap: break-word;">
-    <div style="font-weight: 600; font-size: 16px; margin-bottom: 8px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px;">${feature.name}</div>
-    <div style="font-size: 14px; color: #3b82f6; margin-bottom: 8px; font-weight: 500;">${featureTypeName}</div>
-    ${Object.entries(feature.properties || {})
-              .map(
-                ([key, value]) => `
-        <div style="font-size: 13px; color: #6b7280; margin-bottom: 4px; display: flex; flex-wrap: wrap;">
-          <span style="font-weight: 500; margin-right: 4px;">${key.replace(/_/g, " ").charAt(0).toUpperCase() + key.replace(/_/g, " ").slice(1)}:</span>
-          <span style="word-break: break-all;">${value}</span>
-        </div>
-      `,
-              )
-              .join("")}
-  </div>
-`
+            <div>
+              <div class="modern-tooltip-title">${feature.name}</div>
+              <div class="modern-tooltip-type">${featureTypeName}</div>
+              ${Object.entries(feature.properties || {})
+                .map(
+                  ([key, value]) => `
+                  <div class="modern-tooltip-info">
+                    <span class="modern-tooltip-label">${key.replace(/_/g, " ").charAt(0).toUpperCase() + key.replace(/_/g, " ").slice(1)}:</span>
+                    <span class="modern-tooltip-value">${value}</span>
+                  </div>
+                `,
+                )
+                .join("")}
+            </div>
+          `
 
-          // Crear el marcador con un try/catch adicional
-          let marker = null
-          try {
-            marker = L.circleMarker([lat, lng], {
-              radius: 8,
-              fillColor: markerColor,
-              color: "#ffffff",
-              weight: 2,
-              opacity: 1,
-              fillOpacity: 1,
-            })
-          } catch (markerError) {
-            console.error(`Error al crear el marcador para ${feature.name}:`, markerError)
-            return // Saltar este punto si hay error al crear el marcador
-          }
+          // Create marker with tooltip
+          const marker = L.marker([lat, lng], { icon: defaultIcon }).bindTooltip(tooltipContent, {
+            direction: "top",
+            offset: [0, -20],
+            opacity: 1,
+            permanent: false,
+            interactive: true,
+            className: "modern-tooltip",
+          })
 
-          // Añadir tooltip solo si el marcador se creó correctamente
+          // Only add to layer if it was created successfully
           if (marker) {
-            try {
-              marker.bindTooltip(tooltipContent, {
-                direction: "top",
-                offset: [0, -8],
-                opacity: 1,
-                permanent: false,
-                interactive: true,
-                className: "modern-tooltip",
-              })
-            } catch (tooltipError) {
-              console.warn(`Error al añadir tooltip para ${feature.name}:`, tooltipError)
-              // Continuar incluso si el tooltip falla
-            }
+            marker.addTo(markersLayer)
+            markersAdded++
 
-            // Solo añadir al mapa si todo lo anterior fue exitoso
-            try {
-              marker.addTo(markersLayer)
-              markersAdded++
-              newRenderedMarkers[feature.id] = true
-            } catch (addError) {
-              console.error(`Error al añadir marcador al mapa para ${feature.name}:`, addError)
+            // Track rendered markers by ID
+            newRenderedMarkers[feature.id] = true
+
+            if (isMadridFeature) {
+              madridMarkersAdded++
             }
           }
         } catch (error) {
-          console.error(`Error general al procesar el punto ${feature.name}:`, error)
+          console.error(`Error adding marker for ${feature.name}:`, error)
         }
       } else {
         console.warn(`Missing coordinates for feature: ${feature.name}`)
@@ -778,81 +593,41 @@ export default function LeafletMap({
     // Update rendered markers state
     setRenderedMarkers(newRenderedMarkers)
 
-    // Custom tooltip class for modern styling
-    if (!document.getElementById("modern-tooltip-styles")) {
-      const styleElement = document.createElement("style")
-      styleElement.id = "modern-tooltip-styles"
-      styleElement.textContent = `
-  .leaflet-tooltip {
-    white-space: normal !important;
-    width: auto !important;
-    min-width: 200px !important;
-    max-width: 300px !important;
-  }
-  .modern-tooltip {
-    background-color: rgba(255, 255, 255, 0.95) !important;
-    border: none !important;
-    border-radius: 8px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-    padding: 12px !important;
-    font-family: var(--font-manrope), sans-serif !important;
-    display: block !important;
-    white-space: normal !important;
-  }
-  .leaflet-tooltip-top:before, 
-  .leaflet-tooltip-bottom:before, 
-  .leaflet-tooltip-left:before, 
-  .leaflet-tooltip-right:before {
-    border: none !important;
-  }
-`
-      document.head.appendChild(styleElement)
-    }
+    // Add a summary log specifically for Madrid
+    if (selectedCity?.id === 2) {
+      console.log(`Madrid summary: Added ${madridMarkersAdded} out of ${pointFeatures.length} markers`)
 
-    // Always ensure markers are on top
-    if (markersLayer && geoJsonLayerRef.current) {
-      bringMarkersToFront()
-    }
+      // Force the markers layer to be visible and on top
+      if (markersLayer && markersLayer.getLayers) {
+        // For LayerGroups, we need to bring each individual marker to front
+        const layers = markersLayer.getLayers()
+        layers.forEach((layer) => {
+          if (layer.bringToFront) {
+            layer.bringToFront()
+          }
+        })
 
-    // Force the markers layer to be visible and on top
-    if (markersLayer && markersLayer.getLayers) {
-      bringMarkersToFront()
-
-      // Also ensure the markers layer is the last one added to the map
-      if (map && markersLayer._map) {
-        try {
-          // Remove and re-add to ensure it's on top
-          markersLayer.remove()
-          markersLayer.addTo(map)
-          bringMarkersToFront()
-        } catch (e) {
-          console.warn("Error re-adding markers layer:", e)
+        // Also ensure the markers layer is the last one added to the map
+        if (map && markersLayer._map) {
+          try {
+            // Remove and re-add to ensure it's on top
+            markersLayer.remove()
+            markersLayer.addTo(map)
+          } catch (e) {
+            console.warn("Error re-adding markers layer:", e)
+          }
         }
+      }
+
+      // Check if markers were added but not visible
+      if (madridMarkersAdded > 0) {
+        console.log("Madrid markers were added. If they're not visible, check:")
+        console.log("1. Is the map centered on Madrid? Current center:", map.getCenter())
+        console.log("2. Is the markers layer visible?", markersLayer._map ? "Yes" : "No")
+        console.log("3. Current zoom level:", map.getZoom())
       }
     }
   }, [pointFeatures, isMapReady, selectedCity])
-
-  // Add this new effect to ensure markers stay on top whenever selectedAreaState changes
-  useEffect(() => {
-    // When selected area changes, ensure markers stay on top
-    if (isMapReady && markersLayerRef.current) {
-      // Use setTimeout to ensure this runs after the area selection styling is complete
-      setTimeout(() => {
-        bringMarkersToFront()
-      }, 100)
-    }
-  }, [selectedAreaState, isMapReady])
-
-  // Add an effect to ensure markers stay on top when granularity changes
-  useEffect(() => {
-    // When granularity changes, ensure markers stay on top
-    if (isMapReady && markersLayerRef.current) {
-      // Use setTimeout to ensure this runs after the GeoJSON layer is updated
-      setTimeout(() => {
-        bringMarkersToFront()
-      }, 300)
-    }
-  }, [selectedGranularity, isMapReady])
 
   return <div ref={mapRef} className="h-full w-full" />
 }

@@ -50,48 +50,6 @@ const reverseFeatureTypeMap = Object.entries(featureTypeMap).reduce(
   {} as Record<string, string>,
 )
 
-// Define marker colors based on feature type - MODERN, VIBRANT, WELL-DIFFERENTIATED
-const markerColors = {
-  library: "#3b82f6",             // Blue (vibrant)
-  cultural_center: "#ef4444",     // Red (vibrant)
-  auditorium: "#f97316",          // Orange
-  heritage_space: "#10b981",      // Emerald
-  creation_factory: "#8b5cf6",    // Purple
-  museum: "#ec4899",              // Pink
-  cinema: "#6366f1",              // Indigo
-  exhibition_center: "#14b8a6",   // Teal
-  archive: "#f59e0b",             // Amber
-  live_music_venue: "#e11d48",    // Rose
-  performing_arts_venue: "#06b6d4", // Cyan
-  municipal_market: "#84cc16",    // Lime
-  park_garden: "#22c55e",         // Green
-  educational_center: "#eab308",  // Yellow
-
-  // Plural aliases
-  libraries: "#3b82f6",
-  cultural_centers: "#ef4444",
-  auditoriums: "#f97316",
-  heritage_spaces: "#10b981",
-  creation_factories: "#8b5cf6",
-  museums: "#ec4899",
-  cinemas: "#6366f1",
-  exhibition_centers: "#14b8a6",
-  archives: "#f59e0b",
-  live_music_venues: "#e11d48",
-  performing_arts_venues: "#06b6d4",
-  municipal_markets: "#84cc16",
-  park_gardens: "#22c55e",
-  educational_centers: "#eab308",
-
-  default: "#9ca3af", // Neutral Gray
-}
-
-
-// Add numeric IDs to the color map
-Object.entries(featureTypeMap).forEach(([id, type]) => {
-  markerColors[id] = markerColors[type] || markerColors.default
-})
-
 type PointFeaturesToggleProps = {
   onToggle: (types: Record<string, boolean>) => void
 }
@@ -159,104 +117,65 @@ export function PointFeaturesToggle({ onToggle }: PointFeaturesToggleProps) {
     // No need for triggerRefresh here - removed the setTimeout call
   }
 
-  // Map feature IDs to icons with matching colors
-  const featureIcons = {}
-
-  // Helper function to get the color for a feature type
-  const getFeatureColor = (type) => {
-    return markerColors[type] || markerColors.default
+  // Map feature IDs to icons
+  const featureIcons = {
+    "1": <Book className={`h-4 w-4 ${localVisibleTypes["1"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "2": <Building className={`h-4 w-4 ${localVisibleTypes["2"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "3": <Music className={`h-4 w-4 ${localVisibleTypes["3"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "4": <Landmark className={`h-4 w-4 ${localVisibleTypes["4"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "5": <Factory className={`h-4 w-4 ${localVisibleTypes["5"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "6": <Museum className={`h-4 w-4 ${localVisibleTypes["6"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "7": <Film className={`h-4 w-4 ${localVisibleTypes["7"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "8": <ImageIcon className={`h-4 w-4 ${localVisibleTypes["8"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "9": <Archive className={`h-4 w-4 ${localVisibleTypes["9"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "10": <Mic className={`h-4 w-4 ${localVisibleTypes["10"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "11": <Theater className={`h-4 w-4 ${localVisibleTypes["11"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "12": <ShoppingBag className={`h-4 w-4 ${localVisibleTypes["12"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "13": <Tree className={`h-4 w-4 ${localVisibleTypes["13"] ? "text-primary" : "text-muted-foreground"}`} />,
+    "14": <School className={`h-4 w-4 ${localVisibleTypes["14"] ? "text-primary" : "text-muted-foreground"}`} />,
+    library: <Book className={`h-4 w-4 ${localVisibleTypes.library ? "text-primary" : "text-muted-foreground"}`} />,
+    cultural_center: (
+      <Building className={`h-4 w-4 ${localVisibleTypes.cultural_center ? "text-primary" : "text-muted-foreground"}`} />
+    ),
+    auditorium: (
+      <Music className={`h-4 w-4 ${localVisibleTypes.auditorium ? "text-primary" : "text-muted-foreground"}`} />
+    ),
+    heritage_space: (
+      <Landmark className={`h-4 w-4 ${localVisibleTypes.heritage_space ? "text-primary" : "text-muted-foreground"}`} />
+    ),
+    creation_factory: (
+      <Factory className={`h-4 w-4 ${localVisibleTypes.creation_factory ? "text-primary" : "text-muted-foreground"}`} />
+    ),
+    museum: <Museum className={`h-4 w-4 ${localVisibleTypes.museum ? "text-primary" : "text-muted-foreground"}`} />,
+    cinema: <Film className={`h-4 w-4 ${localVisibleTypes.cinema ? "text-primary" : "text-muted-foreground"}`} />,
+    exhibition_center: (
+      <ImageIcon
+        className={`h-4 w-4 ${localVisibleTypes.exhibition_center ? "text-primary" : "text-muted-foreground"}`}
+      />
+    ),
+    archive: <Archive className={`h-4 w-4 ${localVisibleTypes.archive ? "text-primary" : "text-muted-foreground"}`} />,
+    live_music_venue: (
+      <Mic className={`h-4 w-4 ${localVisibleTypes.live_music_venue ? "text-primary" : "text-muted-foreground"}`} />
+    ),
+    performing_arts_venue: (
+      <Theater
+        className={`h-4 w-4 ${localVisibleTypes.performing_arts_venue ? "text-primary" : "text-muted-foreground"}`}
+      />
+    ),
+    municipal_market: (
+      <ShoppingBag
+        className={`h-4 w-4 ${localVisibleTypes.municipal_market ? "text-primary" : "text-muted-foreground"}`}
+      />
+    ),
+    park_garden: (
+      <Tree className={`h-4 w-4 ${localVisibleTypes.park_garden ? "text-primary" : "text-muted-foreground"}`} />
+    ),
+    educational_center: (
+      <School
+        className={`h-4 w-4 ${localVisibleTypes.educational_center ? "text-primary" : "text-muted-foreground"}`}
+      />
+    ),
   }
-
-  // Generate icons for all feature types
-  Object.entries(featureTypeMap).forEach(([id, type]) => {
-    const color = getFeatureColor(id)
-
-    // Numeric ID icons
-    featureIcons[id] = (
-      <div
-        className={`h-4 w-4 ${localVisibleTypes[id] ? "" : "opacity-50"}`}
-        style={{ color: localVisibleTypes[id] ? color : "var(--muted-foreground)" }}
-      >
-        {(() => {
-          switch (type) {
-            case "library":
-              return <Book className="h-4 w-4" />
-            case "cultural_center":
-              return <Building className="h-4 w-4" />
-            case "auditorium":
-              return <Music className="h-4 w-4" />
-            case "heritage_space":
-              return <Landmark className="h-4 w-4" />
-            case "creation_factory":
-              return <Factory className="h-4 w-4" />
-            case "museum":
-              return <Museum className="h-4 w-4" />
-            case "cinema":
-              return <Film className="h-4 w-4" />
-            case "exhibition_center":
-              return <ImageIcon className="h-4 w-4" />
-            case "archive":
-              return <Archive className="h-4 w-4" />
-            case "live_music_venue":
-              return <Mic className="h-4 w-4" />
-            case "performing_arts_venue":
-              return <Theater className="h-4 w-4" />
-            case "municipal_market":
-              return <ShoppingBag className="h-4 w-4" />
-            case "park_garden":
-              return <Tree className="h-4 w-4" />
-            case "educational_center":
-              return <School className="h-4 w-4" />
-            default:
-              return <Landmark className="h-4 w-4" />
-          }
-        })()}
-      </div>
-    )
-
-    // String type icons
-    featureIcons[type] = (
-      <div
-        className={`h-4 w-4 ${localVisibleTypes[type] ? "" : "opacity-50"}`}
-        style={{ color: localVisibleTypes[type] ? color : "var(--muted-foreground)" }}
-      >
-        {(() => {
-          switch (type) {
-            case "library":
-              return <Book className="h-4 w-4" />
-            case "cultural_center":
-              return <Building className="h-4 w-4" />
-            case "auditorium":
-              return <Music className="h-4 w-4" />
-            case "heritage_space":
-              return <Landmark className="h-4 w-4" />
-            case "creation_factory":
-              return <Factory className="h-4 w-4" />
-            case "museum":
-              return <Museum className="h-4 w-4" />
-            case "cinema":
-              return <Film className="h-4 w-4" />
-            case "exhibition_center":
-              return <ImageIcon className="h-4 w-4" />
-            case "archive":
-              return <Archive className="h-4 w-4" />
-            case "live_music_venue":
-              return <Mic className="h-4 w-4" />
-            case "performing_arts_venue":
-              return <Theater className="h-4 w-4" />
-            case "municipal_market":
-              return <ShoppingBag className="h-4 w-4" />
-            case "park_garden":
-              return <Tree className="h-4 w-4" />
-            case "educational_center":
-              return <School className="h-4 w-4" />
-            default:
-              return <Landmark className="h-4 w-4" />
-          }
-        })()}
-      </div>
-    )
-  })
 
   // Get feature name from ID
   const getFeatureName = (id: string) => {
@@ -287,8 +206,6 @@ export function PointFeaturesToggle({ onToggle }: PointFeaturesToggleProps) {
 
   return (
     <Card className="p-4">
-      <p className="caption mb-4">Customize what is displayed on the map</p>
-      <p className="text-xs text-muted-foreground mb-4">The icons below are also used as markers on the map</p>
       <div className="grid grid-cols-1 gap-4">
         {/* Render feature types from the database definitions */}
         {featureDefinitions.map((definition) => {
@@ -307,10 +224,7 @@ export function PointFeaturesToggle({ onToggle }: PointFeaturesToggleProps) {
           return (
             <div key={id} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div
-                  className={`p-1.5 rounded-md ${localVisibleTypes[id] ? "bg-opacity-20" : "bg-muted"}`}
-                  style={{ backgroundColor: localVisibleTypes[id] ? `${getFeatureColor(id)}20` : undefined }}
-                >
+                <div className={`p-1.5 rounded-md ${localVisibleTypes[id] ? "bg-primary/10" : "bg-muted"}`}>
                   {featureIcons[id] || <Landmark className="h-4 w-4" />}
                 </div>
                 <Label htmlFor={`toggle-${id}`} className="text-sm cursor-pointer">

@@ -3,7 +3,7 @@
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { getIndicatorValue } from "../lib/indicator-service"
+import { getIndicatorValue } from "../lib/supabase-client"
 import { Users } from "lucide-react"
 import { useMapContext } from "@/contexts/map-context"
 import { useEffect, useState } from "react"

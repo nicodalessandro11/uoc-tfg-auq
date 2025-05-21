@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-21 | Major update on data engine, database, and frontend components
+
+- Updated various files in auq_data_engine, auq_database, and auq_frontend directories, reflecting changes in data processing, database schema, and frontend components
+- The update aims to improve data loading, database migrations, and user interface for better user experience and data accuracy
+- Involved Python for data processing, SQL for database management, and TypeScript/JavaScript for frontend development
+
+This commit represents a significant milestone in our project. It not only enhances the overall functionality but also makes our application more user-friendly and data-driven. The changes will greatly improve the performance and reliability of our service.
+
 ## 🗃️ DB | 2025-05-20 | Added city_id to point features and updated data loading scripts
 
 - Modified the data loading scripts for Barcelona and Madrid in 'auq_data_engine/barcelona/load_point_features.py' and 'auq_data_engine/madrid/load_point_features.py'

@@ -507,9 +507,6 @@ export function MapProvider({ children }: { children: ReactNode }) {
         globalSelectedGranularity = granularity
         _setSelectedGranularity(granularity)
 
-        // Reset selected area when granularity changes
-        setSelectedArea(null)
-
         // Reset filter ranges loaded flag
         filterRangesLoadedRef.current = false
 
@@ -535,7 +532,6 @@ export function MapProvider({ children }: { children: ReactNode }) {
       loadGeoJSON,
       loadAvailableAreas,
       loadFilterRanges,
-      setSelectedArea,
     ],
   )
 

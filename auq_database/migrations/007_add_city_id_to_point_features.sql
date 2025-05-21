@@ -1,7 +1,7 @@
 -- Migration: Add city_id to point_features
 -- Description: Adds city_id column to point_features table and creates an index for it
 -- Author: Nico D'Alessandro Calderon
--- Date: 2024-04-17
+-- Date: 2025-05-20
 
 -- Add city_id column
 ALTER TABLE point_features 

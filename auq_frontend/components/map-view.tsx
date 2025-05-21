@@ -89,13 +89,6 @@ export function MapView() {
     }, 300)
   }
 
-  useEffect(() => {
-    // When an area is selected, switch to the info tab
-    if (selectedArea) {
-      setActiveTab("info")
-    }
-  }, [selectedArea])
-
   return (
     <div className="h-[calc(100vh-8rem)] flex w-full" ref={mapContainerRef}>
       {/* Left Sidebar container - fixed width when visible, 0 when collapsed */}

@@ -21,6 +21,7 @@ shared/
 │   ├── data/                   # Input/output artifacts used by scripts
 │   ├── generate_changelog.py   # Generate `CHANGELOG.md` from git history or project notes
 │   ├── git_commit_message_generator.py  # GPT-powered generator for commit messages
+│   ├── test_supabase_connection.py      # Test Supabase connection and configuration
 │   └── __init__.py
 │
 ├── .env.example                # Example env file for central repo (used by Python scripts)
@@ -67,6 +68,9 @@ python -m shared.scripts.generate_changelog
 
 # Generate professional commit messages from staged files
 python -m shared.scripts.git_commit_message_generator
+
+# Test Supabase connection and configuration
+python -m shared.scripts.test_supabase_connection
 ```
 
 ## Docs Included

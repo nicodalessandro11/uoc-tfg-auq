@@ -72,7 +72,6 @@ export default function MapComponent() {
     hasSelectedGranularity,
     mapType,
     clearPointFeaturesCache,
-    triggerRefresh,
   } = useMapContext()
 
   const mapContainerRef = useRef(null)
@@ -87,7 +86,7 @@ export default function MapComponent() {
 
       // If the city has changed, clear the cache for the previous city
       if (prevCityIdRef.current && prevCityIdRef.current !== selectedCity.id) {
-        console.log(`Ciudad cambiada de ${prevCityIdRef.current} a ${selectedCity.id}, limpiando caché`)
+        console.log(`City changed from ${prevCityIdRef.current} to ${selectedCity.id}, clearing cache`)
         clearPointFeaturesCache(prevCityIdRef.current)
       }
 
@@ -95,29 +94,18 @@ export default function MapComponent() {
 
       setIsLoadingPoints(true)
       try {
-        console.log(`Cargando puntos para la ciudad: ${selectedCity.name} (ID: ${selectedCity.id})`)
+        console.log(`Loading point features for city: ${selectedCity.name} (ID: ${selectedCity.id})`)
         const pointFeaturesData = await getCityPointFeatures(selectedCity.id)
+        console.log(`Loaded ${pointFeaturesData.length} point features for ${selectedCity.name}`)
 
-        // Validar los datos recibidos
-        const validatedFeatures = pointFeaturesData.filter((feature) => {
-          // Verificar que las coordenadas existen y son válidas
-          const hasValidCoords =
-            feature &&
-            feature.latitude !== undefined &&
-            feature.longitude !== undefined &&
-            !isNaN(Number(feature.latitude)) &&
-            !isNaN(Number(feature.longitude))
+        // Special handling for Madrid (city ID 2)
+        if (selectedCity.id === 2 && DEBUG_MODE) {
+          console.log("Madrid point features:", pointFeaturesData)
+        }
 
-          if (!hasValidCoords) {
-            console.warn(`Punto con coordenadas inválidas descartado:`, feature)
-          }
-          return hasValidCoords
-        })
-
-        console.log(`Cargados ${validatedFeatures.length} puntos válidos de ${pointFeaturesData.length} totales`)
-        setPointFeatures(validatedFeatures)
+        setPointFeatures(pointFeaturesData)
       } catch (error) {
-        console.error("Error al cargar puntos:", error)
+        console.error("Error loading point features:", error)
         setPointFeatures([])
       } finally {
         setIsLoadingPoints(false)
@@ -177,19 +165,6 @@ export default function MapComponent() {
   console.log(
     `Filtered ${filteredPointFeatures.length} out of ${pointFeatures.length} point features for ${selectedCity?.name}`,
   )
-
-  // Add an effect to ensure markers stay on top when granularity changes
-  useEffect(() => {
-    // When granularity changes, ensure point features are re-rendered properly
-    if (selectedCity && selectedGranularity) {
-      console.log(`Granularity changed to ${selectedGranularity.level}, ensuring point features stay on top`)
-      // Small delay to ensure the map has updated
-      const timer = setTimeout(() => {
-        triggerRefresh()
-      }, 300)
-      return () => clearTimeout(timer)
-    }
-  }, [selectedGranularity, selectedCity, triggerRefresh])
 
   return (
     <div className="h-full w-full relative" ref={mapContainerRef}>

@@ -234,7 +234,7 @@ export async function getDistricts(cityId: number): Promise<District[]> {
     }
 
     if (!data || data.length === 0) {
-      throw new Error("No districts found for city ${cityId}")
+      throw new Error(`No districts found for city ${cityId}`)
     }
 
     return data
@@ -296,41 +296,19 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
   }
 
   return getCachedData(`point_features_${cityId}`, async () => {
-    console.log(`Fetching city-wide point features from neighborhoods for city ID: ${cityId}`)
+    console.log(`Fetching point features for city ID: ${cityId}`)
 
-    // Get all neighborhood IDs in the city
-    const { data: neighborhoods, error: nbErr } = await supabase
-      .from("neighbourhoods")
-      .select("id")
-      .eq("city_id", cityId)
-
-    if (nbErr) {
-      console.error(`Error fetching neighborhoods for city ${cityId}:`, nbErr)
-      return [] // Return empty array instead of throwing error
-    }
-
-    if (!neighborhoods || neighborhoods.length === 0) {
-      console.warn(`No neighborhoods found for city ${cityId}`)
-      return [] // Return empty array instead of throwing error
-    }
-
-    const neighborhoodIds = neighborhoods.map((n) => n.id)
-
-    // Query all point features stored at neighborhood level
     const { data, error } = await supabase
       .from("point_features")
       .select("*")
-      .eq("geo_level_id", 3)
-      .in("geo_id", neighborhoodIds)
+      .eq("city_id", cityId)
 
     if (error) {
-      console.error(`Error fetching point features for city ${cityId}:`, error)
-      return [] // Return empty array instead of throwing error
+      throw new Error(`Error fetching point features: ${error.message}`)
     }
 
     if (!data || data.length === 0) {
-      console.warn(`No point features found for city ${cityId}`)
-      return [] // Return empty array instead of throwing error
+      throw new Error(`No point features found for city ${cityId}`)
     }
 
     // Optional: map feature types
@@ -567,4 +545,70 @@ export async function getGeographicalLevels(): Promise<any[]> {
       level: level.name.toLowerCase(),
     }))
   })
+}
+
+// Cache for indicator values
+const indicatorCache = new Map<string, { data: number; timestamp: number }>()
+
+/**
+ * Get indicator value for a specific area and indicator
+ */
+export async function getIndicatorValue(areaId: number, indicatorId: number, level: string): Promise<number | null> {
+  const cacheKey = `indicator_${areaId}_${indicatorId}_${level}`
+  const cachedItem = indicatorCache.get(cacheKey)
+  const now = Date.now()
+
+  // Return cached data if it exists and is not expired
+  if (cachedItem && now - cachedItem.timestamp < CACHE_TTL) {
+    return cachedItem.data
+  }
+
+  if (!supabase) {
+    console.error("Supabase client not available")
+    return null
+  }
+
+  try {
+    // Convert level to geo_level_id
+    const geoLevelId = level === "district" ? 2 : level === "neighborhood" || level === "neighbourhood" ? 3 : null
+
+    if (geoLevelId === null) {
+      throw new Error(`Invalid geographical level: ${level}`)
+    }
+
+    // Get current indicator value from the view, ordered by year descending to get the latest
+    const { data, error } = await supabase
+      .from("current_indicators_view")
+      .select("value, year")
+      .eq("indicator_def_id", indicatorId)
+      .eq("geo_level_id", geoLevelId)
+      .eq("geo_id", areaId)
+      .order("year", { ascending: false })
+      .limit(1)
+      .returns<{ value: number; year: number }[]>()
+
+    if (error) {
+      console.error(`Error fetching indicator value: ${error.message}`)
+      return null
+    }
+
+    if (!data || data.length === 0) {
+      console.error(`No indicator value found for area ${areaId}, indicator ${indicatorId}, level ${level}`)
+      return null
+    }
+
+    // Cache the result
+    indicatorCache.set(cacheKey, { data: data[0].value, timestamp: now })
+    return data[0].value
+  } catch (error) {
+    console.error(`Error getting indicator value: ${error}`)
+    return null
+  }
+}
+
+/**
+ * Clear indicator cache
+ */
+export function clearIndicatorCache(): void {
+  indicatorCache.clear()
 }

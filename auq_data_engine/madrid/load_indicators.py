@@ -41,6 +41,9 @@ DEFAULT_OUTPUT_PATH = BASE_DIR / "data/processed" / OUTPUT_FILENAME
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 
+# Constants
+CITY_ID = 2  # Madrid city ID
+
 # Indicator mapping from files to database names
 INDICATOR_MAPPING = {
     "population": "Population",
@@ -248,6 +251,7 @@ def process_indicator_file(url: str, indicator_name: str, indicator_def_ids: Dic
                         "indicator_def_id": indicator_def_id,
                         "geo_level_id": 3,  # Always 3 for neighborhood
                         "geo_id": geo_id,
+                        "city_id": CITY_ID,
                         "year": int(period_panel),  # Use period_panel as the year
                         "value": value
                     }

@@ -54,7 +54,7 @@ def upload(table_name: str, records: list[dict]):
         # Use upsert with on_conflict parameter to handle duplicates
         response = supabase.table(table_name).upsert(
             records,
-            on_conflict='indicator_def_id,geo_level_id,geo_id,year' if table_name == 'indicators' else None
+            on_conflict='indicator_def_id,geo_level_id,geo_id,city_id,year' if table_name == 'indicators' else None
         ).execute()
         if hasattr(response, "status_code"):
             info(f"[{table_name}] Status: {response.status_code}")
