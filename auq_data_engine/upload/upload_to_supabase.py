@@ -85,19 +85,49 @@ def upload(table_name: str, records: list[dict], city: str):
         return False
 
     try:
-        # Use upsert with on_conflict parameter to handle duplicates
-        response = supabase.table(table_name).upsert(
-            records,
-            on_conflict='indicator_def_id,geo_level_id,geo_id,city_id,year' if table_name == 'indicators' else None
-        ).execute()
-        if hasattr(response, "status_code"):
-            info(f"[{table_name}] Status: {response.status_code}")
-        if hasattr(response, "data") and response.data:
-            success(f"Uploaded {len(response.data)} records to '{table_name}' for {city}")
-            return True
+        # For point features, we need to handle duplicates based on coordinates
+        if table_name == 'point_features':
+            # Process records in batches to handle duplicates
+            BATCH_SIZE = 100
+            total_uploaded = 0
+            total_skipped = 0
+            
+            for i in range(0, len(records), BATCH_SIZE):
+                batch = records[i:i + BATCH_SIZE]
+                try:
+                    # Use upsert with on_conflict to ignore duplicates
+                    response = supabase.table(table_name).upsert(
+                        batch,
+                        on_conflict='feature_definition_id,round_coordinate(latitude),round_coordinate(longitude),city_id'
+                    ).execute()
+                    if hasattr(response, "data") and response.data:
+                        total_uploaded += len(response.data)
+                except Exception as e:
+                    error(f"Error uploading batch {i//BATCH_SIZE + 1}: {str(e)}")
+                    total_skipped += len(batch)
+                    continue
+            
+            if total_uploaded > 0:
+                success(f"Successfully uploaded {total_uploaded} point features for {city}")
+            if total_skipped > 0:
+                warning(f"Skipped {total_skipped} duplicate point features for {city}")
+            
+            return total_uploaded > 0
         else:
-            warning(f"No data returned after uploading to '{table_name}' for {city}. Check Supabase logs.")
-            return False
+            # For other tables, use upsert with appropriate conflict handling
+            response = supabase.table(table_name).upsert(
+                records,
+                on_conflict='indicator_def_id,geo_level_id,geo_id,city_id,year' if table_name == 'indicators' else None
+            ).execute()
+
+            if hasattr(response, "status_code"):
+                info(f"[{table_name}] Status: {response.status_code}")
+            if hasattr(response, "data") and response.data:
+                success(f"Uploaded {len(response.data)} records to '{table_name}' for {city}")
+                return True
+            else:
+                warning(f"No data returned after uploading to '{table_name}' for {city}. Check Supabase logs.")
+                return False
     except Exception as e:
         error(f"Error during upload to '{table_name}' for {city}: {e}")
         return False

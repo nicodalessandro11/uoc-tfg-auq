@@ -107,11 +107,11 @@
         },
         "point_features": {
             "raw_file": {
-                "parques_y_jardines": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/200761-0-parques-jardines.csv",
-                "museos": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/201132-0-museos.csv",
-                "bibliotecas": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/201747-0-bibliobuses-bibliotecas.csv",
-                "centros_educativos": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/300614-0-centros-educativos.csv",
-                "mercados": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/mercados-madrid.csv"
+                "parques_y_jardines": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/parques-jardines.json",
+                "museos": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/museos.json",
+                "bibliotecas": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/bibliotecas.json",
+                "centros_educativos": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/centros-educativos.json",
+                "salud": "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data/madrid/point_features/centros-salud.json"
             },
             "processed_file": "insert_ready_point_features_madrid.json",
             "source_link": "TODO: Add source link"

@@ -140,7 +140,7 @@ export function MapView() {
                       Points of Interest
                     </h3>
                     <p className="caption mb-4">Customize what is displayed on the map</p>
-                    <PointFeaturesToggle onToggle={handleVisiblePointTypesChange} />
+                    <PointFeaturesToggle />
                   </div>
                 )}
 

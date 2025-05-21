@@ -36,7 +36,8 @@ INSERT INTO feature_definitions (name, description) VALUES
     ('Performing arts venues', 'Theaters and spaces for stage performances'),
     ('Municipal markets', 'Public markets for food and local products'),
     ('Parks and gardens', 'Urban green spaces including parks, gardens, and natural areas'),
-    ('Educational centers', 'Schools, colleges, and other educational institutions');
+    ('Educational centers', 'Schools, colleges, and other educational institutions'),
+    ('Health centers', 'Health centers and hospitals');
 
 
 INSERT INTO indicator_definitions (name, description, unit, category, source) VALUES

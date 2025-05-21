@@ -1,5 +1,17 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-22 | Improved Data Processing and Map Display
+
+- Updated data processing scripts in `auq_data_engine` to handle JSON files instead of CSVs
+- Added new JSON files for point features in Madrid, replacing the old CSV files in `auq_data_engine/data/raw_sample/madrid_sample/point_features/`
+- Modified `leaflet-map.jsx`, `map-component.tsx`, `map-view.tsx`, and `point-features-toggle.tsx` in `auq_frontend/components` to improve map display and toggle feature
+- Updated `map-context.tsx` and `supabase-client.ts` in `auq_frontend/lib` for better data handling
+- Updated `package.json` in `auq_frontend` to include new dependencies
+- Added new migration file `012_add_unique_constraint_to_point_features.sql` in `auq_database/migrations` to ensure data integrity
+- Updated `schema.sql` and `seed.sql` in `auq_database` to reflect changes in the database structure
+
+This commit is a significant step towards improving the overall user experience by providing more accurate data and a more interactive map display.
+
 ## 📦 Feature | 2025-05-21 | Enhanced map visualization and filtering
 
 - Updated district-info.tsx, filter-panel.tsx, leaflet-map.jsx, and visualize-view.tsx to improve map visualization and filtering

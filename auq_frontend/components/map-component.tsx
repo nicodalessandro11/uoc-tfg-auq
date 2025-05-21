@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react"
 import { getCityPointFeatures } from "@/lib/api-service"
 import dynamic from "next/dynamic"
 import { MapTypeSelector } from "@/components/map-type-selector"
+import type { PointFeature } from "@/lib/api-types"
 
 // Create a client-side only component for the map
 const MapWithNoSSR = dynamic(() => import("./leaflet-map"), {
@@ -22,11 +23,11 @@ const MapWithNoSSR = dynamic(() => import("./leaflet-map"), {
 const DEBUG_MODE = true
 
 // Add this function after the existing imports
-function debugMadridPoints(points, visibleTypes) {
+function debugMadridPoints(points: PointFeature[], visibleTypes: Record<string, boolean>) {
   console.group("🔍 Madrid Points Debug")
   console.log(`Total Madrid points: ${points.length}`)
 
-  points.forEach((point) => {
+  points.forEach((point: PointFeature) => {
     const featureType =
       point.featureType ||
       point.feature_type ||
@@ -72,12 +73,13 @@ export default function MapComponent() {
     hasSelectedGranularity,
     mapType,
     clearPointFeaturesCache,
+    setPointFeatures,
+    pointFeatures,
   } = useMapContext()
 
   const mapContainerRef = useRef(null)
-  const [pointFeatures, setPointFeatures] = useState([])
   const [isLoadingPoints, setIsLoadingPoints] = useState(false)
-  const prevCityIdRef = useRef(null)
+  const prevCityIdRef = useRef<number | null>(null)
 
   // Load point features when city changes
   useEffect(() => {
@@ -113,43 +115,17 @@ export default function MapComponent() {
     }
 
     loadPointFeatures()
-  }, [selectedCity, clearPointFeaturesCache])
+  }, [selectedCity, clearPointFeaturesCache, setPointFeatures])
 
   // Filter point features based on visible types - IMPROVED FILTERING LOGIC
   // Memoize the filtered point features to avoid recalculating on every render
   const filteredPointFeatures = useMemo(() => {
-    // Skip filtering if no features
     if (!pointFeatures.length) return []
-
-    // Debug logging
-    if (selectedCity?.id === 2 && DEBUG_MODE) {
-      debugMadridPoints(pointFeatures, visiblePointTypes)
-    }
-
-    // Apply filtering
-    return pointFeatures.filter((feature) => {
-      // Get the feature type identifiers
-      const numericId = feature.feature_definition_id ? feature.feature_definition_id.toString() : null
-      const stringType = numericId ? featureTypeMap[numericId] : null
-      const featureType = feature.featureType || feature.feature_type || stringType || numericId
-
-      // If no feature type identifiers found, show by default
-      if (!numericId && !stringType && !featureType) return true
-
-      // Check both numeric ID and string type - if either is explicitly false, hide the feature
-      if (numericId && visiblePointTypes[numericId] === false) {
-        return false
-      }
-
-      if (stringType && visiblePointTypes[stringType] === false) {
-        return false
-      }
-
-      if (featureType && visiblePointTypes[featureType] === false) {
-        return false
-      }
-
-      // If we get here, the feature should be visible
+    return pointFeatures.filter((feature: PointFeature) => {
+      // Solo usar el string normalizado
+      const featureType = feature.featureType
+      if (!featureType) return false
+      if (visiblePointTypes[featureType] === false) return false
       return true
     })
   }, [pointFeatures, visiblePointTypes, selectedCity?.id])

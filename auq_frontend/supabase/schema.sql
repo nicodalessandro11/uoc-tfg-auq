@@ -43,14 +43,6 @@ CREATE TABLE districts (
     district_code INTEGER NOT NULL,
     city_id INTEGER REFERENCES cities(id) ON DELETE CASCADE,
     geom GEOMETRY(POLYGON, 4326),
-    -- Indicator columns
-    population INTEGER,
-    surface DECIMAL,
-    avg_income DECIMAL,
-    disposable_income DECIMAL,
-    population_density DECIMAL,
-    education_level DECIMAL,
-    unemployment_rate DECIMAL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(city_id, district_code),
@@ -65,14 +57,6 @@ CREATE TABLE neighbourhoods (
     district_id INTEGER REFERENCES districts(id) ON DELETE CASCADE,
     city_id INTEGER REFERENCES cities(id) ON DELETE CASCADE,
     geom GEOMETRY(POLYGON, 4326),
-    -- Indicator columns
-    population INTEGER,
-    surface DECIMAL,
-    avg_income DECIMAL,
-    disposable_income DECIMAL,
-    population_density DECIMAL,
-    education_level DECIMAL,
-    unemployment_rate DECIMAL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(district_id, neighbourhood_code),
@@ -117,29 +101,26 @@ CREATE TABLE feature_definitions (
 -- === Table: point_features ===
 CREATE TABLE point_features (
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    description TEXT,
-    category TEXT NOT NULL,
-    subcategory TEXT,
-    latitude DOUBLE PRECISION NOT NULL,
-    longitude DOUBLE PRECISION NOT NULL,
-    geo_level_id INTEGER NOT NULL REFERENCES geo_levels(id),
+    feature_definition_id INTEGER REFERENCES feature_definitions(id) ON DELETE SET NULL,
+    name TEXT,
+    latitude DECIMAL NOT NULL,
+    longitude DECIMAL NOT NULL,
+    geom GEOMETRY(POINT, 4326),
+    geo_level_id INTEGER REFERENCES geographical_levels(id),
     geo_id INTEGER NOT NULL,
     city_id INTEGER NOT NULL REFERENCES cities(id) ON DELETE CASCADE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(name, category, latitude, longitude)
+    properties JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(feature_definition_id, latitude, longitude, city_id)
 );
 
 -- === 3. Indexes ===
-CREATE INDEX idx_point_features_geo_level ON point_features (geo_level_id);
-CREATE INDEX idx_point_features_geo_id ON point_features (geo_id);
-CREATE INDEX idx_point_features_category ON point_features (category);
-CREATE INDEX idx_point_features_city ON point_features (city_id);
 CREATE INDEX idx_indicators_geo ON indicators (geo_level_id, geo_id);
 CREATE INDEX idx_indicators_city ON indicators (city_id);
 CREATE INDEX idx_point_features_geo ON point_features (geo_level_id, geo_id);
 CREATE INDEX idx_point_features_definition ON point_features (feature_definition_id);
+CREATE INDEX idx_point_features_city ON point_features (city_id);
 
 -- === 4. Views ===
 -- Drop existing views if they exist
@@ -401,7 +382,6 @@ ALTER TABLE indicator_definitions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE indicators ENABLE ROW LEVEL SECURITY;
 ALTER TABLE feature_definitions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE point_features ENABLE ROW LEVEL SECURITY;
-
 
 -- === 8. RLS Policies ===
 CREATE POLICY "Service role access on cities"

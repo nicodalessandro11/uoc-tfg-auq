@@ -317,12 +317,18 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
       featureDefinitions.map((def) => [def.id, def.name.toLowerCase().replace(/\s+/g, "_")]),
     )
 
-    return data.map((feature) => ({
-      ...feature,
-      featureType: featureTypeMap[feature.feature_definition_id] || String(feature.feature_definition_id),
-      geoId: feature.geo_id,
-      city_id: cityId,
-    }))
+    return data
+      .map((feature) => {
+        const typeString = featureTypeMap[feature.feature_definition_id]
+        if (!typeString) return null // descarta puntos sin tipo válido
+        return {
+          ...feature,
+          featureType: typeString,
+          geoId: feature.geo_id,
+          city_id: cityId,
+        }
+      })
+      .filter(Boolean)
   })
 }
 

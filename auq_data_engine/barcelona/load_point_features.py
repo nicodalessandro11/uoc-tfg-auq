@@ -521,62 +521,29 @@ def process_equipaments(data: List[Dict]) -> List[Dict]:
 # ===================
 
 def load_csv_data(url: str, source_name: str) -> List[Dict]:
-    """
-    Load CSV data from a URL.
-    
+    """Load and process CSV data from a URL.
     Args:
         url: The URL to load data from
         source_name: The name of the source for logging purposes
-        
     Returns:
         List of dictionaries containing the CSV data
     """
     info(f"Loading CSV data from {url}")
-    
-    # Get the processor configuration
     processor_config = FILE_PROCESSORS.get(source_name)
     if not processor_config:
         error(f"No processor configuration found for {source_name}")
-        raise ValueError(f"No processor configuration found for {source_name}")
-    
-    # Download the content
+        return []
     try:
         response = requests.get(url)
         response.raise_for_status()
         content = response.content
     except requests.exceptions.RequestException as e:
         error(f"Failed to download CSV from {url}: {str(e)}")
-        raise
-    
-    # Try to read with the configured encoding and delimiter
-    try:
-        df = pd.read_csv(
-            io.BytesIO(content),
-            encoding=processor_config['encoding'],
-            sep=processor_config['delimiter'],
-            quoting=processor_config['quoting'],
-            on_bad_lines='skip',
-            dtype=str  # Read all columns as strings to avoid type inference issues
-        )
-        
-        # Check if we got a valid dataframe with multiple columns
-        if len(df.columns) > 1:
-            info(f"Successfully loaded CSV with encoding={processor_config['encoding']}, delimiter={processor_config['delimiter']}")
-            return df.to_dict('records')
-        else:
-            debug(f"CSV loaded but only got {len(df.columns)} columns with configured settings")
-    except Exception as e:
-        debug(f"Failed to load CSV with configured settings: {str(e)}")
-    
-    # If the configured settings failed, try other combinations
-    encodings = ['utf-8-sig', 'utf-8', 'latin1', 'iso-8859-1']
-    delimiters = [',', ';', '\t']
-    
+        return []
+    encodings = [processor_config['encoding'], 'utf-8', 'utf-8-sig', 'latin-1', 'iso-8859-1', 'cp1252']
+    delimiters = [processor_config['delimiter'], ',', ';', '\t']
     for encoding in encodings:
         for delimiter in delimiters:
-            if encoding == processor_config['encoding'] and delimiter == processor_config['delimiter']:
-                continue  # Skip the combination we already tried
-            
             try:
                 df = pd.read_csv(
                     io.BytesIO(content),
@@ -586,49 +553,27 @@ def load_csv_data(url: str, source_name: str) -> List[Dict]:
                     on_bad_lines='skip',
                     dtype=str
                 )
-                
-                # Check if we got a valid dataframe with multiple columns
                 if len(df.columns) > 1:
                     info(f"Successfully loaded CSV with encoding={encoding}, delimiter={delimiter}")
                     return df.to_dict('records')
-                else:
-                    debug(f"CSV loaded but only got {len(df.columns)} columns with encoding={encoding}, delimiter={delimiter}")
             except Exception as e:
                 debug(f"Failed to load CSV with encoding={encoding}, delimiter={delimiter}: {str(e)}")
                 continue
-    
-    # If pandas failed, try with Python's csv module
     for encoding in encodings:
         try:
-            # Decode the content
             text_content = content.decode(encoding)
-            
-            # Try to detect the dialect
             dialect = csv.Sniffer().sniff(text_content[:1024])
-            
-            # Read the CSV
-            reader = csv.DictReader(
-                io.StringIO(text_content),
-                dialect=dialect
-            )
-            
-            # Convert to list of dicts
+            reader = csv.DictReader(io.StringIO(text_content), dialect=dialect)
             data = list(reader)
-            
-            # Check if we got valid data
             if data and len(data[0].keys()) > 1:
                 info(f"Successfully loaded CSV with csv module using encoding={encoding}")
                 return data
-            else:
-                debug(f"CSV loaded with csv module but got invalid data with encoding={encoding}")
         except Exception as e:
             debug(f"Failed to load CSV with csv module using encoding={encoding}: {str(e)}")
             continue
-    
-    # If all attempts failed, raise an error
     error_msg = f"Failed to parse CSV data from {source_name} with any combination of encoding and delimiter"
     error(error_msg)
-    raise ValueError(error_msg)
+    return []
 
 
 # ===================

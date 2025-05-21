@@ -10,7 +10,7 @@ import { clearApiCacheEntry } from "@/lib/api-service"
 import { getDistricts, getGeoJSON, getGeographicalLevels } from "@/lib/api-service"
 
 // Import types
-import type { City, District, Neighborhood } from "@/lib/api-types"
+import type { City, District, Neighborhood, PointFeature } from "@/lib/api-types"
 
 type Area = District | Neighborhood
 
@@ -61,6 +61,24 @@ export type DynamicFilter = {
   value: [number, number]
 }
 
+// Feature type mapping - consistent with database seed
+const featureTypeMap: Record<string, string> = {
+  "1": "library",
+  "2": "cultural_center",
+  "3": "auditorium",
+  "4": "heritage_space",
+  "5": "creation_factory",
+  "6": "museum",
+  "7": "cinema",
+  "8": "exhibition_center",
+  "9": "archive",
+  "10": "live_music_venue",
+  "11": "performing_arts_venue",
+  "12": "municipal_market",
+  "13": "park_garden",
+  "14": "educational_center",
+}
+
 type MapContextType = {
   selectedCity: City | null
   setSelectedCity: (city: City | null) => void
@@ -76,7 +94,7 @@ type MapContextType = {
   filterRanges: FilterRanges
   resetFilters: () => void
   visiblePointTypes: Record<string, boolean>
-  setVisiblePointTypes: (types: Record<string, boolean>) => void
+  setVisiblePointTypes: (types: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>)) => void
   currentGeoJSON: any
   setCurrentGeoJSON: (data: any) => void
   isLoadingGeoJSON: boolean
@@ -92,6 +110,10 @@ type MapContextType = {
   clearPointFeaturesCache: (cityId?: number) => void
   dynamicFilters: DynamicFilter[]
   setDynamicFilters: (filters: DynamicFilter[]) => void
+  dynamicPointTypes: string[]
+  setDynamicPointTypes: (types: string[]) => void
+  pointFeatures: PointFeature[]
+  setPointFeatures: (features: PointFeature[]) => void
 }
 
 export const MapContext = createContext<MapContextType | undefined>(undefined)
@@ -193,6 +215,12 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
   // Nuevo estado para filtros dinámicos
   const [dynamicFilters, setDynamicFilters] = useState<DynamicFilter[]>([])
+
+  // Nuevo estado para dynamicPointTypes
+  const [dynamicPointTypes, setDynamicPointTypes] = useState<string[]>([])
+
+  // Nuevo estado para pointFeatures
+  const [pointFeatures, setPointFeatures] = useState<PointFeature[]>([])
 
   // Update the loadAvailableAreas function to use direct Supabase data
   const loadAvailableAreas = useCallback(async (cityId: number, granularityLevel: string) => {
@@ -575,20 +603,18 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
   // Custom setter for visiblePointTypes that also updates the global variable
   const setVisiblePointTypes = useCallback(
-    (types: Record<string, boolean>) => {
-      // Only update if values actually changed
-      const hasChanged = Object.keys(types).some((key) => types[key] !== visiblePointTypes[key])
-
-      if (hasChanged) {
-        console.log("Setting visible point types:", types)
-        globalVisiblePointTypes = types
-        _setVisiblePointTypes(types)
-
-        // Only trigger refresh if values actually changed
-        triggerRefresh()
-      }
+    (typesOrUpdater: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>)) => {
+      _setVisiblePointTypes(prev => {
+        const types = typeof typesOrUpdater === 'function' ? typesOrUpdater(prev) : typesOrUpdater
+        const hasChanged = Object.keys(types).some((key) => types[key] !== globalVisiblePointTypes?.[key])
+        if (hasChanged) {
+          globalVisiblePointTypes = types
+          // triggerRefresh() eliminado para evitar doble render y desfase
+        }
+        return types
+      })
     },
-    [visiblePointTypes, triggerRefresh],
+    [triggerRefresh],
   )
 
   // Custom setter for mapType that also updates the global variable
@@ -664,6 +690,45 @@ export function MapProvider({ children }: { children: ReactNode }) {
     setDynamicFilters(filters)
   }, [currentGeoJSON])
 
+  // Actualizar dynamicPointTypes cuando cambian los pointFeatures
+  useEffect(() => {
+    if (!pointFeatures || pointFeatures.length === 0) {
+      setDynamicPointTypes([])
+      return
+    }
+    const types = Array.from(new Set(pointFeatures.map(f => f.featureType).filter(Boolean)))
+    setDynamicPointTypes(types)
+  }, [pointFeatures])
+
+  // Sincroniza visiblePointTypes con dynamicPointTypes
+  useEffect(() => {
+    if (!dynamicPointTypes.length) return
+    _setVisiblePointTypes(prev => {
+      // Si el estado está vacío, activa todos los tipos por defecto
+      if (Object.keys(prev).length === 0) {
+        const allActive = Object.fromEntries(dynamicPointTypes.map(type => [type, true]))
+        return allActive
+      }
+      // Activa por defecto todos los tipos nuevos que no estén en el estado actual
+      const updated = { ...prev }
+      let changed = false
+      dynamicPointTypes.forEach(type => {
+        if (!(type in updated)) {
+          updated[type] = true
+          changed = true
+        }
+      })
+      // Elimina tipos que ya no existen en dynamicPointTypes
+      Object.keys(updated).forEach(type => {
+        if (!dynamicPointTypes.includes(type)) {
+          delete updated[type]
+          changed = true
+        }
+      })
+      return changed ? updated : prev
+    })
+  }, [dynamicPointTypes])
+
   return (
     <MapContext.Provider
       value={{
@@ -697,6 +762,10 @@ export function MapProvider({ children }: { children: ReactNode }) {
         clearPointFeaturesCache,
         dynamicFilters,
         setDynamicFilters,
+        dynamicPointTypes,
+        setDynamicPointTypes,
+        pointFeatures,
+        setPointFeatures,
       }}
     >
       {children}

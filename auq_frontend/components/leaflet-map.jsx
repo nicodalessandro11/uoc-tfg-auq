@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useMapContext } from "@/contexts/map-context"
 import { mapTypes } from "@/components/map-type-selector"
+import debounce from "lodash/debounce"
 
 // Feature type mapping
 const featureTypeMap = {
@@ -36,12 +37,14 @@ export default function LeafletMap({
   const geoJsonLayerRef = useRef(null)
   const markersLayerRef = useRef(null)
   const tileLayerRef = useRef(null)
+  const clusterGroupRef = useRef(null)
   const { setMapInitialized, loadGeoJSON, setSelectedArea, filters, dynamicFilters } = useMapContext()
   const mapInstanceRef = useRef(null)
   const [selectedAreaState, setSelectedAreaState] = useState(null)
   const [isMapReady, setIsMapReady] = useState(false)
   const [currentMapType, setCurrentMapType] = useState(mapType)
   const [renderedMarkers, setRenderedMarkers] = useState({})
+  const [isClusterReady, setIsClusterReady] = useState(false)
 
   // Function to generate a color from a simple palette based on the index
   const getColorFromPalette = (index, total) => {
@@ -57,12 +60,24 @@ export default function LeafletMap({
     linkElement.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     document.head.appendChild(linkElement)
 
+    // Add MarkerCluster CSS
+    const clusterLinkElement = document.createElement("link")
+    clusterLinkElement.rel = "stylesheet"
+    clusterLinkElement.href = "https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"
+    document.head.appendChild(clusterLinkElement)
+
     // Load Leaflet from CDN
     const script = document.createElement("script")
     script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     script.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     script.crossOrigin = ""
-    script.onload = initializeMap
+    script.onload = () => {
+      // Load MarkerCluster after Leaflet
+      const clusterScript = document.createElement("script")
+      clusterScript.src = "https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"
+      clusterScript.onload = initializeMap
+      document.head.appendChild(clusterScript)
+    }
     document.head.appendChild(script)
 
     function initializeMap() {
@@ -97,6 +112,22 @@ export default function LeafletMap({
       geoJsonLayerRef.current = L.layerGroup().addTo(map)
       markersLayerRef.current = L.layerGroup().addTo(map)
 
+      // Create marker cluster group SOLO si MarkerClusterGroup está disponible
+      if (L.MarkerClusterGroup) {
+        clusterGroupRef.current = L.markerClusterGroup({
+          maxClusterRadius: 50,
+          spiderfyOnMaxZoom: true,
+          showCoverageOnHover: false,
+          zoomToBoundsOnClick: true,
+          disableClusteringAtZoom: 16,
+        }).addTo(map)
+        setIsClusterReady(true)
+      } else {
+        clusterGroupRef.current = null
+        setIsClusterReady(false)
+        console.warn("MarkerClusterGroup is not available yet.")
+      }
+
       // Store map instance
       mapInstanceRef.current = map
 
@@ -118,12 +149,25 @@ export default function LeafletMap({
       return () => {
         window.removeEventListener("resize", handleResize)
         if (map) {
+          // Eliminar el cluster group del mapa antes de limpiar la referencia
+          if (clusterGroupRef.current && clusterGroupRef.current._map) {
+            try {
+              clusterGroupRef.current.clearLayers()
+              map.removeLayer(clusterGroupRef.current)
+            } catch (error) {
+              console.warn("Error removing cluster group during cleanup:", error)
+            }
+          }
+          // Limpiar la referencia después de eliminarlo
+          clusterGroupRef.current = null
+
           map.remove()
           mapInstanceRef.current = null
           geoJsonLayerRef.current = null
           markersLayerRef.current = null
           tileLayerRef.current = null
           setIsMapReady(false)
+          setIsClusterReady(false)
         }
       }
     }
@@ -131,6 +175,9 @@ export default function LeafletMap({
     return () => {
       if (linkElement.parentNode) {
         document.head.removeChild(linkElement)
+      }
+      if (clusterLinkElement.parentNode) {
+        document.head.removeChild(clusterLinkElement)
       }
       if (script.parentNode) {
         document.head.removeChild(script)
@@ -411,235 +458,98 @@ export default function LeafletMap({
     }
   }, [currentGeoJSON, dynamicFilters, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady])
 
-  // Update markers when point features change
+  // Update markers when point features change (sin debounce)
   useEffect(() => {
     const map = mapInstanceRef.current
-    const markersLayer = markersLayerRef.current
-    if (!map || !markersLayer || !isMapReady) return
+    const clusterGroup = clusterGroupRef.current
 
-    // Clear previous markers
-    try {
-      markersLayer.clearLayers()
-      setRenderedMarkers({})
-    } catch (error) {
-      console.warn("Error clearing marker layers:", error)
-    }
-
-    // Get Leaflet from window
-    const L = window.L
-    if (!L) return
-
-    // Only proceed if we have point features
-    if (!pointFeatures || pointFeatures.length === 0) {
-      console.log(`No point features to render for ${selectedCity?.name || "unknown city"}`)
+    if (!map || !isMapReady || !isClusterReady || !clusterGroup || !clusterGroup._map || !clusterGroup._map._loaded) {
       return
     }
 
-    console.log(`Rendering ${pointFeatures.length} markers for ${selectedCity?.name}`)
+    // Limpia los marcadores previos
+    try { clusterGroup.clearLayers() } catch { }
 
-    // Special logging for Madrid
-    if (selectedCity?.id === 2) {
-      console.group("🗺️ Madrid Markers Creation")
-      console.log(`Attempting to render ${pointFeatures.length} Madrid markers`)
-      console.table(
-        pointFeatures.map((f) => ({
-          name: f.name,
-          lat: f.latitude,
-          lng: f.longitude,
-          type: f.featureType || f.feature_definition_id,
-        })),
-      )
-      console.groupEnd()
+    if (!pointFeatures || pointFeatures.length === 0) {
+      return
     }
 
-    // Create icon - Fix for marker icon issue
-    const defaultIcon = L.icon({
-      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-      shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41],
-    })
-
-    // Custom tooltip class for modern styling
-    L.Tooltip.prototype.options.className = "modern-tooltip"
-
-    // Add custom tooltip styles to the document
-    if (!document.getElementById("modern-tooltip-styles")) {
-      const styleElement = document.createElement("style")
-      styleElement.id = "modern-tooltip-styles"
-      styleElement.textContent = `
-        .modern-tooltip {
-          background-color: rgba(255, 255, 255, 0.95);
-          border: none;
-          border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          padding: 12px;
-          font-family: var(--font-manrope), sans-serif;
-          max-width: 300px;
-          backdrop-filter: blur(4px);
-        }
-        .modern-tooltip .leaflet-tooltip-content {
-          padding: 0;
-        }
-        .modern-tooltip-title {
-          font-weight: 600;
-          font-size: 16px;
-          color: hsl(var(--foreground));
-          margin-bottom: 8px;
-          border-bottom: 1px solid hsl(var(--border));
-          padding-bottom: 6px;
-        }
-        .modern-tooltip-type {
-          font-size: 14px;
-          color: hsl(var(--primary));
-          margin-bottom: 8px;
-          font-weight: 500;
-        }
-        .modern-tooltip-info {
-          font-size: 13px;
-          color: hsl(var(--muted-foreground));
-          margin-bottom: 4px;
-          display: flex;
-        }
-        .modern-tooltip-label {
-          font-weight: 500;
-          margin-right: 4px;
-        }
-        .modern-tooltip-value {
-          flex: 1;
-        }
-        .leaflet-tooltip-pane {
-          z-index: 1000;
-        }
-        .leaflet-tooltip.modern-tooltip::before {
-          border-right-color: rgba(255, 255, 255, 0.95);
-        }
-        .leaflet-tooltip-left.modern-tooltip::before {
-          border-left-color: rgba(255, 255, 255, 0.95);
-        }
-      `
-      document.head.appendChild(styleElement)
-    }
-
-    // Add markers
-    let markersAdded = 0
-    let madridMarkersAdded = 0
-    const newRenderedMarkers = {}
-
-    pointFeatures.forEach((feature) => {
-      if (feature.latitude && feature.longitude) {
-        try {
-          // Validate coordinates
-          const lat = Number.parseFloat(feature.latitude)
-          const lng = Number.parseFloat(feature.longitude)
-
-          // Special logging for Madrid features
-          const isMadridFeature = selectedCity?.id === 2
-
-          if (isMadridFeature) {
-            console.log(`Creating Madrid marker: ${feature.name}, coords: [${lat}, ${lng}]`)
-          }
-
-          if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-            console.warn(`Invalid coordinates for feature ${feature.name}: [${lat}, ${lng}]`)
-            return
-          }
-
-          // Format feature type for display
-          const featureTypeName = (feature.featureType || "Point of Interest")
-            .replace(/_/g, " ")
-            .split(" ")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ")
-
-          // Create modern tooltip content
-          const tooltipContent = `
-            <div>
-              <div class="modern-tooltip-title">${feature.name}</div>
-              <div class="modern-tooltip-type">${featureTypeName}</div>
-              ${Object.entries(feature.properties || {})
-              .map(
-                ([key, value]) => `
-                  <div class="modern-tooltip-info">
-                    <span class="modern-tooltip-label">${key.replace(/_/g, " ").charAt(0).toUpperCase() + key.replace(/_/g, " ").slice(1)}:</span>
-                    <span class="modern-tooltip-value">${value}</span>
-                  </div>
-                `,
-              )
-              .join("")}
-            </div>
-          `
-
-          // Create marker with tooltip
-          const marker = L.marker([lat, lng], { icon: defaultIcon }).bindTooltip(tooltipContent, {
-            direction: "top",
-            offset: [0, -20],
-            opacity: 1,
-            permanent: false,
-            interactive: true,
-            className: "modern-tooltip",
-          })
-
-          // Only add to layer if it was created successfully
-          if (marker) {
-            marker.addTo(markersLayer)
-            markersAdded++
-
-            // Track rendered markers by ID
-            newRenderedMarkers[feature.id] = true
-
-            if (isMadridFeature) {
-              madridMarkersAdded++
-            }
-          }
-        } catch (error) {
-          console.error(`Error adding marker for ${feature.name}:`, error)
-        }
-      } else {
-        console.warn(`Missing coordinates for feature: ${feature.name}`)
-      }
-    })
-
-    // Update rendered markers state
-    setRenderedMarkers(newRenderedMarkers)
-
-    // Add a summary log specifically for Madrid
-    if (selectedCity?.id === 2) {
-      console.log(`Madrid summary: Added ${madridMarkersAdded} out of ${pointFeatures.length} markers`)
-
-      // Force the markers layer to be visible and on top
-      if (markersLayer && markersLayer.getLayers) {
-        // For LayerGroups, we need to bring each individual marker to front
-        const layers = markersLayer.getLayers()
-        layers.forEach((layer) => {
-          if (layer.bringToFront) {
-            layer.bringToFront()
-          }
-        })
-
-        // Also ensure the markers layer is the last one added to the map
-        if (map && markersLayer._map) {
+    try {
+      const L = window.L
+      const defaultIcon = L.icon({
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+      })
+      pointFeatures.forEach((feature) => {
+        if (feature.latitude && feature.longitude) {
           try {
-            // Remove and re-add to ensure it's on top
-            markersLayer.remove()
-            markersLayer.addTo(map)
-          } catch (e) {
-            console.warn("Error re-adding markers layer:", e)
+            const lat = Number.parseFloat(feature.latitude)
+            const lng = Number.parseFloat(feature.longitude)
+            if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) return
+            const featureTypeName = (feature.featureType || "Point of Interest")
+              .replace(/_/g, " ")
+              .split(" ")
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ")
+            const tooltipContent = `
+              <div>
+                <div class="modern-tooltip-title">${feature.name}</div>
+                <div class="modern-tooltip-type">${featureTypeName}</div>
+                ${Object.entries(feature.properties || {})
+                .map(
+                  ([key, value]) => `
+                      <div class="modern-tooltip-info">
+                        <span class="modern-tooltip-label">${key.replace(/_/g, " ").charAt(0).toUpperCase() + key.replace(/_/g, " ").slice(1)}:</span>
+                        <span class="modern-tooltip-value">${value}</span>
+                      </div>
+                    `
+                )
+                .join("")}
+              </div>
+            `
+            const marker = L.marker([lat, lng], { icon: defaultIcon }).bindTooltip(tooltipContent, {
+              direction: "top",
+              offset: [0, -20],
+              opacity: 1,
+              permanent: false,
+              interactive: true,
+              className: "modern-tooltip",
+            })
+            if (clusterGroup && clusterGroup._map && clusterGroup._map._loaded) {
+              clusterGroup.addLayer(marker)
+            }
+          } catch (error) {
+            // Silenciar error de marker individual
           }
         }
-      }
+      })
+    } catch (e) {
+      // Silenciar error global
+    }
 
-      // Check if markers were added but not visible
-      if (madridMarkersAdded > 0) {
-        console.log("Madrid markers were added. If they're not visible, check:")
-        console.log("1. Is the map centered on Madrid? Current center:", map.getCenter())
-        console.log("2. Is the markers layer visible?", markersLayer._map ? "Yes" : "No")
-        console.log("3. Current zoom level:", map.getZoom())
+    return () => {
+      if (clusterGroup && clusterGroup._map && clusterGroup._map._loaded) {
+        try { clusterGroup.clearLayers() } catch { }
       }
     }
-  }, [pointFeatures, isMapReady, selectedCity])
+  }, [pointFeatures, isMapReady, selectedCity, isClusterReady])
+
+  // Log de posiciones duplicadas antes de renderizar marcadores
+  useEffect(() => {
+    if (!pointFeatures || pointFeatures.length === 0) return
+    const seen = new Set()
+    let duplicates = 0
+    pointFeatures.forEach(f => {
+      const key = `${f.latitude},${f.longitude}`
+      if (seen.has(key)) duplicates++
+      else seen.add(key)
+    })
+    console.log(`Total duplicates: ${duplicates} out of ${pointFeatures.length}`)
+  }, [pointFeatures])
 
   return <div ref={mapRef} className="h-full w-full" />
 }
