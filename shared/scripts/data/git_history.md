@@ -1,5 +1,14 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-22 | Enhanced Point Features and Improved Data Upload
+
+- Updated `insert_ready_point_features_bcn.json` and `insert_ready_point_features_madrid.json` in `auq_data_engine/data/processed` for enhanced point features
+- Modified `upload_to_supabase.py` in `auq_data_engine/upload` to improve data upload process
+- Refactored `leaflet-map.jsx`, `map-component.tsx`, `point-features-toggle.tsx`, `multi-select.tsx` and `map-context.tsx` in `auq_frontend/components` and `auq_frontend/contexts` for better map interaction
+- Updated `supabase-client.ts` in `auq_frontend/lib` for better database interaction
+
+This commit enhances the point features for both Barcelona and Madrid and improves the data upload process to Supabase. It also refactors the frontend components to provide a better map interaction experience for the users.
+
 ## 📦 Feature | 2025-05-22 | Enhancements to AUQ Frontend and Database
 
 - Added unique constraint to point features in auq_database/migrations/013_add_unique_constraint_to_point_features.sql

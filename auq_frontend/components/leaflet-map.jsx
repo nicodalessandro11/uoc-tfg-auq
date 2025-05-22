@@ -23,6 +23,108 @@ const featureTypeMap = {
   14: "educational_center",
 }
 
+// Feature type mapping with styles
+const featureTypeStyles = {
+  library: {
+    color: "#4CAF50", // Verde
+    icon: "📚"
+  },
+  cultural_center: {
+    color: "#2196F3", // Azul
+    icon: "🎭"
+  },
+  auditorium: {
+    color: "#9C27B0", // Púrpura
+    icon: "🎪"
+  },
+  heritage_space: {
+    color: "#FF9800", // Naranja
+    icon: "🏛️"
+  },
+  creation_factory: {
+    color: "#E91E63", // Rosa
+    icon: "🏭"
+  },
+  museum: {
+    color: "#795548", // Marrón
+    icon: "🏛️"
+  },
+  cinema: {
+    color: "#607D8B", // Gris azulado
+    icon: "🎬"
+  },
+  exhibition_center: {
+    color: "#00BCD4", // Cyan
+    icon: "🖼️"
+  },
+  archive: {
+    color: "#673AB7", // Púrpura oscuro
+    icon: "📜"
+  },
+  live_music_venue: {
+    color: "#FFC107", // Amarillo
+    icon: "🎵"
+  },
+  performing_arts_venue: {
+    color: "#F44336", // Rojo
+    icon: "🎭"
+  },
+  municipal_market: {
+    color: "#8BC34A", // Verde claro
+    icon: "🛒"
+  },
+  park_garden: {
+    color: "#009688", // Verde azulado
+    icon: "🌳"
+  },
+  educational_center: {
+    color: "#3F51B5", // Índigo
+    icon: "🎓"
+  }
+}
+
+// Color palette for dynamic assignment
+const colorPalette = [
+  '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6',
+  '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3',
+  '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'
+]
+
+// Helper to assign a color to each feature type by order of appearance
+const featureTypeColorMap = {}
+let colorIndex = 0
+const getColorForFeatureType = (featureType) => {
+  if (!featureTypeColorMap[featureType]) {
+    featureTypeColorMap[featureType] = colorPalette[colorIndex % colorPalette.length]
+    colorIndex++
+  }
+  return featureTypeColorMap[featureType]
+}
+
+// Leaflet-color-markers icon URLs
+const markerIconUrls = [
+  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
+  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
+  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png',
+  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
+  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png',
+]
+const markerShadowUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
+
+// Helper to assign a marker icon URL to each feature type by order of appearance
+const featureTypeIconMap = {}
+let iconIndex = 0
+const getIconUrlForFeatureType = (featureType) => {
+  if (!featureTypeIconMap[featureType]) {
+    featureTypeIconMap[featureType] = markerIconUrls[iconIndex % markerIconUrls.length]
+    iconIndex++
+  }
+  return featureTypeIconMap[featureType]
+}
+
 // This component will only be loaded on the client side
 export default function LeafletMap({
   selectedCity,
@@ -45,11 +147,20 @@ export default function LeafletMap({
   const [currentMapType, setCurrentMapType] = useState(mapType)
   const [renderedMarkers, setRenderedMarkers] = useState({})
   const [isClusterReady, setIsClusterReady] = useState(false)
+  const markersRef = useRef([])
 
   // Function to generate a color from a simple palette based on the index
   const getColorFromPalette = (index, total) => {
     const colors = ["#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f", "#e5c494", "#b3b3b3"]
     return colors[index % colors.length]
+  }
+
+  // Helper function to get marker style
+  const getMarkerStyle = (featureType) => {
+    return featureTypeStyles[featureType] || {
+      color: "#FF4444",
+      icon: "📍"
+    }
   }
 
   // Initialize the map
@@ -115,11 +226,14 @@ export default function LeafletMap({
       // Create marker cluster group SOLO si MarkerClusterGroup está disponible
       if (L.MarkerClusterGroup) {
         clusterGroupRef.current = L.markerClusterGroup({
-          maxClusterRadius: 50,
+          maxClusterRadius: 80,
           spiderfyOnMaxZoom: true,
           showCoverageOnHover: false,
           zoomToBoundsOnClick: true,
-          disableClusteringAtZoom: 16,
+          disableClusteringAtZoom: 15,
+          chunkedLoading: true,
+          chunkInterval: 200,
+          chunkDelay: 50,
         }).addTo(map)
         setIsClusterReady(true)
       } else {
@@ -441,102 +555,115 @@ export default function LeafletMap({
     }
   }, [currentGeoJSON, dynamicFilters, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady])
 
-  // Update markers when point features change (sin debounce)
+  // Update markers when point features change
   useEffect(() => {
     const map = mapInstanceRef.current
-    const clusterGroup = clusterGroupRef.current
-
-    if (!map || !isMapReady || !isClusterReady || !clusterGroup || !clusterGroup._map || !clusterGroup._map._loaded) {
+    if (!map || !pointFeatures || pointFeatures.length === 0) {
+      console.log("[Map] No map or no point features to render")
       return
     }
 
-    // Limpia los marcadores previos
-    try { clusterGroup.clearLayers() } catch { }
+    console.log(`[Map] Rendering ${pointFeatures.length} point features`)
 
-    if (!pointFeatures || pointFeatures.length === 0) {
-      return
+    // Clear previous markers
+    if (markersRef.current) {
+      markersRef.current.forEach(marker => marker.remove())
+      markersRef.current = []
     }
 
-    try {
-      const L = window.L
-      const defaultIcon = L.icon({
-        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41],
-      })
-      pointFeatures.forEach((feature) => {
-        try {
-          const lat = Number.parseFloat(feature.latitude)
-          const lng = Number.parseFloat(feature.longitude)
-          if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) return
-          const featureTypeName = (feature.featureType || "Point of Interest")
-            .replace(/_/g, " ")
-            .split(" ")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ")
+    // Process markers in chunks for better performance
+    const chunkSize = 100
+    const chunks = []
+    for (let i = 0; i < pointFeatures.length; i += chunkSize) {
+      chunks.push(pointFeatures.slice(i, i + chunkSize))
+    }
 
-          // Limitar descripción solo para Madrid
-          const MAX_DESCRIPTION_LENGTH = 100
-          const tooltipContent = `
-              <div class="modern-tooltip">
-                <div class="modern-tooltip-title">${feature.name}</div>
-                <div class="modern-tooltip-type">${featureTypeName}</div>
-                ${Object.entries(feature.properties || {})
-              .filter(([key]) => key !== "id" && key !== "city_id" && key !== "created_at" && key !== "updated_at")
-              .map(([key, value]) => {
-                let displayValue = value
-                if (
-                  selectedCity?.id === 2 &&
-                  key === "description" &&
-                  typeof value === "string" &&
-                  value.length > MAX_DESCRIPTION_LENGTH
-                ) {
-                  displayValue = value.slice(0, MAX_DESCRIPTION_LENGTH) + "…"
-                }
-                return `
-                      <div class="modern-tooltip-info">
-                        <span class="modern-tooltip-label">${key.replace(/_/g, " ").charAt(0).toUpperCase() + key.replace(/_/g, " ").slice(1)}:</span>
-                        <span class="modern-tooltip-value" title="${typeof value === 'string' ? value.replace(/\"/g, '&quot;') : value}">${displayValue}</span>
-                      </div>
-                    `
-              })
-              .join("")}
+    console.log(`[Map] Split ${pointFeatures.length} markers into ${chunks.length} chunks`)
+
+    let totalMarkers = 0
+    let invalidMarkers = 0
+
+    chunks.forEach((chunk, chunkIndex) => {
+      setTimeout(() => {
+        chunk.forEach((feature) => {
+          try {
+            const lat = Number.parseFloat(feature.latitude)
+            const lng = Number.parseFloat(feature.longitude)
+            if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+              console.warn(`[Map] Invalid coordinates for feature ${feature.id}: lat=${lat}, lng=${lng}`)
+              invalidMarkers++
+              return
+            }
+
+            const featureTypeName = (feature.featureType || "Point of Interest")
+              .replace(/_/g, " ")
+              .split(" ")
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ")
+
+            const iconUrl = getIconUrlForFeatureType(feature.featureType)
+            const marker = L.marker([lat, lng], {
+              icon: L.icon({
+                iconUrl,
+                shadowUrl: markerShadowUrl,
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41],
+              }),
+            })
+
+            // Add popup with feature information (instead of tooltip)
+            let propertiesHtml = ''
+            if (feature.properties && typeof feature.properties === 'object') {
+              const entries = Object.entries(feature.properties)
+                .filter(([k, v]) => v !== null && v !== undefined && k !== 'id' && k !== 'name')
+                .map(([k, v]) => `<li><strong>${k.replace(/_/g, ' ')}:</strong> ${v}</li>`)
+              if (entries.length > 0) {
+                propertiesHtml = `<ul style=\"margin: 0; padding-left: 18px; font-size: 12px;\">${entries.join('')}</ul>`
+              }
+            }
+            const popupContent = `
+              <div class=\"marker-tooltip\" style=\"
+                background: white;
+                padding: 10px 12px;
+                border-radius: 6px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+                max-width: 260px;
+                min-width: 160px;
+              \">
+                <h3 style=\"margin: 0 0 6px 0; font-size: 15px; font-weight: bold;\">${feature.name || featureTypeName}</h3>
+                <div style=\"margin-bottom: 6px; font-size: 13px;\">
+                  <span style=\"color: ${getColorForFeatureType(feature.featureType)}; font-weight: bold;\">${featureTypeName}</span>
+                </div>
+                ${propertiesHtml}
               </div>
             `
+            marker.bindPopup(popupContent, { autoPan: true, closeButton: true, className: 'custom-popup' })
 
-          const marker = L.marker([lat, lng], { icon: defaultIcon }).bindTooltip(tooltipContent, {
-            direction: "top",
-            offset: [0, -20],
-            opacity: 1,
-            permanent: false,
-            interactive: true,
-            className: "modern-tooltip",
-          })
-          marker.off("mouseover");
-          marker.off("mouseout");
-          marker.on("click", function () {
-            marker.openTooltip();
-          });
-          if (clusterGroup && clusterGroup._map && clusterGroup._map._loaded) {
-            clusterGroup.addLayer(marker)
+            marker.addTo(map)
+            markersRef.current.push(marker)
+            totalMarkers++
+          } catch (error) {
+            console.error(`[Map] Error creating marker for feature ${feature.id}:`, error)
+            invalidMarkers++
           }
-        } catch (error) {
-          // Silenciar error de marker individual
-        }
-      })
-    } catch (e) {
-      // Silenciar error global
-    }
+        })
+
+        console.log(`[Map] Processed chunk ${chunkIndex + 1}/${chunks.length}`)
+      }, chunkIndex * 100) // Process each chunk with a delay
+    })
+
+    console.log(`[Map] Total markers rendered: ${totalMarkers}`)
+    console.log(`[Map] Invalid markers: ${invalidMarkers}`)
 
     return () => {
-      if (clusterGroup && clusterGroup._map && clusterGroup._map._loaded) {
-        try { clusterGroup.clearLayers() } catch { }
+      if (markersRef.current) {
+        markersRef.current.forEach(marker => marker.remove())
+        markersRef.current = []
       }
     }
-  }, [pointFeatures, isMapReady, selectedCity, isClusterReady])
+  }, [pointFeatures])
 
   return <div ref={mapRef} className="h-full w-full" />
 }

@@ -69,7 +69,7 @@ export function MultiSelect({
                             <Badge
                                 key={option.value}
                                 variant="secondary"
-                                className="rounded-sm px-1 font-normal bg-white/80 hover:bg-white"
+                                className="rounded-sm px-1 font-normal bg-white/80 text-black hover:bg-white dark:bg-gray-800 dark:text-white"
                             >
                                 {option.label}
                                 <button

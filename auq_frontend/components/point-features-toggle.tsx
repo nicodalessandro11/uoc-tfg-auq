@@ -22,6 +22,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { useMapContext } from "@/contexts/map-context"
 import { getFeatureDefinitions } from "@/lib/api-service"
+import { Button } from "@/components/ui/button"
 
 // Feature type mapping - consistent with database seed
 const featureTypeMap = {
@@ -50,6 +51,28 @@ const reverseFeatureTypeMap = Object.entries(featureTypeMap).reduce(
   {} as Record<string, string>,
 )
 
+// Paleta de colores igual que en leaflet-map.jsx
+const markerIconColors = [
+  '#2A81CB', // blue
+  '#D41159', // red
+  '#3CB44B', // green
+  '#FF8800', // orange
+  '#FFD700', // yellow
+  '#911EB4', // violet
+  '#808080', // grey
+  '#000000', // black
+]
+// Mapeo de tipo a color por orden de aparición
+const featureTypeColorMap: Record<string, string> = {}
+let colorIndex = 0
+const getColorForFeatureType = (featureType: string) => {
+  if (!featureTypeColorMap[featureType]) {
+    featureTypeColorMap[featureType] = markerIconColors[colorIndex % markerIconColors.length]
+    colorIndex++
+  }
+  return featureTypeColorMap[featureType]
+}
+
 export function PointFeaturesToggle() {
   const { visiblePointTypes, setVisiblePointTypes, dynamicPointTypes } = useMapContext()
   const [featureDefinitions, setFeatureDefinitions] = useState<any[]>([])
@@ -73,11 +96,30 @@ export function PointFeaturesToggle() {
 
   // Optimizado: handler memoizado
   const handleToggle = useCallback((type: string) => {
-    setVisiblePointTypes(prev => ({
-      ...prev,
-      [type]: !prev[type]
-    }))
+    setVisiblePointTypes(prev => {
+      const newState = { ...prev }
+      // Si el tipo no existe en el estado, lo añadimos como visible
+      if (!(type in newState)) {
+        newState[type] = true
+      }
+      // Invertimos el estado actual
+      newState[type] = !newState[type]
+      console.log(`Toggling ${type} to ${newState[type]}`)
+      return newState
+    })
   }, [setVisiblePointTypes])
+
+  // Switch for toggling all types
+  const allOn = dynamicPointTypes.every(type => visiblePointTypes[type])
+  const handleToggleAll = () => {
+    setVisiblePointTypes(prev => {
+      const newState = { ...prev }
+      dynamicPointTypes.forEach(type => {
+        newState[type] = !allOn
+      })
+      return newState
+    })
+  }
 
   // Map feature IDs to icons
   const featureIcons = {
@@ -168,16 +210,32 @@ export function PointFeaturesToggle() {
 
   return (
     <Card className="p-4">
-      <div className="flex flex-wrap gap-2">
-        {dynamicPointTypes.map((type) => (
-          <div key={type} className="flex items-center gap-1">
-            <Switch
-              checked={visiblePointTypes[type] ?? true}
-              onCheckedChange={() => handleToggle(type)}
-            />
-            <span className="capitalize text-xs">{type.replace(/_/g, ' ')}</span>
-          </div>
-        ))}
+      <div className="flex items-center gap-2 mb-3">
+        <Switch
+          checked={allOn}
+          onCheckedChange={handleToggleAll}
+        />
+        <span className="text-xs font-semibold select-none">Show all</span>
+      </div>
+      <div className="flex flex-col gap-2">
+        {dynamicPointTypes.map((type) => {
+          const isVisible = visiblePointTypes[type] ?? true
+          const color = getColorForFeatureType(type)
+          return (
+            <div key={type} className="flex items-center gap-2">
+              <Switch
+                checked={isVisible}
+                onCheckedChange={() => handleToggle(type)}
+                style={{
+                  '--switch-checked-bg': isVisible ? color : undefined,
+                  backgroundColor: isVisible ? color : undefined,
+                  borderColor: isVisible ? color : undefined,
+                } as React.CSSProperties}
+              />
+              <span className="capitalize text-xs">{type.replace(/_/g, ' ')}</span>
+            </div>
+          )
+        })}
       </div>
     </Card>
   )

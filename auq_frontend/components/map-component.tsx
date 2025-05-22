@@ -94,17 +94,44 @@ export default function MapComponent() {
     loadPointFeatures()
   }, [selectedCity, clearPointFeaturesCache, setPointFeatures])
 
-  // Filter point features based on visible types - IMPROVED FILTERING LOGIC
-  // Memoize the filtered point features to avoid recalculating on every render
+  // Filter point features based on visible types
   const filteredPointFeatures = useMemo(() => {
-    if (!pointFeatures.length) return []
-    return pointFeatures.filter((feature: PointFeature) => {
-      const featureType = feature.featureType
-      if (!featureType) return false
-      if (visiblePointTypes[featureType] === false) return false
-      return true
+    console.log("[Map] Starting to filter point features")
+    console.log(`[Map] Total point features before filtering: ${pointFeatures.length}`)
+    console.log("[Map] Visible point types:", visiblePointTypes)
+
+    if (!pointFeatures || pointFeatures.length === 0) {
+      console.log("[Map] No point features to filter")
+      return []
+    }
+
+    const filtered = pointFeatures.filter((feature) => {
+      if (!feature.featureType) {
+        console.warn(`[Map] Feature ${feature.id} has no feature type`)
+        return false
+      }
+
+      const isVisible = visiblePointTypes[feature.featureType]
+      if (isVisible === undefined) {
+        console.warn(`[Map] Feature type ${feature.featureType} not found in visiblePointTypes`)
+        return false
+      }
+
+      return isVisible
     })
-  }, [pointFeatures, visiblePointTypes, selectedCity?.id])
+
+    console.log(`[Map] Total point features after filtering: ${filtered.length}`)
+    console.log("[Map] Feature types distribution after filtering:",
+      Object.entries(
+        filtered.reduce<Record<string, number>>((acc, f) => {
+          acc[f.featureType] = (acc[f.featureType] || 0) + 1
+          return acc
+        }, {})
+      )
+    )
+
+    return filtered
+  }, [pointFeatures, visiblePointTypes])
 
   // Debug Madrid points if selected
   if (selectedCity?.id === 2 && DEBUG_MODE) {

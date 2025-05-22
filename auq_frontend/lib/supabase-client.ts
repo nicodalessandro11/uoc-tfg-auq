@@ -296,31 +296,55 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
   }
 
   return getCachedData(`point_features_${cityId}`, async () => {
-    console.log(`Fetching point features for city ID: ${cityId}`)
+    console.log(`[Supabase] Fetching point features for city ID: ${cityId}`)
 
+    // Primero obtenemos los feature definitions
+    const { data: featureDefinitions, error: featureError } = await supabase
+      .from("feature_definitions")
+      .select("id, name")
+
+    if (featureError) {
+      console.error(`[Supabase] Error fetching feature definitions: ${featureError.message}`)
+      throw new Error(`Error fetching feature definitions: ${featureError.message}`)
+    }
+
+    // Creamos un mapa de IDs a nombres
+    const featureTypeMap = Object.fromEntries(
+      (featureDefinitions as { id: number; name: string }[]).map(def => [
+        def.id,
+        def.name.toLowerCase().replace(/\s+/g, "_")
+      ])
+    )
+
+    console.log(`[Supabase] Feature type map created with ${Object.keys(featureTypeMap).length} types`)
+
+    // Ahora obtenemos los point features
     const { data, error } = await supabase
       .from("point_features")
       .select("*")
       .eq("city_id", cityId)
+      .limit(10000)
 
     if (error) {
+      console.error(`[Supabase] Error fetching point features: ${error.message}`)
       throw new Error(`Error fetching point features: ${error.message}`)
     }
 
     if (!data || data.length === 0) {
+      console.error(`[Supabase] No point features found for city ${cityId}`)
       throw new Error(`No point features found for city ${cityId}`)
     }
 
-    // Optional: map feature types
-    const featureDefinitions = await getFeatureDefinitions()
-    const featureTypeMap = Object.fromEntries(
-      featureDefinitions.map((def) => [def.id, def.name.toLowerCase().replace(/\s+/g, "_")]),
-    )
+    console.log(`[Supabase] Total point features fetched from database: ${data.length}`)
 
-    return data
+    // Mapeamos los tipos usando el mapa de IDs a nombres
+    const mappedData = (data as PointFeature[])
       .map((feature) => {
         const typeString = featureTypeMap[feature.feature_definition_id]
-        if (!typeString) return null // descarta puntos sin tipo válido
+        if (!typeString) {
+          console.warn(`[Supabase] No feature type found for feature ID ${feature.id} with definition_id ${feature.feature_definition_id}`)
+          return null
+        }
         return {
           ...feature,
           featureType: typeString,
@@ -328,7 +352,19 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
           city_id: cityId,
         }
       })
-      .filter(Boolean)
+      .filter((feature): feature is PointFeature => feature !== null)
+
+    console.log(`[Supabase] Total point features after mapping: ${mappedData.length}`)
+    console.log(`[Supabase] Feature types distribution:`, 
+      Object.entries(
+        mappedData.reduce<Record<string, number>>((acc, f) => {
+          acc[f.featureType] = (acc[f.featureType] || 0) + 1
+          return acc
+        }, {})
+      )
+    )
+
+    return mappedData
   })
 }
 

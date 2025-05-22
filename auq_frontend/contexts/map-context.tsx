@@ -7,7 +7,7 @@ import { clearCacheEntry as clearSupabaseCacheEntry } from "@/lib/supabase-clien
 import { clearApiCacheEntry } from "@/lib/api-service"
 
 // Import API service functions
-import { getDistricts, getGeoJSON, getGeographicalLevels } from "@/lib/api-service"
+import { getDistricts, getGeoJSON, getGeographicalLevels, getCityPointFeatures } from "@/lib/api-service"
 
 // Import types
 import type { City, District, Neighborhood, PointFeature } from "@/lib/api-types"
@@ -221,6 +221,50 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
   // Nuevo estado para pointFeatures
   const [pointFeatures, setPointFeatures] = useState<PointFeature[]>([])
+
+  // Load available point types when city changes
+  useEffect(() => {
+    async function loadAvailablePointTypes() {
+      if (!selectedCity) {
+        setDynamicPointTypes([])
+        setVisiblePointTypes({})
+        return
+      }
+
+      try {
+        console.log(`[MapContext] Loading point features for city ${selectedCity.id}`)
+        const features = await getCityPointFeatures(selectedCity.id)
+        console.log(`[MapContext] Loaded ${features.length} point features`)
+
+        // Get unique feature types
+        const uniqueTypes = Array.from(
+          new Set(
+            features
+              .map(f => f.featureType)
+              .filter((type): type is string => type !== undefined)
+          )
+        )
+        console.log(`[MapContext] Found ${uniqueTypes.length} unique feature types:`, uniqueTypes)
+
+        // Initialize visibility state for each type
+        const initialVisibility = uniqueTypes.reduce<Record<string, boolean>>((acc, type) => {
+          acc[type] = true // All types visible by default
+          return acc
+        }, {})
+
+        console.log("[MapContext] Initial visibility state:", initialVisibility)
+
+        setDynamicPointTypes(uniqueTypes)
+        setVisiblePointTypes(initialVisibility)
+      } catch (error) {
+        console.error("[MapContext] Error loading point types:", error)
+        setDynamicPointTypes([])
+        setVisiblePointTypes({})
+      }
+    }
+
+    loadAvailablePointTypes()
+  }, [selectedCity])
 
   // Update the loadAvailableAreas function to use direct Supabase data
   const loadAvailableAreas = useCallback(async (cityId: number, granularityLevel: string) => {

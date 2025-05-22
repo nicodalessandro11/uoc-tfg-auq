@@ -92,16 +92,42 @@ def upload(table_name: str, records: list[dict], city: str):
             total_uploaded = 0
             total_skipped = 0
             
+            # Print total records before processing
+            info(f"Total records to process for {city}: {len(records)}")
+            
             for i in range(0, len(records), BATCH_SIZE):
                 batch = records[i:i + BATCH_SIZE]
                 try:
+                    # Check for duplicates within the batch
+                    seen = set()
+                    duplicates = []
+                    unique_records = []
+                    
+                    for record in batch:
+                        key = (record['feature_definition_id'], 
+                              record['latitude'], 
+                              record['longitude'], 
+                              record['city_id'])
+                        if key in seen:
+                            duplicates.append(record)
+                        else:
+                            seen.add(key)
+                            unique_records.append(record)
+                    
+                    if duplicates:
+                        warning(f"Found {len(duplicates)} duplicates in batch {i//BATCH_SIZE + 1}")
+                        warning(f"Example duplicate: {duplicates[0]}")
+                        info(f"Unique records in this batch: {len(unique_records)}")
+                    
                     # Use upsert with on_conflict to ignore duplicates
-                    response = supabase.table(table_name).upsert(
-                        batch,
-                        on_conflict='feature_definition_id,latitude,longitude,city_id'
-                    ).execute()
-                    if hasattr(response, "data") and response.data:
-                        total_uploaded += len(response.data)
+                    if unique_records:  # Only try to upload if we have unique records
+                        response = supabase.table(table_name).upsert(
+                            unique_records,
+                            on_conflict='feature_definition_id,latitude,longitude,city_id'
+                        ).execute()
+                        if hasattr(response, "data") and response.data:
+                            total_uploaded += len(response.data)
+                            info(f"Successfully uploaded {len(response.data)} records in batch {i//BATCH_SIZE + 1}")
                 except Exception as e:
                     error(f"Error uploading batch {i//BATCH_SIZE + 1}: {str(e)}")
                     total_skipped += len(batch)
