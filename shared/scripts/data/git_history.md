@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-22 | Update and add new data files for Barcelona and Madrid
+
+- Updated and added new data files in `auq_data_engine/barcelona/` and `auq_data_engine/madrid/`
+- Changes were made to improve the accuracy of the data and to include new data points for both cities
+- Technical details: Added new JSON files and updated existing ones, deleted some CSV files, and modified Python scripts for data processing
+
+This commit is a significant step towards improving the data quality and coverage for our Barcelona and Madrid datasets. It will enhance the accuracy of our analytics and predictions.
+
 ## 📦 Feature | 2025-05-22 | Improved Data Processing and Map Display
 
 - Updated data processing scripts in `auq_data_engine` to handle JSON files instead of CSVs
