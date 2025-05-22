@@ -20,28 +20,14 @@ const MapWithNoSSR = dynamic(() => import("./leaflet-map"), {
 })
 
 // Debug flag to control verbose logging
-const DEBUG_MODE = true
+const DEBUG_MODE = false
 
 // Add this function after the existing imports
 function debugMadridPoints(points: PointFeature[], visibleTypes: Record<string, boolean>) {
+  if (!DEBUG_MODE) return;
+
   console.group("🔍 Madrid Points Debug")
   console.log(`Total Madrid points: ${points.length}`)
-
-  points.forEach((point: PointFeature) => {
-    const featureType =
-      point.featureType ||
-      point.feature_type ||
-      (point.feature_definition_id ? point.feature_definition_id.toString() : "unknown")
-
-    const isVisible = visibleTypes[featureType] !== undefined ? visibleTypes[featureType] : true
-
-    console.log(`Point: ${point.name}`)
-    console.log(`  - Type: ${featureType}`)
-    console.log(`  - Coordinates: [${point.latitude}, ${point.longitude}]`)
-    console.log(`  - Visible: ${isVisible}`)
-    console.log(`  - Feature Definition ID: ${point.feature_definition_id}`)
-  })
-
   console.groupEnd()
 }
 
@@ -88,7 +74,6 @@ export default function MapComponent() {
 
       // If the city has changed, clear the cache for the previous city
       if (prevCityIdRef.current && prevCityIdRef.current !== selectedCity.id) {
-        console.log(`City changed from ${prevCityIdRef.current} to ${selectedCity.id}, clearing cache`)
         clearPointFeaturesCache(prevCityIdRef.current)
       }
 
@@ -96,15 +81,7 @@ export default function MapComponent() {
 
       setIsLoadingPoints(true)
       try {
-        console.log(`Loading point features for city: ${selectedCity.name} (ID: ${selectedCity.id})`)
         const pointFeaturesData = await getCityPointFeatures(selectedCity.id)
-        console.log(`Loaded ${pointFeaturesData.length} point features for ${selectedCity.name}`)
-
-        // Special handling for Madrid (city ID 2)
-        if (selectedCity.id === 2 && DEBUG_MODE) {
-          console.log("Madrid point features:", pointFeaturesData)
-        }
-
         setPointFeatures(pointFeaturesData)
       } catch (error) {
         console.error("Error loading point features:", error)
@@ -122,7 +99,6 @@ export default function MapComponent() {
   const filteredPointFeatures = useMemo(() => {
     if (!pointFeatures.length) return []
     return pointFeatures.filter((feature: PointFeature) => {
-      // Solo usar el string normalizado
       const featureType = feature.featureType
       if (!featureType) return false
       if (visiblePointTypes[featureType] === false) return false
@@ -133,14 +109,7 @@ export default function MapComponent() {
   // Debug Madrid points if selected
   if (selectedCity?.id === 2 && DEBUG_MODE) {
     debugMadridPoints(pointFeatures, visiblePointTypes)
-    console.log(`Filtered ${filteredPointFeatures.length} out of ${pointFeatures.length} point features for Madrid`)
-    console.log("Visible point types:", visiblePointTypes)
   }
-
-  // Only log summary in normal mode
-  console.log(
-    `Filtered ${filteredPointFeatures.length} out of ${pointFeatures.length} point features for ${selectedCity?.name}`,
-  )
 
   return (
     <div className="h-full w-full relative" ref={mapContainerRef}>

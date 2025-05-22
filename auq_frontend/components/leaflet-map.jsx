@@ -196,7 +196,6 @@ export default function LeafletMap({
     if (selectedCity) {
       // Only set the view when the city changes
       if (!prevCityId || prevCityId !== selectedCity.id) {
-        console.log(`City changed to ${selectedCity.name}, updating map view`)
         setDefaultCityView(map, selectedCity)
         // Store the current city ID for future comparison
         map.prevCityId = selectedCity.id
@@ -218,8 +217,6 @@ export default function LeafletMap({
     if (!map || !selectedCity) return
 
     try {
-      console.log(`Setting default view for city: ${selectedCity.name} (ID: ${selectedCity.id})`)
-
       if (selectedCity.id === 1) {
         // Barcelona
         map.setView([41.3851, 2.1734], 12)
@@ -230,8 +227,6 @@ export default function LeafletMap({
         // Default view of Spain
         map.setView([40, -4], 5)
       }
-
-      console.log(`Map view updated successfully for ${selectedCity.name}`)
     } catch (error) {
       console.error(`Error setting default view for city ${selectedCity.name}:`, error)
       // Fallback to a safe default
@@ -255,8 +250,6 @@ export default function LeafletMap({
 
     const L = window.L
     if (!L) return
-
-    console.log("Updating map type to:", mapType)
 
     try {
       // Get the selected map type configuration
@@ -314,7 +307,6 @@ export default function LeafletMap({
 
     // Check if we have valid GeoJSON data
     if (!currentGeoJSON || !currentGeoJSON.features || currentGeoJSON.features.length === 0) {
-      console.log("No valid GeoJSON data to render")
       return
     }
 
@@ -367,14 +359,12 @@ export default function LeafletMap({
       const validFeatures = filteredFeatures.filter((feature) => {
         // Check if feature has valid geometry
         if (!feature.geometry || !feature.geometry.coordinates) {
-          console.warn("Feature missing geometry or coordinates:", feature)
           return false
         }
 
         // Check if coordinates are valid (not empty, not NaN)
         const coords = feature.geometry.coordinates
         if (!coords.length) {
-          console.warn("Feature has empty coordinates:", feature)
           return false
         }
 
@@ -382,7 +372,6 @@ export default function LeafletMap({
         if (feature.geometry.type === "Polygon") {
           const ring = coords[0]
           if (!ring || !ring.length) {
-            console.warn("Polygon has empty ring:", feature)
             return false
           }
 
@@ -397,7 +386,6 @@ export default function LeafletMap({
           )
 
           if (hasInvalidCoords) {
-            console.warn("Polygon has invalid coordinates:", feature)
             return false
           }
         }
@@ -406,7 +394,6 @@ export default function LeafletMap({
       })
 
       if (validFeatures.length === 0) {
-        console.warn("No valid features found in GeoJSON data")
         return
       }
 
@@ -447,10 +434,6 @@ export default function LeafletMap({
       // Only add to layer if it was created successfully
       if (geoJson) {
         geoJson.addTo(geoJsonLayer)
-
-        // We don't need to fit bounds every time GeoJSON changes
-        // The map view is already set when the city changes
-        // This prevents unnecessary errors and map jumps
       }
     } catch (geoJsonError) {
       console.error("Error rendering GeoJSON:", geoJsonError)
@@ -485,46 +468,63 @@ export default function LeafletMap({
         shadowSize: [41, 41],
       })
       pointFeatures.forEach((feature) => {
-        if (feature.latitude && feature.longitude) {
-          try {
-            const lat = Number.parseFloat(feature.latitude)
-            const lng = Number.parseFloat(feature.longitude)
-            if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) return
-            const featureTypeName = (feature.featureType || "Point of Interest")
-              .replace(/_/g, " ")
-              .split(" ")
-              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(" ")
-            const tooltipContent = `
-              <div>
+        try {
+          const lat = Number.parseFloat(feature.latitude)
+          const lng = Number.parseFloat(feature.longitude)
+          if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) return
+          const featureTypeName = (feature.featureType || "Point of Interest")
+            .replace(/_/g, " ")
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")
+
+          // Limitar descripción solo para Madrid
+          const MAX_DESCRIPTION_LENGTH = 100
+          const tooltipContent = `
+              <div class="modern-tooltip">
                 <div class="modern-tooltip-title">${feature.name}</div>
                 <div class="modern-tooltip-type">${featureTypeName}</div>
                 ${Object.entries(feature.properties || {})
-                .map(
-                  ([key, value]) => `
+              .filter(([key]) => key !== "id" && key !== "city_id" && key !== "created_at" && key !== "updated_at")
+              .map(([key, value]) => {
+                let displayValue = value
+                if (
+                  selectedCity?.id === 2 &&
+                  key === "description" &&
+                  typeof value === "string" &&
+                  value.length > MAX_DESCRIPTION_LENGTH
+                ) {
+                  displayValue = value.slice(0, MAX_DESCRIPTION_LENGTH) + "…"
+                }
+                return `
                       <div class="modern-tooltip-info">
                         <span class="modern-tooltip-label">${key.replace(/_/g, " ").charAt(0).toUpperCase() + key.replace(/_/g, " ").slice(1)}:</span>
-                        <span class="modern-tooltip-value">${value}</span>
+                        <span class="modern-tooltip-value" title="${typeof value === 'string' ? value.replace(/\"/g, '&quot;') : value}">${displayValue}</span>
                       </div>
                     `
-                )
-                .join("")}
+              })
+              .join("")}
               </div>
             `
-            const marker = L.marker([lat, lng], { icon: defaultIcon }).bindTooltip(tooltipContent, {
-              direction: "top",
-              offset: [0, -20],
-              opacity: 1,
-              permanent: false,
-              interactive: true,
-              className: "modern-tooltip",
-            })
-            if (clusterGroup && clusterGroup._map && clusterGroup._map._loaded) {
-              clusterGroup.addLayer(marker)
-            }
-          } catch (error) {
-            // Silenciar error de marker individual
+
+          const marker = L.marker([lat, lng], { icon: defaultIcon }).bindTooltip(tooltipContent, {
+            direction: "top",
+            offset: [0, -20],
+            opacity: 1,
+            permanent: false,
+            interactive: true,
+            className: "modern-tooltip",
+          })
+          marker.off("mouseover");
+          marker.off("mouseout");
+          marker.on("click", function () {
+            marker.openTooltip();
+          });
+          if (clusterGroup && clusterGroup._map && clusterGroup._map._loaded) {
+            clusterGroup.addLayer(marker)
           }
+        } catch (error) {
+          // Silenciar error de marker individual
         }
       })
     } catch (e) {
@@ -537,19 +537,6 @@ export default function LeafletMap({
       }
     }
   }, [pointFeatures, isMapReady, selectedCity, isClusterReady])
-
-  // Log de posiciones duplicadas antes de renderizar marcadores
-  useEffect(() => {
-    if (!pointFeatures || pointFeatures.length === 0) return
-    const seen = new Set()
-    let duplicates = 0
-    pointFeatures.forEach(f => {
-      const key = `${f.latitude},${f.longitude}`
-      if (seen.has(key)) duplicates++
-      else seen.add(key)
-    })
-    console.log(`Total duplicates: ${duplicates} out of ${pointFeatures.length}`)
-  }, [pointFeatures])
 
   return <div ref={mapRef} className="h-full w-full" />
 }

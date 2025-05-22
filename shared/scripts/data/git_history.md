@@ -1,5 +1,15 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-22 | Enhancements to AUQ Frontend and Database
+
+- Added unique constraint to point features in auq_database/migrations/013_add_unique_constraint_to_point_features.sql
+- Updated compare-view.tsx, district-comparison-chart.tsx, leaflet-map.jsx, map-component.tsx, and visualize-view.tsx in auq_frontend/components for improved user interface and functionality
+- Introduced new UI components: multi-select.tsx and visualize-chart.tsx in auq_frontend/components/ui for better data visualization
+- Modified package.json in auq_frontend for updated dependencies
+- Updated seed.sql in auq_frontend/supabase for database seeding
+
+These changes were made to improve the overall user experience and enhance the data visualization capabilities of the AUQ application. The addition of the unique constraint to the database ensures data integrity. The new UI components provide more interactive and comprehensive data visualization options.
+
 ## 📦 Feature | 2025-05-22 | Improved data loading and testing for Barcelona and Madrid
 
 - Updated load_indicators.py and load_point_features.py in both auq_data_engine/barcelona and auq_data_engine/madrid directories, enhancing data loading process.

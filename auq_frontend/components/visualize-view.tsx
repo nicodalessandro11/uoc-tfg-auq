@@ -15,6 +15,7 @@ import { ArrowLeft, BarChart2, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { getDistricts, getCityIndicators, getIndicatorDefinitions } from "@/lib/api-service"
 import type { IndicatorDefinition, District, Area } from "@/lib/api-types"
+import { VisualizeChart } from "@/components/visualize-chart"
 
 export function VisualizeView() {
   const { selectedCity, setSelectedCity, selectedGranularity, setSelectedGranularity, loadGeoJSON } = useMapContext()
@@ -22,6 +23,9 @@ export function VisualizeView() {
   const [isLoading, setIsLoading] = useState(false)
   const [localAvailableAreas, setLocalAvailableAreas] = useState<Area[]>([])
   const [availableIndicators, setAvailableIndicators] = useState<IndicatorDefinition[]>([])
+  const [areas, setAreas] = useState<Area[]>([])
+  const [indicatorValues, setIndicatorValues] = useState<Record<number, number>>({})
+  const [topN, setTopN] = useState(5)
 
   console.log('VisualizeView rendered with:', {
     selectedCity,
@@ -127,6 +131,7 @@ export function VisualizeView() {
         })
 
         setLocalAvailableAreas(formattedAreas)
+        setAreas(formattedAreas)
       } catch (error) {
         console.error("Error loading areas:", error)
       } finally {
@@ -137,116 +142,102 @@ export function VisualizeView() {
     loadAreas()
   }, [selectedCity, selectedGranularity, loadGeoJSON])
 
-  // Render the appropriate chart based on the selected indicator
-  const renderChart = () => {
-    if (!selectedIndicator) {
-      return (
-        <Card>
-          <CardContent className="h-[400px] flex items-center justify-center">
-            <p className="text-muted-foreground">Please select an indicator to visualize</p>
-          </CardContent>
-        </Card>
-      )
+  // Load values for the selected indicator
+  useEffect(() => {
+    async function loadValues() {
+      if (!selectedCity || !selectedGranularity || !selectedIndicator) return
+      setIsLoading(true)
+      try {
+        const definitions = await getIndicatorDefinitions()
+        const indicatorDef = definitions.find(def => def.name === selectedIndicator)
+        if (!indicatorDef) return
+        const indicators = await getCityIndicators(selectedCity.id, selectedGranularity.level)
+        const values: Record<number, number> = {}
+        indicators.forEach(ind => {
+          if (ind.indicator_def_id === indicatorDef.id) {
+            values[ind.geo_id] = ind.value
+          }
+        })
+        setIndicatorValues(values)
+      } catch (error) {
+        console.error("Error loading indicator values:", error)
+      } finally {
+        setIsLoading(false)
+      }
     }
+    loadValues()
+  }, [selectedCity, selectedGranularity, selectedIndicator])
 
-    if (isLoading) {
-      return (
-        <Card>
-          <CardContent className="h-[400px] flex items-center justify-center">
-            <div className="flex flex-col items-center gap-4">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-muted-foreground">Loading data...</p>
-            </div>
-          </CardContent>
-        </Card>
-      )
-    }
-
-    if (localAvailableAreas.length === 0) {
-      return (
-        <Card>
-          <CardContent className="h-[400px] flex items-center justify-center">
-            <p className="text-muted-foreground">No data available. Please select a city and level.</p>
-          </CardContent>
-        </Card>
-      )
-    }
-
-    // Find the selected indicator definition
-    const selectedDefinition = availableIndicators.find(def => def.name === selectedIndicator)
-
-    if (!selectedDefinition) {
-      return (
-        <Card>
-          <CardContent className="h-[400px] flex items-center justify-center">
-            <p className="text-muted-foreground">No visualization available for this indicator</p>
-          </CardContent>
-        </Card>
-      )
-    }
-
-    // Use a generic chart component that can handle any indicator
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{selectedDefinition.name}</CardTitle>
-          <CardDescription>
-            {selectedDefinition.description || `Data for ${selectedDefinition.name}`}
-            {selectedDefinition.unit && ` (${selectedDefinition.unit})`}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[400px]">
-            <BarChart2 className="h-full w-full text-muted-foreground" />
-            <div className="mt-4">
-              {localAvailableAreas.map(area => (
-                <div key={area.id} className="flex justify-between items-center py-2 border-b">
-                  <span>{area.name}</span>
-                  <span className="font-medium">
-                    {area[selectedDefinition.name.toLowerCase().replace(/\s+/g, '_') as keyof Area] || 'N/A'}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    )
+  // Opciones de Top N dinámicas
+  const topOptions = [3, 5, 10, 15, 20].filter(n => n <= areas.length)
+  if (!topOptions.includes(topN) && topOptions.length > 0) {
+    setTopN(topOptions[topOptions.length - 1])
   }
+
+  const indicatorDef = availableIndicators.find(def => def.name === selectedIndicator)
 
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="grid gap-6">
         <Card>
-          <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <Label className="text-base font-medium">Select Indicator</Label>
-              <Select value={selectedIndicator} onValueChange={setSelectedIndicator}>
-                <SelectTrigger className="modern-input">
-                  <SelectValue placeholder="Select indicator to visualize..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableIndicators.map((indicator) => (
-                    <SelectItem key={indicator.id} value={indicator.name}>
-                      {indicator.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <CardContent className="space-y-6 p-4">
+            <div className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="flex-1 space-y-1">
+                <Label className="text-sm font-medium text-primary">Select Indicator</Label>
+                <Select value={selectedIndicator} onValueChange={setSelectedIndicator}>
+                  <SelectTrigger className="modern-input border-primary text-black dark:text-white focus:ring-primary focus:border-primary h-10 text-sm">
+                    <SelectValue placeholder="Select indicator to visualize..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableIndicators.map((indicator) => (
+                      <SelectItem key={indicator.id} value={indicator.name}>
+                        {indicator.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-32 space-y-1">
+                <Label className="text-sm font-medium text-primary">Top N</Label>
+                <Select value={topN.toString()} onValueChange={v => setTopN(Number(v))}>
+                  <SelectTrigger className="modern-input border-primary text-black dark:text-white focus:ring-primary focus:border-primary h-10 text-sm">
+                    <SelectValue placeholder="Top N" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {topOptions.map(n => (
+                      <SelectItem key={n} value={n.toString()}>
+                        Top {n}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div className="modern-card bg-primary/5">
-              <h3 className="text-sm font-medium mb-2">About this data</h3>
-              <p className="text-sm text-muted-foreground">
-                {selectedIndicator
-                  ? `This visualization shows ${selectedIndicator} data for all areas in ${selectedCity?.name || "the selected city"}. Select an indicator from the dropdown above to explore different metrics.`
-                  : `Select an indicator from the dropdown above to visualize data for ${selectedCity?.name || "the selected city"}.`}
+            <div className="modern-card bg-primary/5 p-3">
+              <p className="text-sm text-muted-foreground leading-snug">
+                {indicatorDef?.description
+                  ? indicatorDef.description
+                  : selectedIndicator
+                    ? `This visualization shows ${selectedIndicator} data for all areas in ${selectedCity?.name || "the selected city"}. Select an indicator from the dropdown above to explore different metrics.`
+                    : `Select an indicator from the dropdown above to visualize data for ${selectedCity?.name || "the selected city"}.`}
               </p>
             </div>
           </CardContent>
         </Card>
 
-        <div className="space-y-6">{renderChart()}</div>
+        {isLoading || !indicatorDef ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : (
+          <VisualizeChart
+            areas={areas}
+            indicator={indicatorDef}
+            indicatorValues={indicatorValues}
+            topN={topN}
+          />
+        )}
       </div>
     </div>
   )
