@@ -37,7 +37,21 @@ INSERT INTO feature_definitions (name, description) VALUES
     ('Municipal markets', 'Public markets for food and local products'),
     ('Parks and gardens', 'Urban green spaces including parks, gardens, and natural areas'),
     ('Educational centers', 'Schools, colleges, and other educational institutions'),
-    ('Health centers', 'Health centers and hospitals');
+    ('Health centers', 'Health centers and hospitals'),
+    ('Playgrounds', 'Outdoor areas equipped for children to play'),
+    ('Time Banks', 'Community programs for exchanging services using time as currency'),
+    ('Musical bars and pubs', 'Bars and pubs with live or recorded music for entertainment'),
+    ('Cocktail bars', 'Venues specialized in serving cocktails and mixed drinks'),
+    ('Nightclubs', 'Entertainment venues with DJs, dancing, and late-night music'),
+    ('Sports facilities', 'Gyms, sports fields, courts, and athletic centers'),
+    ('Karaokes', 'Venues where patrons sing along to music tracks with lyrics'),
+    ('Municipal museums', 'Museums managed and operated by the local municipality'),
+    ('Swimming', 'Pools and facilities for recreational or competitive swimming'),
+    ('Restaurants', 'Establishments that prepare and serve meals to customers'),
+    ('Theaters', 'Buildings or venues for dramatic or musical performances'),
+    ('Universities', 'Institutions of higher education offering undergraduate and postgraduate degrees'),
+    ('Zoo', 'Facilities where animals are kept for public viewing and conservation');
+
 
 
 INSERT INTO indicator_definitions (name, description, unit, category, source) VALUES

@@ -4,7 +4,7 @@
 ETL Script: Load Point Features of Barcelona
 
 This script performs the following tasks:
-- Downloads point feature data from multiple sources in the files_manifest.json
+- Load point features data from Barcelona Open Data API.
 - Processes each file according to its specific format and encoding
 - Transforms the data into a standardized format for database insertion
 - Saves the processed point features as a JSON file in the /data/processed folder
@@ -15,23 +15,21 @@ Usage:
 
 Author: Nico D'Alessandro Calderon
 Email: nicodalessandro11@gmail.com
-Date: 2025-04-17
+Date: 2024-04-17
 Version: 1.0.0
 License: MIT License
 """
 
 import json
-import csv
-import requests
 import pandas as pd
-import re
-import io
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Callable
-from io import StringIO, BytesIO
+from typing import Dict, List, Any, Optional
 import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
+import requests
+import urllib.parse
+import time
 
 from shared.common_lib.emoji_logger import info, success, warning, error, debug
 
@@ -62,57 +60,32 @@ OUTPUT_FILENAME = "insert_ready_point_features_bcn.json"
 BASE_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_PATH = BASE_DIR / "data/processed" / OUTPUT_FILENAME
 
-# File processing configurations
-FILE_PROCESSORS = {
-    "parques_y_jardines": {
-        "feature_definition": "Parks and gardens",
-        "processor": "process_parcs_jardins",
-        "encoding": "utf-16",  # File has UTF-16 BOM
-        "delimiter": "\t",     # Tab-separated
-        "quoting": csv.QUOTE_NONE  # No quotes in the file
-    },
-    "mercados": {
-        "feature_definition": "Municipal markets",
-        "processor": "process_mercats",
-        "encoding": "utf-8-sig",
-        "delimiter": ";",
-        "quoting": csv.QUOTE_MINIMAL
-    },
-    "varios": {
-        "feature_definition": None,  # Will be determined by Tipus_Equipament
-        "processor": "process_equipaments",
-        "encoding": "utf-8-sig",
-        "delimiter": ",",
-        "quoting": csv.QUOTE_MINIMAL
-    }
-}
-
-# Mapping of equipment types to feature definitions
-EQUIPMENT_TYPE_MAPPING = {
-    "Biblioteques de Barcelona": "Libraries",
-    "Centres cívics": "Cultural centers",
-    "Grans auditoris": "Auditoriums",
-    "Espais d'interès patrimonial": "Heritage spaces",
-    "Fàbriques de Creació": "Creation factories",
-    "Museus i col·leccions": "Museums",
+# Feature definitions mapping from API filters to database feature definitions
+FEATURE_MAPPING = {
+    "Àrees de jocs infantils": "Playgrounds",
+    "Auditoris": "Auditoriums",
+    "Bancs del Temps": "Time Banks",
+    "Bars i pubs musicals": "Musical bars and pubs",
+    "Biblioteques": "Libraries",
+    "Biblioteques municipals": "Libraries",
     "Cinemes": "Cinemas",
-    "Centres d'exposicions": "Exhibition centers",
-    "Arxius": "Archives",
-    "Arxius de districte": "Archives",
-    "Arxius i biblioteques patrimonials": "Archives and patrimonial libraries",
-    "Sales de música en viu": "Live music venues",
-    "Sales d'arts escèniques": "Performing arts venues",
-    "Mercats municipals": "Municipal markets",
+    "Cocteleries": "Cocktail bars",
+    "Discoteques": "Nightclubs",
+    "Instal·lacions esportives": "Sports facilities",
+    "Karaokes": "Karaokes",
+    "Museus": "Museums",
+    "Museus municipals": "Municipal museums",
+    "Natació": "Swimming",
     "Parcs i jardins": "Parks and gardens",
-    "Centres educatius": "Educational centers",
-    "Ateneus": "Cultural centers",
-    "Cases de la Festa": "Cultural centers"
+    "Restaurants": "Restaurants",
+    "Teatres": "Theaters",
+    "Universitats": "Universities",
+    "Zoo": "Zoo"
 }
 
-
-# ===================
+# ==================
 # Database Functions
-# ===================
+# ==================
 
 def get_supabase_client() -> Client:
     """Initialize and return a Supabase client"""
@@ -146,450 +119,235 @@ def load_feature_definitions(supabase: Client) -> Dict[str, int]:
         return {}
 
 # ===================
-# Utility Functions
+# API Functions
 # ===================
 
-def clean_coordinate(coord_str: str, is_northing: bool = True) -> float:
+def generate_url(resource_id: str) -> str:
     """
-    Clean and convert a coordinate string to a float.
+    Generate the URL for Barcelona Open Data API based on resource ID and filters.
     
     Args:
-        coord_str: The coordinate string to clean
-        is_northing: Whether this is a northing (latitude) coordinate
+        resource_id (str): The resource ID from the API manifest
         
     Returns:
-        float: The cleaned coordinate value
+        str: The complete API URL with filters
     """
-    if not coord_str or pd.isna(coord_str):
-        return None
-        
-    try:
-        # Remove whitespace
-        coord_str = str(coord_str).strip()
-        
-        # Replace comma with dot for decimal point
-        coord_str = coord_str.replace(',', '.')
-        
-        # Handle multiple dots as thousand separators
-        if '.' in coord_str:
-            # Split by dots and join all parts except the last one
-            parts = coord_str.split('.')
-            if len(parts) > 2:
-                # Join all parts except the last one (which is the decimal part)
-                integer_part = ''.join(parts[:-1])
-                decimal_part = parts[-1]
-                coord_str = f"{integer_part}.{decimal_part}"
-        
-        # Convert to float
-        coord = float(coord_str)
-        
-        # If the coordinate is in the expected range for Barcelona, return it as is
-        if is_northing and 41.0 <= coord <= 42.0:
-            return coord
-        elif not is_northing and 1.0 <= coord <= 3.0:
-            return coord
-            
-        # If not in the expected range, try converting from UTM
-        # This is a simplified conversion - in production you'd want to use pyproj
-        if is_northing:
-            # Assuming UTM zone 31N for Barcelona
-            coord = coord / 1000000  # Convert from UTM meters to degrees
-        else:
-            coord = coord / 1000000  # Convert from UTM meters to degrees
-            
-        return coord
-        
-    except (ValueError, TypeError) as e:
-        print(f"⚠️ Could not convert coordinate '{coord_str}' to float: {str(e)}")
-        return None
+    base_url = "https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search_sql?"
+    
+    # Define all filters from the API
+    filters = [
+        "Àrees de jocs infantils",
+        "Auditoris",
+        "Bancs del Temps",
+        "Bars i pubs musicals",
+        "Biblioteques",
+        "Biblioteques municipals",
+        "Cinemes",
+        "Cocteleries",
+        "Discoteques",
+        "Instal·lacions esportives",
+        "Karaokes",
+        "Museus",
+        "Museus municipals",
+        "Natació",
+        "Parcs i jardins",
+        "Restaurants",
+        "Teatres",
+        "Universitats",
+        "Zoo"
+    ]
+    
+    # Convert filters to SQL format and escape single quotes
+    filters_sql = ", ".join(f"'{filter.replace(chr(39), chr(39)+chr(39))}'" for filter in filters)
+    sql = f'SELECT * FROM "{resource_id}" WHERE "secondary_filters_name" IN ({filters_sql})'
+    
+    # Encode the SQL query
+    query_string = urllib.parse.urlencode({"sql": sql})
+    return base_url + query_string
 
-def clean_market_coordinate(coord_str: str) -> float:
+def fetch_data(url: str, max_retries: int = 3, timeout: int = 30) -> Optional[Dict]:
     """
-    Clean and convert a market coordinate string to a float.
-    Specifically handles the format like '41.399.835.932.090.400'
+    Fetch data from Barcelona Open Data API with retry mechanism and timeout.
     
     Args:
-        coord_str: The coordinate string to clean
+        url (str): The API URL to fetch data from
+        max_retries (int): Maximum number of retry attempts
+        timeout (int): Request timeout in seconds
         
     Returns:
-        float: The cleaned coordinate value
+        Optional[Dict]: The fetched data or None if there was an error
     """
-    if not coord_str or pd.isna(coord_str):
-        return None
-        
-    try:
-        # Remove whitespace
-        coord_str = str(coord_str).strip()
-        
-        # Replace comma with dot for decimal point
-        coord_str = coord_str.replace(',', '.')
-        
-        # Handle multiple dots as thousand separators
-        if '.' in coord_str:
-            # Split by dots
-            parts = coord_str.split('.')
+    retry_delay = 1  # Initial delay in seconds
+    
+    for attempt in range(max_retries):
+        try:
+            debug(f"Fetching data from Barcelona API (attempt {attempt + 1}/{max_retries})")
+            response = requests.get(url, timeout=timeout)
+            response.raise_for_status()
             
-            # If there are more than 2 parts, this is using dots as thousand separators
-            if len(parts) > 2:
-                # For coordinates like "41.399.835.932.090.400"
-                # We need to join all parts except the last one
-                integer_part = ''.join(parts[:-1])
-                decimal_part = parts[-1]
+            data = response.json()
+            if not data:
+                warning("Empty response from API")
+                continue
                 
-                # Create a new string with a single decimal point
-                coord_str = f"{integer_part}.{decimal_part}"
+            if 'result' not in data:
+                warning("Invalid response format: missing 'result' key")
+                continue
                 
-                # Debug output
-                print(f"Original: {coord_str}, Cleaned: {coord_str}")
-        
-        # Convert to float
-        return float(coord_str)
-        
-    except (ValueError, TypeError) as e:
-        print(f"⚠️ Could not convert market coordinate '{coord_str}' to float: {str(e)}")
-        return None
-
+            if 'records' not in data['result']:
+                warning("Invalid response format: missing 'records' key")
+                continue
+                
+            info(f"Successfully fetched {len(data['result']['records'])} records")
+            return data
+            
+        except requests.exceptions.Timeout:
+            warning(f"Request timed out after {timeout} seconds")
+        except requests.exceptions.ConnectionError:
+            warning("Connection error occurred")
+        except requests.exceptions.HTTPError as e:
+            warning(f"HTTP error occurred: {str(e)}")
+        except json.JSONDecodeError:
+            warning("Failed to parse JSON response")
+        except Exception as e:
+            warning(f"Unexpected error: {str(e)}")
+            
+        if attempt < max_retries - 1:
+            retry_delay *= 2  # Exponential backoff
+            debug(f"Retrying in {retry_delay} seconds...")
+            time.sleep(retry_delay)
+    
+    error(f"Failed to fetch data after {max_retries} attempts")
+    return None
 
 # ===================
 # File Processors
 # ===================
 
-def process_parcs_jardins(data: List[Dict]) -> List[Dict]:
-    """Process parks and gardens data."""
-    processed = []
-    feature_def = FEATURE_DEFINITIONS.get('Parks and gardens')
-    
-    if not feature_def:
-        warning("'Parks and gardens' feature definition not found in database - skipping all records")
-        return processed
-        
-    for row in data:
-        try:
-            # Clean up column names - remove any BOM or whitespace
-            row = {k.strip().replace('\ufeff', ''): v.strip() if isinstance(v, str) else v 
-                  for k, v in row.items()}
-            
-            # Map the column names to our expected format
-            name = row.get('name')
-            y_coord = row.get('geo_epgs_4326_lat')  # This is actually UTM northing
-            x_coord = row.get('geo_epgs_4326_lon')  # This is actually UTM easting
-            neighborhood_id = row.get('addresses_neighborhood_id')
-            register_id = row.get('register_id')
-            
-            # Skip if required fields are missing or empty
-            if not all([name, y_coord, x_coord, neighborhood_id, register_id]):
-                debug(f"Skipping park/garden record due to missing required fields")
-                continue
-            
-            # Convert coordinates to WGS84 decimal degrees
-            try:
-                lat = clean_coordinate(y_coord, is_northing=True)
-                lon = clean_coordinate(x_coord, is_northing=False)
-                
-                # Validate coordinates are in reasonable range for Barcelona
-                if not (41.0 <= lat <= 42.0 and 1.5 <= lon <= 2.5):
-                    debug(f"Skipping park/garden record due to coordinates outside Barcelona range: lat={lat}, lon={lon}")
-                    continue
-                
-                # Convert neighborhood_id to integer
-                neighborhood_id_int = int(neighborhood_id)
-            except (ValueError, TypeError) as e:
-                debug(f"Skipping park/garden record due to invalid coordinates or neighborhood_id: {str(e)}")
-                continue
-            
-            # Create the processed record
-            processed.append({
-                'feature_definition_id': feature_def,
-                'name': name,
-                'latitude': lat,
-                'longitude': lon,
-                'geom': f"SRID=4326;POINT({lon} {lat})",  # Note: longitude first in WKT
-                'geo_level_id': GEO_LEVELS['Neighbourhood'],
-                'geo_id': neighborhood_id_int,
-                'city_id': CITY_ID,
-                'properties': {
-                    'address': row.get('addresses_road_name'),
-                    'postal_code': row.get('addresses_zip_code'),
-                }
-            })
-        except Exception as e:
-            error(f"Error processing park/garden record: {str(e)}")
-            continue
-    
-    info(f"Processed {len(processed)} parks and gardens records")
-    return processed
-
-
-def process_mercats(data: List[Dict]) -> List[Dict]:
-    """Process markets data."""
-    processed = []
-    feature_def = FEATURE_DEFINITIONS.get('Municipal markets')
-    
-    if not feature_def:
-        warning("'Municipal markets' feature definition not found in database - skipping all records")
-        return processed
-        
-    for row in data:
-        try:
-            # Clean up column names - handle both string and non-string values
-            row = {k.strip().replace('\ufeff', '') if isinstance(k, str) else k: 
-                  v.strip() if isinstance(v, str) else v 
-                  for k, v in row.items()}
-            
-            # Required fields
-            required_fields = {
-                'register_id': str,
-                'name': str,
-                'addresses_neighborhood_id': int
-            }
-            
-            # Validate and convert required fields
-            record = {}
-            for field, field_type in required_fields.items():
-                value = row.get(field)
-                if value is None or (isinstance(value, str) and value.strip() == ''):
-                    debug(f"Skipping market record due to missing {field}")
-                    break
-                try:
-                    if isinstance(value, str):
-                        record[field] = field_type(value.strip())
-                    else:
-                        record[field] = field_type(value)
-                except (ValueError, TypeError) as e:
-                    debug(f"Skipping market record due to invalid {field}: {str(e)}")
-                    break
-            else:  # All required fields are valid
-                # Handle coordinates separately
-                lat = clean_market_coordinate(row.get('geo_epgs_4326_lat'))
-                lon = clean_market_coordinate(row.get('geo_epgs_4326_lon'))
-                
-                if lat is None or lon is None:
-                    debug(f"Skipping market record due to invalid coordinates")
-                    continue
-                
-                # Extract only the requested fields
-                address = row.get('addresses_road_name', '')
-                street_number = row.get('addresses_start_street_number', '')
-                postal_code = row.get('addresses_zip_code', '')
-                telephone = row.get('values_value', '')
-                
-                # Create properties with only the requested fields
-                properties = {}
-                if address:
-                    properties['address'] = address
-                if street_number:
-                    properties['street_number'] = street_number
-                if postal_code:
-                    properties['postal_code'] = postal_code
-                if telephone:
-                    properties['telephone'] = telephone
-                
-                # Validate coordinates are in reasonable range for Barcelona
-                if not (41.3 <= lat <= 41.5 and 2.0 <= lon <= 2.3):
-                    debug(f"Skipping market record due to coordinates outside Barcelona range: lat={lat}, lon={lon}")
-                    continue
-                
-                processed.append({
-                    'feature_definition_id': feature_def,
-                    'name': record['name'],
-                    'latitude': lat,
-                    'longitude': lon,
-                    'geom': f"SRID=4326;POINT({lon} {lat})",
-                    'geo_level_id': GEO_LEVELS['Neighbourhood'],
-                    'geo_id': record['addresses_neighborhood_id'],
-                    'city_id': CITY_ID,
-                    'properties': properties
-                })
-        except Exception as e:
-            warning(f"Error processing market record: {str(e)}")
-            continue
-    
-    info(f"Processed {len(processed)} market records")
-    return processed
-
-
-def process_equipaments(data: List[Dict]) -> List[Dict]:
-    """Process equipment data."""
-    processed = []
-    
-    for row in data:
-        try:
-            # Clean up column names - remove any BOM or whitespace
-            row = {k.strip().replace('\ufeff', '') if isinstance(k, str) else k: 
-                  v.strip() if isinstance(v, str) else v 
-                  for k, v in row.items()}
-            
-            # Get equipment type and feature definition
-            equipment_type = row.get('Tipus_Equipament', '').strip()
-            feature_def = None
-            
-            # Try exact match first
-            eng_name = EQUIPMENT_TYPE_MAPPING.get(equipment_type)
-            if eng_name:
-                feature_def = FEATURE_DEFINITIONS.get(eng_name)
-                if feature_def:
-                    debug(f"Exact match found: '{equipment_type}' -> '{eng_name}' -> {feature_def}")
-                else:
-                    warning(f"Feature definition not found in database for type: {eng_name}")
-                    continue
-            else:
-                warning(f"Equipment type not found in mapping: {equipment_type}")
-                continue
-            
-            # Map the column names to our expected format
-            name = row.get('Nom_Equipament')
-            y_coord = row.get('Latitud')  # This is actually UTM northing
-            x_coord = row.get('Longitud')  # This is actually UTM easting
-            neighborhood_code = row.get('Codi_Barri')
-            district_code = row.get('Codi_Districte')
-            
-            # Skip if required fields are missing or empty
-            if not all([name, y_coord, x_coord, neighborhood_code, district_code]):
-                debug(f"Skipping equipment record due to missing required fields")
-                continue
-            
-            # Convert coordinates to WGS84 decimal degrees
-            try:
-                lat = clean_coordinate(y_coord, is_northing=True)
-                lon = clean_coordinate(x_coord, is_northing=False)
-                
-                # Validate coordinates are in reasonable range for Barcelona
-                # For equipaments, the coordinates are already in WGS84 format after conversion
-                if not (41.3 <= lat <= 41.5 and 2.0 <= lon <= 2.3):
-                    debug(f"Skipping equipment record due to coordinates outside Barcelona range: lat={lat}, lon={lon}")
-                    continue
-                
-                # Convert codes to integers
-                neighborhood_code_int = int(neighborhood_code)
-            except (ValueError, TypeError) as e:
-                debug(f"Skipping equipment record due to invalid coordinates or codes: {str(e)}")
-                continue
-            
-            # Create properties excluding the specified columns
-            excluded_columns = [
-                "Tipus_Equipament",
-                "Nom_Equipament",
-                "Latitud",
-                "Longitud",
-                "Codi_Barri",
-                "Codi_Districte",
-                "Id_Equipament",
-                "Te_Subseus",
-                "Id_Seu_Principal",
-                "Es_subseu_de",
-                "Es_seu_principal",
-                "Nom_Districte",
-                "Nom_Barri",
-                "Notes_Equipament",
-            ]
-            
-            properties = {
-                'register_id': row.get('Id_Equipament'),
-                'equipment_type': equipment_type
-            }
-            
-            # Add any other properties that aren't in the excluded list
-            for k, v in row.items():
-                if k not in excluded_columns and v:
-                    properties[k] = v
-            
-            # Create the point feature object
-            point_feature = {
-                "feature_definition_id": feature_def,
-                "name": name,
-                "latitude": lat,
-                "longitude": lon,
-                "geom": f"SRID=4326;POINT({lon} {lat})",  # Note: longitude first in WKT
-                "geo_level_id": GEO_LEVELS["Neighbourhood"],
-                "geo_id": neighborhood_code_int,
-                "city_id": CITY_ID,
-                "properties": properties
-            }
-            
-            processed.append(point_feature)
-            
-        except Exception as e:
-            warning(f"Error processing equipment record: {str(e)}")
-            continue
-    
-    info(f"Processed {len(processed)} equipment records")
-    return processed
-
-
-# ===================
-# Data Loading
-# ===================
-
-def load_csv_data(url: str, source_name: str) -> List[Dict]:
-    """Load and process CSV data from a URL.
-    Args:
-        url: The URL to load data from
-        source_name: The name of the source for logging purposes
-    Returns:
-        List of dictionaries containing the CSV data
+def process_records(data: Dict, feature_defs: Dict[str, int], supabase: Client) -> List[Dict]:
     """
-    info(f"Loading CSV data from {url}")
-    processor_config = FILE_PROCESSORS.get(source_name)
-    if not processor_config:
-        error(f"No processor configuration found for {source_name}")
-        return []
+    Process records from the API response and transform them into the required format.
+    
+    Args:
+        data: Dictionary containing the API response data
+        feature_defs: Dictionary mapping feature names to their IDs
+        supabase: Supabase client instance
+        
+    Returns:
+        List of processed records ready for database insertion
+    """
+    processed_records = []
+    
     try:
-        response = requests.get(url)
-        response.raise_for_status()
-        content = response.content
-    except requests.exceptions.RequestException as e:
-        error(f"Failed to download CSV from {url}: {str(e)}")
-        return []
-    encodings = [processor_config['encoding'], 'utf-8', 'utf-8-sig', 'latin-1', 'iso-8859-1', 'cp1252']
-    delimiters = [processor_config['delimiter'], ',', ';', '\t']
-    for encoding in encodings:
-        for delimiter in delimiters:
+        # Get the records from the response
+        records = data.get('result', {}).get('records', [])
+        if not records:
+            warning("No records found in API response")
+            return processed_records
+            
+        info(f"Processing {len(records)} records from API response")
+        
+        # Process each record
+        for record in records:
             try:
-                df = pd.read_csv(
-                    io.BytesIO(content),
-                    encoding=encoding,
-                    sep=delimiter,
-                    quoting=processor_config['quoting'],
-                    on_bad_lines='skip',
-                    dtype=str
-                )
-                if len(df.columns) > 1:
-                    info(f"Successfully loaded CSV with encoding={encoding}, delimiter={delimiter}")
-                    return df.to_dict('records')
+                # Extract required fields
+                name = record.get('name', '')
+                if not name:
+                    warning("Skipping record with missing name")
+                    continue
+                    
+                # Get coordinates directly from record
+                lon = record.get('geo_epgs_4326_lon')
+                lat = record.get('geo_epgs_4326_lat')
+                if not lon or not lat:
+                    warning(f"Skipping record with missing coordinates: {name}")
+                    continue
+                
+                # Convert coordinates to float
+                try:
+                    lon = float(lon)
+                    lat = float(lat)
+                except (ValueError, TypeError):
+                    warning(f"Invalid coordinate format: lon={lon}, lat={lat}")
+                    continue
+                    
+                # Get address information
+                road_name = record.get('addresses_road_name', '')
+                street_number = record.get('addresses_start_street_number', '')
+                zip_code = record.get('addresses_zip_code', '')
+                
+                # Get phone number if available
+                phone = None
+                if record.get('values_category') == 'Telèfons':
+                    phone = record.get('values_value')
+                
+                # Get feature definition ID
+                feature_type = record.get('secondary_filters_name')
+                if not feature_type:
+                    warning(f"Missing feature type for: {name}")
+                    continue
+                    
+                # Map the feature type to the database feature definition
+                mapped_feature = FEATURE_MAPPING.get(feature_type)
+                if not mapped_feature:
+                    warning(f"No feature mapping found for: {feature_type}")
+                    continue
+                    
+                feature_def_id = feature_defs.get(mapped_feature)
+                if not feature_def_id:
+                    warning(f"No feature definition found for type: {mapped_feature}")
+                    continue
+                
+                # Get neighbourhood ID
+                neighbourhood_id = record.get('addresses_neighborhood_id')
+                if not neighbourhood_id:
+                    warning(f"Record '{name}' is missing neighbourhood_id in the API response")
+                    continue
+                
+                # Create the point feature record
+                point_feature = {
+                    "name": name,
+                    "latitude": lat,
+                    "longitude": lon,
+                    "geom": f"POINT({lon} {lat})",
+                    "properties": {
+                        "address_road_name": road_name,
+                        "address_street_number": street_number,
+                        "address_zip_code": zip_code,
+                        "phone": phone,
+                        "district": record.get('addresses_district_name', ''),
+                        "neighbourhood": record.get('addresses_neighborhood_name', '')
+                    },
+                    "city_id": CITY_ID,
+                    "geo_level_id": GEO_LEVELS["Neighbourhood"],
+                    "feature_definition_id": feature_def_id,
+                    "geo_id": int(neighbourhood_id)
+                }
+                
+                processed_records.append(point_feature)
+                
             except Exception as e:
-                debug(f"Failed to load CSV with encoding={encoding}, delimiter={delimiter}: {str(e)}")
+                warning(f"Error processing record: {str(e)}")
                 continue
-    for encoding in encodings:
-        try:
-            text_content = content.decode(encoding)
-            dialect = csv.Sniffer().sniff(text_content[:1024])
-            reader = csv.DictReader(io.StringIO(text_content), dialect=dialect)
-            data = list(reader)
-            if data and len(data[0].keys()) > 1:
-                info(f"Successfully loaded CSV with csv module using encoding={encoding}")
-                return data
-        except Exception as e:
-            debug(f"Failed to load CSV with csv module using encoding={encoding}: {str(e)}")
-            continue
-    error_msg = f"Failed to parse CSV data from {source_name} with any combination of encoding and delimiter"
-    error(error_msg)
-    return []
-
+                
+        info(f"Successfully processed {len(processed_records)} records")
+        return processed_records
+        
+    except Exception as e:
+        error(f"Error processing records: {str(e)}")
+        return []
 
 # ===================
 # Core ETL Process
 # ===================
 
-def run(
-    manifest_path: Path = BASE_DIR / "data/files_manifest.json",
-    output_path: Path = DEFAULT_OUTPUT_PATH
-) -> None:
+def run(output_path: Path = DEFAULT_OUTPUT_PATH, manifest_path: Path = None) -> None:
     """
     Main execution logic to fetch, process, and store point feature data.
     
     Args:
-        manifest_path: Path to the files manifest JSON
-        output_path: Output file path to save the processed data
+        output_path: Path where to save the processed data
+        manifest_path: Path to the api-file-manifest.json file
     """
     info(f"Starting ETL process for Barcelona point features...")
     
@@ -603,55 +361,34 @@ def run(
     global FEATURE_DEFINITIONS
     FEATURE_DEFINITIONS = load_feature_definitions(supabase)
     
-    # Load the files manifest
-    try:
-        with open(manifest_path, 'r', encoding='utf-8') as f:
-            manifest = json.load(f)
-    except Exception as e:
-        error(f"Failed to load files manifest: {e}")
-        return
-    
-    # Get Barcelona point features URLs
-    bcn_point_features = manifest.get("barcelona", {}).get("point_features", {}).get("raw_file", {})
-    
-    if not bcn_point_features:
-        error("No point feature URLs found in the manifest")
-        return
-    
-    info(f"Found {len(bcn_point_features)} point feature sources to process")
-    
-    # Process each file
+    # Process all features
     all_processed_data = []
     
-    for filename, url in bcn_point_features.items():
-        info(f"Processing {filename} from {url}")
+    try:
+        # Load the resource ID from the api-file-manifest.json file
+        if manifest_path is None:
+            manifest_path = BASE_DIR / "data/api-file-manifest.json"
+            
+        debug(f"Using manifest file at: {manifest_path}")
+        with open(manifest_path, 'r') as f:
+            manifest = json.load(f)
+            resource_id = manifest['barcelona']['point_features']['resource_id']
+            debug(f"Found resource_id: {resource_id}")
         
-        # Determine the processor to use
-        processor_config = FILE_PROCESSORS.get(filename)
-        if not processor_config:
-            warning(f"No processor configured for {filename}. Skipping.")
-            continue
+        # Generate URL for all features using the resource_id from the manifest
+        url = generate_url(resource_id)
+        debug(f"Generated URL: {url}")
         
-        # Load the data
-        raw_data = load_csv_data(url, filename)
-        if not raw_data:
-            warning(f"No data loaded from {filename}. Skipping.")
-            continue
-        
-        info(f"Loaded {len(raw_data)} records from {filename}")
-        
-        # Process the data using the appropriate processor
-        processor_name = processor_config["processor"]
-        processor_func = globals().get(processor_name)
-        
-        if not processor_func:
-            warning(f"Processor function {processor_name} not found. Skipping {filename}.")
-            continue
-        
-        processed_data = processor_func(raw_data)
-        info(f"Processed {len(processed_data)} records from {filename}")
-        
-        all_processed_data.extend(processed_data)
+        # Fetch and process data
+        data = fetch_data(url)
+        if data:
+            processed_data = process_records(data, FEATURE_DEFINITIONS, supabase)
+            all_processed_data.extend(processed_data)
+        else:
+            error("Failed to fetch data")
+            
+    except Exception as e:
+        error(f"Error processing data: {str(e)}")
     
     # Save the processed data
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -662,7 +399,6 @@ def run(
     info(f"Total point features processed: {len(all_processed_data)}")
     success(f"Output saved to: {output_path}")
 
-
 # ==========================
 # CLI Entry Point
 # ==========================
@@ -671,13 +407,8 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description="ETL script for loading Barcelona point features.")
-    parser.add_argument("--manifest_path", type=str, default=str(BASE_DIR / "data/files_manifest.json"), 
-                        help="Path to the files manifest JSON.")
     parser.add_argument("--output_path", type=str, default=str(DEFAULT_OUTPUT_PATH), 
-                        help="Output path for the processed JSON file.")
+                      help="Path where to save the processed data.")
     
     args = parser.parse_args()
-    run(
-        manifest_path=Path(args.manifest_path),
-        output_path=Path(args.output_path)
-    )
+    run(output_path=Path(args.output_path))

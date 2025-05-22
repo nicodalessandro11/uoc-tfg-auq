@@ -71,7 +71,7 @@ def process_point_features():
     print(f"{F} 📍 Running POINT FEATURE ETLs...")
 
     # Get the correct manifest path
-    manifest_path = Path(__file__).resolve().parent / "data/files_manifest.json"
+    manifest_path = Path(__file__).resolve().parent / "data/api-file-manifest.json"
     
     bcn_p.run(manifest_path=manifest_path)
     mad_p.run(manifest_path=manifest_path)

@@ -32,8 +32,8 @@ from io import StringIO
 load_dotenv()
 
 # Configuration
-BASE_DIR = Path(__file__).resolve().parents[1]
-MANIFEST_PATH = BASE_DIR / "data/files_manifest.json"
+BASE_DIR = Path(__file__).resolve().parent.parent
+MANIFEST_PATH = BASE_DIR / "data/api-file-manifest.json"
 OUTPUT_FILENAME = "insert_ready_indicators_bcn.json"
 DEFAULT_OUTPUT_PATH = BASE_DIR / "data/processed" / OUTPUT_FILENAME
 

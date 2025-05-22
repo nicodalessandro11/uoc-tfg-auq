@@ -26,10 +26,10 @@ from pathlib import Path
 # Paths & Manifest
 # =====================
 
-BASE_DIR = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(__file__).resolve().parent.parent
 print(f"Base directory is: {BASE_DIR}")
 PROCESSED_DIR = BASE_DIR / "data/processed"
-MANIFEST_PATH = BASE_DIR / "data/files_manifest.json"
+MANIFEST_PATH = BASE_DIR / "data/api-file-manifest.json"
 
 with open(MANIFEST_PATH, encoding="utf-8") as f:
     MANIFEST = json.load(f)

@@ -1,5 +1,18 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-22 | Improved data loading and testing for Barcelona and Madrid
+
+- Updated load_indicators.py and load_point_features.py in both auq_data_engine/barcelona and auq_data_engine/madrid directories, enhancing data loading process.
+- Removed files_manifest.json from auq_data_engine/data, simplifying data management.
+- Modified insert_ready_point_features_bcn.json and insert_ready_point_features_madrid.json in auq_data_engine/data/processed, improving data processing.
+- Added example-record.json to auq_data_engine/data/raw_sample/barcelona_sample, expanding sample data.
+- Adjusted test-api.ipynb in auq_data_engine/data/raw_sample/barcelona_sample, refining testing procedures.
+- Revised main.py and upload_to_supabase.py in auq_data_engine, optimizing data upload functionality.
+- Altered test_base_data_upload.py and test_point_features_upload.py in auq_data_engine/tests, enhancing testing capabilities.
+- Modified seed.sql in auq_database, improving database seeding.
+
+This commit aims to enhance the overall functionality of the AUQ data engine, with a focus on data loading and testing for Barcelona and Madrid. It is a significant step towards our goal of creating a more robust and efficient data processing system.
+
 ## 📦 Feature | 2025-05-22 | Update and add new data files for Barcelona and Madrid
 
 - Updated and added new data files in `auq_data_engine/barcelona/` and `auq_data_engine/madrid/`

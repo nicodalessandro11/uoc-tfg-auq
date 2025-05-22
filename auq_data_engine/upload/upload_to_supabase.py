@@ -39,14 +39,14 @@ EXPECTED_COUNTS = {
     "bcn": {
         "districts": 10,
         "neighbourhoods": 73,
-        "point_features": 0,  # Set this based on your expected count
-        "indicators": 0  # Set this based on your expected count
+        "point_features": 0,  # Set this based on expected count
+        "indicators": 0  # Set this based on expected count
     },
     "madrid": {
         "districts": 21,
         "neighbourhoods": 131,
-        "point_features": 0,  # Set this based on your expected count
-        "indicators": 0  # Set this based on your expected count
+        "point_features": 0,  # Set this based on expected count
+        "indicators": 0  # Set this based on expected count
     }
 }
 
@@ -98,7 +98,7 @@ def upload(table_name: str, records: list[dict], city: str):
                     # Use upsert with on_conflict to ignore duplicates
                     response = supabase.table(table_name).upsert(
                         batch,
-                        on_conflict='feature_definition_id,round_coordinate(latitude),round_coordinate(longitude),city_id'
+                        on_conflict='feature_definition_id,latitude,longitude,city_id'
                     ).execute()
                     if hasattr(response, "data") and response.data:
                         total_uploaded += len(response.data)

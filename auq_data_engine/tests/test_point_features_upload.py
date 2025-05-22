@@ -24,7 +24,7 @@ BCN_COORDS = {
     "lat_min": 41.320,
     "lat_max": 41.470,
     "lon_min": 2.070,
-    "lon_max": 2.230
+    "lon_max": 2.240  # Ajustado para incluir puntos ligeramente más al este
 }
 
 MAD_COORDS = {
