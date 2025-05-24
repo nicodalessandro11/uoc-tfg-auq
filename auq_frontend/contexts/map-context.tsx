@@ -180,6 +180,11 @@ const defaultFilterRanges: FilterRanges = {
   disposableIncome: { min: 0, max: 30000 },
 }
 
+// Helper to get the localStorage key for visiblePointTypes
+function getVisiblePointTypesKey(cityId?: number, granularity?: string) {
+  return `visiblePointTypes_${cityId || 'none'}_${granularity || 'none'}`;
+}
+
 export function MapProvider({ children }: { children: ReactNode }) {
   // Use the global variables as initial state
   const [selectedCity, _setSelectedCity] = useState<City | null>(globalSelectedCity)
@@ -189,9 +194,24 @@ export function MapProvider({ children }: { children: ReactNode }) {
   const [availableAreas, setAvailableAreas] = useState<Area[]>([])
   const [filters, _setFilters] = useState<Filters>(globalFilters || defaultFilters)
   const [filterRanges, setFilterRanges] = useState<FilterRanges>(defaultFilterRanges)
+  const getInitialVisiblePointTypes = () => {
+    if (typeof window !== 'undefined') {
+      const cityId = globalSelectedCity?.id;
+      const granularity = globalSelectedGranularity?.level;
+      const vpt = localStorage.getItem(getVisiblePointTypesKey(cityId, granularity));
+      if (vpt) {
+        try {
+          return JSON.parse(vpt);
+        } catch (e) {
+          // ignore
+        }
+      }
+    }
+    return globalVisiblePointTypes || defaultVisiblePointTypes;
+  };
   const [visiblePointTypes, _setVisiblePointTypes] = useState<Record<string, boolean>>(
-    globalVisiblePointTypes || defaultVisiblePointTypes,
-  )
+    getInitialVisiblePointTypes()
+  );
   const [hasSelectedGranularity, _setHasSelectedGranularity] = useState<boolean>(globalHasSelectedGranularity)
   const [mapType, _setMapType] = useState<MapType>(globalMapType)
 
@@ -222,6 +242,64 @@ export function MapProvider({ children }: { children: ReactNode }) {
   // Nuevo estado para pointFeatures
   const [pointFeatures, setPointFeatures] = useState<PointFeature[]>([])
 
+  // Restore flags for localStorage hydration
+  const dynamicFiltersRestoredRef = useRef(false);
+  const visiblePointTypesRestoredRef = useRef(false);
+  const filtersRestoredRef = useRef(false);
+
+  // Reset RestoredRef flags when city or granularity changes
+  useEffect(() => {
+    debugPersist('Resetting RestoredRef flags due to city or granularity change', selectedCity?.id, selectedGranularity?.level);
+    visiblePointTypesRestoredRef.current = false;
+    filtersRestoredRef.current = false;
+    dynamicFiltersRestoredRef.current = false;
+  }, [selectedCity, selectedGranularity]);
+
+  // Restore visiblePointTypes from localStorage after dynamicPointTypes are loaded
+  useEffect(() => {
+    debugPersist('visiblePointTypes restoration effect running', { dynamicPointTypes, visiblePointTypesRestored: visiblePointTypesRestoredRef.current });
+    if (!dynamicPointTypes.length) return; // Don't set flag if types are empty
+    if (!selectedCity || !selectedGranularity) return; // Only run when both are set
+    if (visiblePointTypesRestoredRef.current) return;
+    if (typeof window !== "undefined") {
+      const cityId = selectedCity?.id;
+      const granularity = selectedGranularity?.level;
+      const key = getVisiblePointTypesKey(cityId, granularity);
+      debugPersist('Before restoration: localStorage value for key', key, localStorage.getItem(key));
+      const vpt = localStorage.getItem(key);
+      debugPersist('Attempting to restore visiblePointTypes from localStorage', vpt, 'with key', key);
+      if (vpt) {
+        try {
+          const savedTypes = JSON.parse(vpt) as Record<string, boolean>;
+          debugPersist('Restoring visiblePointTypes: saved keys', Object.keys(savedTypes), 'dynamicPointTypes', dynamicPointTypes);
+          // Only restore types that exist in dynamicPointTypes
+          const validTypes = Object.fromEntries(
+            Object.entries(savedTypes).filter(([type]) => dynamicPointTypes.includes(type))
+          );
+          if (Object.keys(validTypes).length > 0) {
+            debugPersist('Restored visiblePointTypes', validTypes);
+            _setVisiblePointTypes(validTypes);
+            visiblePointTypesRestoredRef.current = true;
+            setTimeout(() => {
+              debugPersist('UI state after restoration', validTypes);
+            }, 100);
+            return;
+          }
+        } catch (error) {
+          console.error("Error restoring visible point types:", error);
+        }
+      }
+      // If nothing to restore, set all to true
+      const initialVisibility = Object.fromEntries(dynamicPointTypes.map(type => [type, true]));
+      debugPersist('No saved visiblePointTypes, setting all to true', initialVisibility);
+      _setVisiblePointTypes(initialVisibility);
+      visiblePointTypesRestoredRef.current = true;
+      setTimeout(() => {
+        debugPersist('UI state after restoration (all true)', initialVisibility);
+      }, 100);
+    }
+  }, [dynamicPointTypes, selectedCity, selectedGranularity]);
+
   // Load available point types when city changes
   useEffect(() => {
     async function loadAvailablePointTypes() {
@@ -246,16 +324,8 @@ export function MapProvider({ children }: { children: ReactNode }) {
         )
         console.log(`[MapContext] Found ${uniqueTypes.length} unique feature types:`, uniqueTypes)
 
-        // Initialize visibility state for each type
-        const initialVisibility = uniqueTypes.reduce<Record<string, boolean>>((acc, type) => {
-          acc[type] = true // All types visible by default
-          return acc
-        }, {})
-
-        console.log("[MapContext] Initial visibility state:", initialVisibility)
-
         setDynamicPointTypes(uniqueTypes)
-        setVisiblePointTypes(initialVisibility)
+        // Do NOT set visiblePointTypes here anymore
       } catch (error) {
         console.error("[MapContext] Error loading point types:", error)
         setDynamicPointTypes([])
@@ -275,28 +345,17 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
       if (granularityLevel === "district") {
         // For districts, we can still use the API service function since it's useful to have
-        const districtsData = await getDistricts(cityId)
-
-        // Ensure districtsData is an array before mapping
-        let districtsArray = []
-        if (Array.isArray(districtsData)) {
-          districtsArray = districtsData
-        } else if (districtsData && typeof districtsData === "object") {
-          // Try to extract data if it's in a nested property
-          if (Array.isArray(districtsData.data)) {
-            districtsArray = districtsData.data
-          }
-        }
+        const districtsData: District[] = await getDistricts(cityId)
 
         // Transform API response to match the expected Area type
-        areas = districtsArray.map((district) => ({
+        areas = districtsData.map((district: District) => ({
           id: district.id,
           name: district.name,
-          cityId: district.city_id,
+          city_id: district.city_id,
           population: district.population || 0,
-          avgIncome: district.avg_income || 0,
+          avg_income: district.avg_income || 0,
           surface: district.surface || 0,
-          disposableIncome: district.disposable_income || 0,
+          disposable_income: district.disposable_income || 0,
         }))
 
         console.log(`Loaded ${areas.length} districts for city ${cityId}`)
@@ -306,15 +365,15 @@ export function MapProvider({ children }: { children: ReactNode }) {
           const geoJsonData = await getGeoJSON(cityId, "neighborhood")
 
           if (geoJsonData && geoJsonData.features) {
-            areas = geoJsonData.features.map((feature) => ({
+            areas = geoJsonData.features.map((feature: any) => ({
               id: feature.properties.id,
               name: feature.properties.name,
-              districtId: feature.properties.district_id,
-              cityId: feature.properties.city_id,
+              district_id: feature.properties.district_id,
+              city_id: feature.properties.city_id,
               population: feature.properties.population || 0,
-              avgIncome: feature.properties.avg_income || 0,
+              avg_income: feature.properties.avg_income || 0,
               surface: feature.properties.surface || 0,
-              disposableIncome: feature.properties.disposable_income || 0,
+              disposable_income: feature.properties.disposable_income || 0,
             }))
           }
         } catch (error) {
@@ -510,8 +569,9 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
   // Reset filters to their full range
   const resetFilters = useCallback(() => {
-    if (!filterRanges) return
+    if (!filterRanges) return;
 
+    // Reset classic filters
     const newFilters = {
       populationMin: filterRanges.population.min,
       populationMax: filterRanges.population.max,
@@ -521,19 +581,26 @@ export function MapProvider({ children }: { children: ReactNode }) {
       surfaceMax: filterRanges.surface.max,
       disposableIncomeMin: filterRanges.disposableIncome.min,
       disposableIncomeMax: filterRanges.disposableIncome.max,
-    }
+    };
+    _setFilters(newFilters);
 
-    console.log("Manually resetting filters to full range:", newFilters)
-    _setFilters(newFilters)
-    triggerRefresh()
-  }, [filterRanges, triggerRefresh])
+    // Reset dynamic filters (sliders)
+    setDynamicFilters((prev) =>
+      prev.map((f) => ({
+        ...f,
+        value: [f.min, f.max],
+      }))
+    );
+
+    triggerRefresh();
+  }, [filterRanges, triggerRefresh]);
 
   // Function to clear point features cache
   const clearPointFeaturesCache = useCallback((cityId?: number) => {
     console.log(`Clearing point features cache${cityId ? ` for city ${cityId}` : ""}`)
     if (cityId) {
-      clearApiCacheEntry("pointFeatures", cityId)
-      clearSupabaseCacheEntry("pointFeatures", cityId)
+      clearApiCacheEntry("pointFeatures", String(cityId))
+      clearSupabaseCacheEntry("pointFeatures")
     } else {
       clearApiCacheEntry("pointFeatures")
       clearSupabaseCacheEntry("pointFeatures")
@@ -653,7 +720,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
         const hasChanged = Object.keys(types).some((key) => types[key] !== globalVisiblePointTypes?.[key])
         if (hasChanged) {
           globalVisiblePointTypes = types
-          // triggerRefresh() eliminado para evitar doble render y desfase
+          debugPersist('setVisiblePointTypes: new state', types)
         }
         return types
       })
@@ -710,29 +777,54 @@ export function MapProvider({ children }: { children: ReactNode }) {
   // Detectar indicadores y rangos dinámicamente al cargar el GeoJSON
   useEffect(() => {
     if (!currentGeoJSON || !currentGeoJSON.features || currentGeoJSON.features.length === 0) {
-      setDynamicFilters([])
-      return
+      setDynamicFilters([]);
+      return;
     }
+
     // Tomar todas las keys numéricas de las propiedades del primer feature
-    const sampleProps = currentGeoJSON.features[0].properties
+    const sampleProps = currentGeoJSON.features[0].properties;
     const indicatorKeys = Object.keys(sampleProps).filter(
       (key) => typeof sampleProps[key] === 'number' && key !== 'id' && key !== 'district_code' && key !== 'city_id' && key !== 'neighbourhood_code' && key !== 'district_id'
-    )
+    );
+
     // Para cada indicador, calcular min y max
-    const filters: DynamicFilter[] = indicatorKeys.map((key) => {
-      const values = currentGeoJSON.features.map(f => f.properties[key]).filter(v => typeof v === 'number')
-      const min = Math.min(...values)
-      const max = Math.max(...values)
+    const filters: DynamicFilter[] = indicatorKeys.map((key: string) => {
+      const values = currentGeoJSON.features.map((f: any) => f.properties[key]).filter((v: any) => typeof v === 'number');
+      const min = Math.min(...values);
+      const max = Math.max(...values);
       return {
         key,
-        name: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        name: key.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()),
         min,
         max,
         value: [min, max],
+      };
+    });
+
+    // Restore dynamicFilters from localStorage if present, only once
+    if (!dynamicFiltersRestoredRef.current && typeof window !== "undefined") {
+      const dynFilters = localStorage.getItem("dynamicFilters");
+      if (dynFilters) {
+        try {
+          const savedFilters = JSON.parse(dynFilters);
+          // Only restore filters that exist in the current GeoJSON
+          const validFilters = savedFilters.filter((saved: DynamicFilter) =>
+            filters.some(f => f.key === saved.key)
+          );
+          if (validFilters.length > 0) {
+            setDynamicFilters(validFilters);
+            dynamicFiltersRestoredRef.current = true;
+            return;
+          }
+        } catch (error) {
+          console.error("Error restoring dynamic filters:", error);
+        }
       }
-    })
-    setDynamicFilters(filters)
-  }, [currentGeoJSON])
+    }
+
+    // If no valid saved filters or restoration failed, set new filters
+    setDynamicFilters(filters);
+  }, [currentGeoJSON]);
 
   // Actualizar dynamicPointTypes cuando cambian los pointFeatures
   useEffect(() => {
@@ -740,7 +832,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
       setDynamicPointTypes([])
       return
     }
-    const types = Array.from(new Set(pointFeatures.map(f => f.featureType).filter(Boolean)))
+    const types = Array.from(new Set(pointFeatures.map(f => f.featureType).filter((x): x is string => Boolean(x))))
     setDynamicPointTypes(types)
   }, [pointFeatures])
 
@@ -772,6 +864,136 @@ export function MapProvider({ children }: { children: ReactNode }) {
       return changed ? updated : prev
     })
   }, [dynamicPointTypes])
+
+  // On mount, restore persistent state from localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Restore city
+    const city = localStorage.getItem("selectedCity");
+    if (city) {
+      try {
+        _setSelectedCity(JSON.parse(city));
+      } catch (error) {
+        console.error("Error restoring selected city:", error);
+      }
+    }
+
+    // Restore area
+    const area = localStorage.getItem("selectedArea");
+    if (area) {
+      try {
+        setSelectedArea(JSON.parse(area));
+      } catch (error) {
+        console.error("Error restoring selected area:", error);
+      }
+    }
+
+    // Restore mapType
+    const mapType = localStorage.getItem("mapType");
+    if (mapType && ["osm", "satellite", "grayscale", "terrain", "dark", "watercolor"].includes(mapType)) {
+      _setMapType(mapType as MapType);
+    }
+  }, []);
+
+  // Restore filters from localStorage after filterRanges are loaded
+  useEffect(() => {
+    if (!filterRanges) return; // Don't set flag if ranges are empty
+    if (filtersRestoredRef.current) return;
+    if (typeof window !== "undefined") {
+      const filtersStr = localStorage.getItem("filters");
+      debugPersist('Attempting to restore filters from localStorage', filtersStr);
+      if (filtersStr) {
+        try {
+          const savedFilters = JSON.parse(filtersStr);
+          // Only restore if keys match expected filter keys
+          const valid = Object.keys(defaultFilters).every(k => k in savedFilters);
+          if (valid) {
+            _setFilters(savedFilters);
+            filtersRestoredRef.current = true;
+            debugPersist('Restored filters', savedFilters);
+            return;
+          }
+        } catch (error) {
+          console.error("Error restoring filters:", error);
+        }
+      }
+      // If nothing to restore, set flag so we don't try again
+      filtersRestoredRef.current = true;
+    }
+  }, [filterRanges]);
+
+  // Restore dynamicFilters from localStorage after currentGeoJSON is loaded
+  useEffect(() => {
+    if (!currentGeoJSON || !currentGeoJSON.features || currentGeoJSON.features.length === 0 || dynamicFiltersRestoredRef.current) return;
+    if (typeof window !== "undefined") {
+      const dynFilters = localStorage.getItem("dynamicFilters");
+      debugPersist('Attempting to restore dynamicFilters from localStorage', dynFilters);
+      if (dynFilters) {
+        try {
+          const savedFilters = JSON.parse(dynFilters);
+          // Only restore filters that exist in the current GeoJSON
+          const indicatorKeys = Object.keys(currentGeoJSON.features[0].properties).filter(
+            (key) => typeof currentGeoJSON.features[0].properties[key] === 'number' && key !== 'id' && key !== 'district_code' && key !== 'city_id' && key !== 'neighbourhood_code' && key !== 'district_id'
+          );
+          const validFilters = savedFilters.filter((saved: DynamicFilter) =>
+            indicatorKeys.includes(saved.key)
+          );
+          if (validFilters.length > 0) {
+            setDynamicFilters(validFilters);
+            dynamicFiltersRestoredRef.current = true;
+            debugPersist('Restored dynamicFilters', validFilters);
+            return;
+          }
+        } catch (error) {
+          console.error("Error restoring dynamic filters:", error);
+        }
+      }
+    }
+  }, [currentGeoJSON]);
+
+  // Persist on change with debug logs
+  useEffect(() => {
+    if (selectedCity) {
+      debugPersist('Persisting selectedCity', selectedCity);
+      localStorage.setItem("selectedCity", JSON.stringify(selectedCity));
+    }
+  }, [selectedCity]);
+  useEffect(() => {
+    if (selectedArea) {
+      debugPersist('Persisting selectedArea', selectedArea);
+      localStorage.setItem("selectedArea", JSON.stringify(selectedArea));
+    }
+  }, [selectedArea]);
+  useEffect(() => {
+    if (filters) {
+      debugPersist('Persisting filters', filters);
+      localStorage.setItem("filters", JSON.stringify(filters));
+    }
+  }, [filters]);
+  useEffect(() => {
+    if (dynamicFilters) {
+      debugPersist('Persisting dynamicFilters', dynamicFilters);
+      localStorage.setItem("dynamicFilters", JSON.stringify(dynamicFilters));
+    }
+  }, [dynamicFilters]);
+  useEffect(() => {
+    if (mapType) {
+      debugPersist('Persisting mapType', mapType);
+      localStorage.setItem("mapType", mapType);
+    }
+  }, [mapType]);
+  useEffect(() => {
+    if (visiblePointTypesRestoredRef.current && visiblePointTypes) {
+      const cityId = selectedCity?.id;
+      const granularity = selectedGranularity?.level;
+      const key = getVisiblePointTypesKey(cityId, granularity);
+      debugPersist('Persisting visiblePointTypes', visiblePointTypes, 'for', cityId, granularity, 'with key', key);
+      localStorage.setItem(key, JSON.stringify(visiblePointTypes));
+    } else {
+      debugPersist('Skipping persist: restoration not complete or state undefined', visiblePointTypes);
+    }
+  }, [visiblePointTypes, selectedCity, selectedGranularity]);
 
   return (
     <MapContext.Provider
@@ -823,4 +1045,11 @@ export function useMapContext() {
     throw new Error("useMapContext must be used within a MapProvider")
   }
   return context
+}
+
+// --- Add debug logging helper ---
+function debugPersist(msg: string, ...args: any[]) {
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('[Persist]', msg, ...args);
+  }
 }

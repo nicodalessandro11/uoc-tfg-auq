@@ -210,12 +210,12 @@ export function PointFeaturesToggle() {
 
   return (
     <Card className="p-4">
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex justify-end items-center gap-2 my-2">
+        <span className="text-xs font-semibold select-none">{allOn ? "Hide all" : "Show all"}</span>
         <Switch
           checked={allOn}
           onCheckedChange={handleToggleAll}
         />
-        <span className="text-xs font-semibold select-none">Show all</span>
       </div>
       <div className="flex flex-col gap-2">
         {dynamicPointTypes.map((type) => {

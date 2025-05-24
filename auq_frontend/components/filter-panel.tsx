@@ -21,10 +21,8 @@ export function FilterPanel() {
 
   return (
     <Card className="p-4 space-y-6">
-      <div className="flex justify-between items-center">
-        <Label className="text-sm font-medium">Filters</Label>
+      <div className="flex justify-end items-center">
         <Button variant="outline" size="sm" onClick={resetFilters} className="flex items-center gap-1">
-          <RefreshCw className="h-3 w-3" />
           Reset
         </Button>
       </div>
@@ -38,7 +36,7 @@ export function FilterPanel() {
           <div className="flex justify-between">
             <Label className="text-sm font-medium">{filter.name}{filter.unit ? ` (${filter.unit})` : ""}</Label>
             <span className="text-xs text-muted-foreground">
-              {filter.value[0].toLocaleString()} - {filter.value[1].toLocaleString()}
+              {Math.round(filter.value[0]).toLocaleString()} - {Math.round(filter.value[1]).toLocaleString()}
             </span>
           </div>
           <Slider

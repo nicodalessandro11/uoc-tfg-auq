@@ -19,13 +19,13 @@ type AreaInfoProps = {
 
 // Icon mapping for indicator names
 const indicatorIcons: Record<string, JSX.Element> = {
-  population: <Users className="h-5 w-5 text-blue-600" />,
-  surface: <Map className="h-5 w-5 text-green-600" />,
-  "average gross taxable income per person": <DollarSign className="h-5 w-5 text-yellow-600" />,
-  "disposable income per capita": <Wallet className="h-5 w-5 text-emerald-600" />,
-  "population density": <Ruler className="h-5 w-5 text-purple-600" />,
-  "education level": <Badge className="h-5 w-5 text-pink-600" />,
-  "unemployment rate": <Euro className="h-5 w-5 text-red-600" />,
+  population: <Users className="h-5 w-5 text-primary dark:text-primary-400" />,
+  surface: <Map className="h-5 w-5 text-green-600 dark:text-green-400" />,
+  "average gross taxable income per person": <DollarSign className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />,
+  "disposable income per capita": <Wallet className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />,
+  "population density": <Ruler className="h-5 w-5 text-purple-600 dark:text-purple-400" />,
+  "education level": <Badge className="h-5 w-5 text-pink-600 dark:text-pink-400" />,
+  "unemployment rate": <Euro className="h-5 w-5 text-red-600 dark:text-red-400" />,
 }
 
 export function DistrictInfo({ area }: AreaInfoProps) {
@@ -62,10 +62,9 @@ export function DistrictInfo({ area }: AreaInfoProps) {
 
   return (
     <div className="space-y-4">
-      <div className="modern-card bg-primary text-primary-foreground">
+      <div className="rounded-xl bg-primary/90 dark:bg-primary-900 text-primary-foreground px-5 py-4 flex flex-col gap-1 shadow-md">
         <div className="flex items-center gap-2 mb-1">
-          <MapPin className="h-5 w-5" />
-          <h3 className="text-xl font-bold tracking-tight text-black">{area.name}</h3>
+          <h3 className="text-xl font-bold tracking-tight text-primary-foreground">{area.name}</h3>
         </div>
         <p className="text-sm text-primary-foreground/80">
           {selectedGranularity.level === "district" ? "District Profile" : "Neighborhood Profile"}
@@ -76,19 +75,18 @@ export function DistrictInfo({ area }: AreaInfoProps) {
         {indicatorDefs.map(def => (
           indicatorValues[def.name] !== null && (
             <div
-              className="rounded-xl border bg-white/80 shadow-sm p-4 flex flex-col gap-2 hover:shadow-md transition-all"
+              className="rounded-xl border border-border bg-background/80 dark:bg-muted/70 shadow-sm p-5 flex flex-col gap-2 hover:shadow-md transition-all"
               key={def.id}
             >
               <div className="flex items-center gap-3 mb-1">
-                {indicatorIcons[def.name.toLowerCase()] || <Badge className="h-5 w-5 text-gray-400" />}
                 <div>
-                  <h4 className="text-base font-semibold text-gray-900">{def.name}{def.unit ? ` (${def.unit})` : ''}</h4>
+                  <h4 className="text-base font-semibold text-foreground dark:text-white">{def.name}{def.unit ? ` (${def.unit})` : ''}</h4>
                   {def.description && (
-                    <p className="text-xs text-gray-500 mt-0.5">{def.description}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{def.description}</p>
                   )}
                 </div>
               </div>
-              <p className="text-xl font-bold text-primary-700">
+              <p className="text-xl text-center font-bold text-primary dark:text-primary-400">
                 {indicatorValues[def.name]?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 {def.unit && !isNaN(Number(indicatorValues[def.name])) && ` ${def.unit}`}
               </p>

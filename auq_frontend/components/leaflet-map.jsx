@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { useMapContext } from "@/contexts/map-context"
 import { mapTypes } from "@/components/map-type-selector"
 import debounce from "lodash/debounce"
+import { useTheme } from "next-themes"
 
 // Feature type mapping
 const featureTypeMap = {
@@ -140,7 +141,7 @@ export default function LeafletMap({
   const markersLayerRef = useRef(null)
   const tileLayerRef = useRef(null)
   const clusterGroupRef = useRef(null)
-  const { setMapInitialized, loadGeoJSON, setSelectedArea, filters, dynamicFilters } = useMapContext()
+  const { setMapInitialized, loadGeoJSON, setSelectedArea, filters, dynamicFilters, setMapType } = useMapContext()
   const mapInstanceRef = useRef(null)
   const [selectedAreaState, setSelectedAreaState] = useState(null)
   const [isMapReady, setIsMapReady] = useState(false)
@@ -148,6 +149,7 @@ export default function LeafletMap({
   const [renderedMarkers, setRenderedMarkers] = useState({})
   const [isClusterReady, setIsClusterReady] = useState(false)
   const markersRef = useRef([])
+  const { theme } = useTheme()
 
   // Function to generate a color from a simple palette based on the index
   const getColorFromPalette = (index, total) => {
@@ -336,7 +338,7 @@ export default function LeafletMap({
         map.setView([41.3851, 2.1734], 12)
       } else if (selectedCity.id === 2) {
         // Madrid
-        map.setView([40.4168, -3.7038], 12)
+        map.setView([40.4168, -3.7038], 11)
       } else {
         // Default view of Spain
         map.setView([40, -4], 5)
@@ -616,9 +618,26 @@ export default function LeafletMap({
             // Add popup with feature information (instead of tooltip)
             let propertiesHtml = ''
             if (feature.properties && typeof feature.properties === 'object') {
+              const capitalize = (str) =>
+                str
+                  .replace(/_/g, ' ')
+                  .replace(/\b\w/g, (c) => c.toUpperCase());
+
               const entries = Object.entries(feature.properties)
-                .filter(([k, v]) => v !== null && v !== undefined && k !== 'id' && k !== 'name')
-                .map(([k, v]) => `<li><strong>${k.replace(/_/g, ' ')}:</strong> ${v}</li>`)
+                .filter(([k, v]) =>
+                  v !== null &&
+                  v !== undefined &&
+                  (typeof v !== 'string' || v.trim() !== '') &&
+                  k !== 'id' &&
+                  k !== 'name'
+                )
+                .map(([k, v]) => {
+                  let value = v;
+                  if (k === 'description' && typeof v === 'string' && v.length > 180) {
+                    value = v.slice(0, 180) + '...';
+                  }
+                  return `<li><strong>${capitalize(k)}:</strong> ${value}</li>`;
+                });
               if (entries.length > 0) {
                 propertiesHtml = `<ul style=\"margin: 0; padding-left: 18px; font-size: 12px;\">${entries.join('')}</ul>`
               }
@@ -664,6 +683,29 @@ export default function LeafletMap({
       }
     }
   }, [pointFeatures])
+
+  // Switch map type based on theme
+  useEffect(() => {
+    if (!theme) return;
+    if (theme === "dark") {
+      setMapType && setMapType("dark")
+    } else if (theme === "light") {
+      setMapType && setMapType("grayscale")
+    }
+  }, [theme, setMapType])
+
+  // After rendering polygons, restore selected area if present in localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const savedArea = localStorage.getItem("selectedArea");
+    if (savedArea) {
+      try {
+        const area = JSON.parse(savedArea);
+        setSelectedAreaState(area);
+        setSelectedArea(area);
+      } catch { }
+    }
+  }, [currentGeoJSON, isMapReady]);
 
   return <div ref={mapRef} className="h-full w-full" />
 }
