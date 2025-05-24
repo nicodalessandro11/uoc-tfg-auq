@@ -7,6 +7,7 @@ import { DistrictInfo } from "@/components/district-info"
 import { PointFeaturesToggle } from "@/components/point-features-toggle"
 import { ChatSidebar } from "@/components/chat-sidebar"
 import { Filter, Info, MapPin, ChevronLeft, ChevronRight, Bot } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const MapComponent = dynamic(() => import("@/components/map-component"), {
@@ -18,38 +19,59 @@ const MapComponent = dynamic(() => import("@/components/map-component"), {
   ),
 })
 
-// Add type for the area interface
-interface AreaWithDetails {
-  id: number;
-  name: string;
-  cityId: number;
-  population: number;
-  avgIncome: number;
-  districtId?: number;
-}
-
-// Helper function to convert Area to AreaWithDetails
-function convertAreaToDetails(area: any): AreaWithDetails {
-  return {
-    id: area.id,
-    name: area.name,
-    cityId: area.city_id || area.cityId,
-    population: area.population || 0,
-    avgIncome: area.avg_income || area.avgIncome || 0,
-    districtId: area.district_id || area.districtId,
-  };
-}
-
 export function MapView() {
-  const { selectedCity, selectedArea, setVisiblePointTypes, visiblePointTypes, triggerRefresh, selectedGranularity } =
+  const { selectedCity, selectedArea, setVisiblePointTypes, visiblePointTypes, triggerRefresh, selectedGranularity, availableAreas, setSelectedArea } =
     useMapContext()
-  const [activeTab, setActiveTab] = useState("points");
-  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
-  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(true);
+  const [activeTab, setActiveTab] = useState("points")
+  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false)
+  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(true) // Hidden by default
   const mapContainerRef = useRef(null)
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   // Handle responsive sidebar
   const [isMobile, setIsMobile] = useState(false)
+
+  // Set initial tab from URL on mount
+  useEffect(() => {
+    const tabParam = searchParams.get("tab")
+    if (tabParam && ["points", "filters", "info"].includes(tabParam)) {
+      setActiveTab(tabParam)
+    }
+  }, [searchParams])
+
+  // Auto-select area from URL param if present and level matches
+  useEffect(() => {
+    const areaParam = searchParams.get("area")
+    const levelParam = searchParams.get("level")
+    if (
+      areaParam &&
+      levelParam === selectedGranularity?.level &&
+      availableAreas &&
+      availableAreas.length > 0
+    ) {
+      const area = availableAreas.find(a => a.id.toString() === areaParam)
+      if (area) {
+        setSelectedArea(area)
+      }
+    }
+  }, [searchParams, availableAreas, setSelectedArea, selectedGranularity])
+
+  // Reset selected area and remove area param when granularity changes
+  useEffect(() => {
+    setSelectedArea(null)
+    // Remove area param from URL
+    const params = new URLSearchParams(window.location.search)
+    params.delete("area")
+    router.push(`?${params.toString()}`, { scroll: false })
+  }, [selectedGranularity])
+
+  // Update URL when tab changes
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    params.set("tab", activeTab)
+    router.push(`?${params.toString()}`, { scroll: false })
+  }, [activeTab, router])
 
   // Memoize the setVisiblePointTypes handler to prevent unnecessary re-renders
   const handleVisiblePointTypesChange = useCallback(
@@ -62,14 +84,6 @@ export function MapView() {
     },
     [setVisiblePointTypes, visiblePointTypes],
   )
-
-  // Handle tab change with persistence
-  const handleTabChange = useCallback((tab: string) => {
-    setActiveTab(tab);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("activeTab", tab);
-    }
-  }, []);
 
   useEffect(() => {
     const checkIfMobile = () => {
@@ -119,100 +133,89 @@ export function MapView() {
     }, 300)
   }
 
-  // Restore from localStorage after mount
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedTab = localStorage.getItem("activeTab");
-      if (savedTab && ["points", "filters", "info"].includes(savedTab)) {
-        setActiveTab(savedTab);
-      }
-      const savedLeft = localStorage.getItem("leftSidebarCollapsed");
-      if (savedLeft !== null) setLeftSidebarCollapsed(savedLeft === "true");
-      const savedRight = localStorage.getItem("rightSidebarCollapsed");
-      if (savedRight !== null) setRightSidebarCollapsed(savedRight === "true");
-    }
-  }, []);
-
   return (
     <div className="h-[calc(100vh-8rem)] flex w-full" ref={mapContainerRef}>
-      {/* Left Sidebar container */}
+      {/* Left Sidebar container - fixed width when visible, 0 when collapsed */}
       <div
-        className={`h-full transition-all duration-300 flex-shrink-0 bg-background ${leftSidebarCollapsed ? "w-0" : "w-80"
-          } ${isMobile ? "absolute" : ""}`}
+        className="h-full transition-all duration-300 flex-shrink-0"
+        style={{
+          width: leftSidebarCollapsed ? 0 : "350px",
+          overflow: "hidden",
+        }}
       >
-        <div className="flex h-full flex-col w-80">
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-4">
-              <div className="modern-tabs flex mb-6">
-                <button
-                  type="button"
-                  className={`flex-1 modern-tab ${activeTab === "points" ? "modern-tab-active" : "modern-tab-inactive"}`}
-                  onClick={() => handleTabChange("points")}
-                >
-                  <MapPin className="h-4 w-4 mr-2 inline-block" />
-                  Points
-                </button>
-                <button
-                  type="button"
-                  className={`flex-1 modern-tab ${activeTab === "filters" ? "modern-tab-active" : "modern-tab-inactive"}`}
-                  onClick={() => handleTabChange("filters")}
-                >
-                  <Filter className="h-4 w-4 mr-2 inline-block" />
-                  Filters
-                </button>
-                <button
-                  type="button"
-                  className={`flex-1 modern-tab ${activeTab === "info" ? "modern-tab-active" : "modern-tab-inactive"}`}
-                  onClick={() => handleTabChange("info")}
-                >
-                  <Info className="h-4 w-4 mr-2 inline-block" />
-                  Info
-                </button>
-              </div>
+        {/* Left Sidebar content */}
+        <div className="h-full w-[350px] bg-background border-r">
+          <div className="flex flex-col h-full">
+            <div className="p-4 border-b">
+              <h2 className="text-xl font-bold tracking-tight">{selectedCity ? selectedCity.name : "Select city"}</h2>
+              <p className="text-sm text-muted-foreground mt-1">Walk the city through data</p>
+            </div>
 
-              {activeTab === "points" && (
-                <div>
-                  <h3 className="section-title flex items-center">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    Points of Interest
-                  </h3>
-                  <p className="caption mb-4">Customize what is displayed on the map</p>
-                  <PointFeaturesToggle />
+            <div className="flex-1 overflow-auto">
+              <div className="p-4">
+                <div className="modern-tabs flex mb-6">
+                  <button
+                    className={`flex-1 modern-tab ${activeTab === "points" ? "modern-tab-active" : "modern-tab-inactive"}`}
+                    onClick={() => setActiveTab("points")}
+                  >
+                    <MapPin className="h-4 w-4 mr-2 inline-block" />
+                    Points
+                  </button>
+                  <button
+                    className={`flex-1 modern-tab ${activeTab === "filters" ? "modern-tab-active" : "modern-tab-inactive"}`}
+                    onClick={() => setActiveTab("filters")}
+                  >
+                    <Filter className="h-4 w-4 mr-2 inline-block" />
+                    Filters
+                  </button>
+                  <button
+                    className={`flex-1 modern-tab ${activeTab === "info" ? "modern-tab-active" : "modern-tab-inactive"}`}
+                    onClick={() => setActiveTab("info")}
+                  >
+                    <Info className="h-4 w-4 mr-2 inline-block" />
+                    Info
+                  </button>
                 </div>
-              )}
 
-              {activeTab === "filters" && (
-                <div>
-                  <h3 className="section-title flex items-center">
-                    <Filter className="h-4 w-4 mr-2" />
-                    Filter Areas
-                  </h3>
-                  <p className="caption mb-4">
-                    Adjust filters to explore data from {selectedCity?.name || "the selected city"}
-                  </p>
-                  <FilterPanel />
-                </div>
-              )}
+                {activeTab === "points" && (
+                  <div>
+                    <h3 className="section-title flex items-center">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      Points of Interest
+                    </h3>
+                    <p className="caption mb-4">Customize what is displayed on the map</p>
+                    <PointFeaturesToggle />
+                  </div>
+                )}
 
-              {activeTab === "info" && (
-                <div>
-                  <h3 className="section-title flex items-center">
-                    <Info className="h-4 w-4 mr-2" />
-                    Area Information
-                  </h3>
-                  <p className="caption mb-4">Details about the selected area</p>
-                  {selectedArea ? (
-                    <DistrictInfo area={convertAreaToDetails(selectedArea)} />
-                  ) : (
-                    <div className="text-center py-8 flex flex-col items-center gap-4">
-                      <div className="bg-muted rounded-full p-4">
-                        <MapPin className="h-8 w-8 text-muted-foreground" />
+                {activeTab === "filters" && (
+                  <div>
+                    <h3 className="section-title flex items-center">
+                      <Filter className="h-4 w-4 mr-2" />
+                      Filter Areas
+                    </h3>
+                    <p className="caption mb-4">
+                      Adjust filters to explore data from {selectedCity?.name || "the selected city"}
+                    </p>
+                    <FilterPanel />
+                  </div>
+                )}
+
+                {activeTab === "info" && (
+                  <div>
+                    {selectedArea && "cityId" in selectedArea && "avgIncome" in selectedArea ? (
+                      <DistrictInfo area={selectedArea as { id: number; name: string; cityId: number; population: number; avgIncome: number; districtId?: number }} />
+                    ) : (
+                      <div className="text-center py-8 flex flex-col items-center gap-4">
+                        <div className="bg-muted rounded-full p-4">
+                          <MapPin className="h-8 w-8 text-muted-foreground" />
+                        </div>
+                        <p className="text-muted-foreground">Select an area on the map to view details</p>
                       </div>
-                      <p className="text-muted-foreground">Select an area on the map to view details</p>
-                    </div>
-                  )}
-                </div>
-              )}
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -220,12 +223,14 @@ export function MapView() {
 
       {/* Left Sidebar toggle button */}
       <button
-        type="button"
-        className="absolute left-4 top-4 z-40 rounded-full bg-background p-2 shadow-lg hover:bg-accent"
-        onClick={() => setLeftSidebarCollapsed(!leftSidebarCollapsed)}
-        style={{ left: leftSidebarCollapsed ? "1rem" : "21rem" }}
+        className="absolute left-0 top-1/2 transform -translate-y-1/2 z-[1000] bg-primary hover:bg-blue-600 text-white rounded-r-lg p-1 shadow-lg border-1 border-white"
+        onClick={() => {
+          setLeftSidebarCollapsed(!leftSidebarCollapsed)
+          setTimeout(() => triggerRefresh(), 300)
+        }}
+        style={{ left: leftSidebarCollapsed ? "0" : isMobile ? "calc(100% - 30px)" : "350px" }}
       >
-        {leftSidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        {leftSidebarCollapsed ? <ChevronRight className="h-6 w-6" /> : <ChevronLeft className="h-6 w-6" />}
       </button>
 
       {/* Map area - takes full width when sidebars are collapsed */}
@@ -233,7 +238,7 @@ export function MapView() {
         <MapComponent />
       </div>
 
-      {/* Right Sidebar container */}
+      {/* Right Sidebar container - fixed width when visible, 0 when collapsed */}
       <div
         className="h-full transition-all duration-300 flex-shrink-0"
         style={{
@@ -249,12 +254,11 @@ export function MapView() {
 
       {/* Right Sidebar toggle button */}
       <button
-        type="button"
-        className="absolute right-4 top-4 z-40 rounded-full bg-background p-2 shadow-lg hover:bg-accent"
+        className="absolute right-0 top-1/2 transform -translate-y-1/2 z-[1000] bg-primary hover:bg-blue-600 text-white rounded-l-lg p-3 shadow-lg border-2 border-white"
         onClick={toggleRightSidebar}
-        style={{ right: rightSidebarCollapsed ? "1rem" : "21rem" }}
+        style={{ right: rightSidebarCollapsed ? "0" : "350px" }}
       >
-        <Bot className="h-4 w-4" />
+        {rightSidebarCollapsed ? <Bot className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
       </button>
     </div>
   )

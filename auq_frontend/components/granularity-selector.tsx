@@ -5,6 +5,7 @@ import { useMapContext } from "@/contexts/map-context"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Layers } from "lucide-react"
 import { getGeographicalLevels } from "@/lib/supabase-client"
+import { useRouter, useSearchParams } from "next/navigation"
 
 // Define the GranularityLevel type
 type GranularityLevel = {
@@ -27,6 +28,8 @@ export function GranularitySelector() {
     { id: 2, name: "Districts", level: "district" },
     { id: 3, name: "Neighborhoods", level: "neighbourhood" },
   ])
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   // Fetch granularity levels on component mount
   useEffect(() => {
@@ -36,13 +39,30 @@ export function GranularitySelector() {
         // Filter out the "city" level as it's not used for map visualization
         const filteredLevels = levels.filter((level) => level.level !== "city")
         setGranularityLevels(filteredLevels)
+        // On mount, if level param exists, set it
+        const levelParam = searchParams.get("level")
+        if (levelParam) {
+          const found = filteredLevels.find((g) => g.level === levelParam)
+          if (found) setSelectedGranularity(found)
+        }
       } catch (error) {
         console.error("Error loading granularity levels:", error)
       }
     }
 
     loadGranularityLevels()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Update URL when granularity changes
+  useEffect(() => {
+    if (selectedGranularity) {
+      const params = new URLSearchParams(window.location.search)
+      params.set("level", selectedGranularity.level)
+      router.replace(`?${params.toString()}`)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedGranularity])
 
   const handleGranularityChange = (value: string) => {
     if (!value || !selectedCity) return // Prevent empty selection or if no city selected
@@ -68,9 +88,8 @@ export function GranularitySelector() {
   return (
     <div className="flex items-center gap-2">
       <div
-        className={`flex items-center gap-2 text-sm font-medium ${
-          !selectedCity ? "text-muted-foreground" : !hasSelectedGranularity ? "text-primary animate-pulse" : ""
-        }`}
+        className={`flex items-center gap-2 text-sm font-medium ${!selectedCity ? "text-muted-foreground" : !hasSelectedGranularity ? "text-primary animate-pulse" : ""
+          }`}
       >
         <Layers className={`h-4 w-4 ${!hasSelectedGranularity && selectedCity ? "animate-bounce" : ""}`} />
         <span>Level:</span>

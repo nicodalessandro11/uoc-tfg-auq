@@ -1,13 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { MapPin, BarChart2, Settings, Diff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+
 export function Header() {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const queryString = searchParams.toString()
 
   return (
     <header className="sticky top-0 z-50 w-full modern-header">
@@ -15,7 +18,7 @@ export function Header() {
         {/* LEFT */}
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" className="text-primary-foreground md:hidden"></Button>
-          <Link href="/" className="flex items-center gap-2">
+          <Link href={`/${queryString ? "?" + queryString : ""}`} className="flex items-center gap-2">
             <div>
               <img src="/mascot-blue.svg" alt="Mascot" className="h-14 w-14" />
             </div>
@@ -27,13 +30,13 @@ export function Header() {
         {/* Navigation Links - Hidden on mobile */}
         <div className="flex items-center gap-4 ml-auto">
           <div className="hidden md:flex items-center ml-8 space-x-1">
-            <Link href="/">
+            <Link href={`/${queryString ? "?" + queryString : ""}`}>
               <Button variant="ghost" className={`text-primary-foreground ${pathname === "/" ? "bg-white/10" : ""}`}>
                 <MapPin className="mr-2 h-5 w-5" />
                 Map
               </Button>
             </Link>
-            <Link href="/compare">
+            <Link href={`/compare${queryString ? "?" + queryString : ""}`}>
               <Button
                 variant="ghost"
                 className={`text-primary-foreground ${pathname === "/compare" ? "bg-white/10" : ""}`}
@@ -42,7 +45,7 @@ export function Header() {
                 Compare
               </Button>
             </Link>
-            <Link href="/visualize">
+            <Link href={`/visualize${queryString ? "?" + queryString : ""}`}>
               <Button
                 variant="ghost"
                 className={`text-primary-foreground ${pathname === "/visualize" ? "bg-white/10" : ""}`}
@@ -51,7 +54,7 @@ export function Header() {
                 Visualize
               </Button>
             </Link>
-            <Link href="/admin">
+            <Link href={`/admin${queryString ? "?" + queryString : ""}`}>
               <Button
                 variant="ghost"
                 className={`text-primary-foreground ${pathname === "/admin" ? "bg-white/10" : ""}`}
@@ -72,22 +75,22 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <Link href="/">
+              <Link href={`/${queryString ? "?" + queryString : ""}`}>
                 <DropdownMenuItem className="cursor-pointer">Map</DropdownMenuItem>
               </Link>
-              <Link href="/compare">
+              <Link href={`/compare${queryString ? "?" + queryString : ""}`}>
                 <DropdownMenuItem className="cursor-pointer">
                   <Diff className="mr-2 h-4 w-4" />
                   Compare
                 </DropdownMenuItem>
               </Link>
-              <Link href="/visualize">
+              <Link href={`/visualize${queryString ? "?" + queryString : ""}`}>
                 <DropdownMenuItem className="cursor-pointer">
                   <BarChart2 className="mr-2 h-4 w-4" />
                   Visualize
                 </DropdownMenuItem>
               </Link>
-              <Link href="/admin">
+              <Link href={`/admin${queryString ? "?" + queryString : ""}`}>
                 <DropdownMenuItem className="cursor-pointer">
                   <Settings className="mr-2 h-4 w-4" />
                   Admin

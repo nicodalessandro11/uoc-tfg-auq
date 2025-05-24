@@ -5,6 +5,7 @@ import { useMapContext } from "@/contexts/map-context"
 import { mapTypes } from "@/components/map-type-selector"
 import debounce from "lodash/debounce"
 import { useTheme } from "next-themes"
+import { useRouter, useSearchParams } from "next/navigation"
 
 // Feature type mapping
 const featureTypeMap = {
@@ -141,7 +142,7 @@ export default function LeafletMap({
   const markersLayerRef = useRef(null)
   const tileLayerRef = useRef(null)
   const clusterGroupRef = useRef(null)
-  const { setMapInitialized, loadGeoJSON, setSelectedArea, filters, dynamicFilters, setMapType } = useMapContext()
+  const { setMapInitialized, loadGeoJSON, setSelectedArea, filters, dynamicFilters, setMapType, selectedArea } = useMapContext()
   const mapInstanceRef = useRef(null)
   const [selectedAreaState, setSelectedAreaState] = useState(null)
   const [isMapReady, setIsMapReady] = useState(false)
@@ -150,6 +151,10 @@ export default function LeafletMap({
   const [isClusterReady, setIsClusterReady] = useState(false)
   const markersRef = useRef([])
   const { theme } = useTheme()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  // Track if the last click was on a polygon
+  const lastPolygonClickRef = useRef(false)
 
   // Function to generate a color from a simple palette based on the index
   const getColorFromPalette = (index, total) => {
@@ -252,6 +257,15 @@ export default function LeafletMap({
 
       // Notify that map is initialized
       setMapInitialized(true)
+
+      // Deselect area when clicking on map background
+      map.on('click', function (e) {
+        if (lastPolygonClickRef.current) {
+          lastPolygonClickRef.current = false
+          return
+        }
+        setSelectedArea(null)
+      })
 
       // Handle resize events
       const handleResize = () => {
@@ -525,6 +539,7 @@ export default function LeafletMap({
         onEachFeature: (feature, layer) => {
           layer.on({
             click: (e) => {
+              lastPolygonClickRef.current = true
               const areaId = feature.properties.id
               const areaName = feature.properties.name
               const area = {
@@ -541,6 +556,10 @@ export default function LeafletMap({
               }
               setSelectedAreaState(area)
               setSelectedArea(area)
+              // Update area param in URL
+              const params = new URLSearchParams(window.location.search)
+              params.set("area", areaId)
+              router.push(`?${params.toString()}`, { scroll: false })
             },
           })
           layer.bindTooltip(feature.properties.name)
@@ -555,7 +574,7 @@ export default function LeafletMap({
       console.error("Error rendering GeoJSON:", geoJsonError)
       setDefaultCityView(map, selectedCity)
     }
-  }, [currentGeoJSON, dynamicFilters, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady])
+  }, [currentGeoJSON, dynamicFilters, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady, router])
 
   // Update markers when point features change
   useEffect(() => {
@@ -694,18 +713,14 @@ export default function LeafletMap({
     }
   }, [theme, setMapType])
 
-  // After rendering polygons, restore selected area if present in localStorage
+  // Sync polygon highlight with selectedArea from context
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const savedArea = localStorage.getItem("selectedArea");
-    if (savedArea) {
-      try {
-        const area = JSON.parse(savedArea);
-        setSelectedAreaState(area);
-        setSelectedArea(area);
-      } catch { }
+    if (selectedArea) {
+      setSelectedAreaState(selectedArea)
+    } else {
+      setSelectedAreaState(null)
     }
-  }, [currentGeoJSON, isMapReady]);
+  }, [selectedArea])
 
   return <div ref={mapRef} className="h-full w-full" />
 }

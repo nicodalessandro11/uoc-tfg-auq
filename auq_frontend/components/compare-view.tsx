@@ -13,6 +13,7 @@ import { getCities, getDistricts, getIndicatorDefinitions, getCityIndicators } f
 import { DistrictComparisonChart } from "@/components/district-comparison-chart"
 import { MultiSelect } from "@/components/ui/multi-select"
 import type { IndicatorDefinition, City, Area } from "@/lib/api-types"
+import { useSearchParams } from "next/navigation"
 
 export function CompareView() {
   const {
@@ -34,6 +35,7 @@ export function CompareView() {
   const [loadingCities, setLoadingCities] = useState(true)
   const [availableIndicators, setAvailableIndicators] = useState<IndicatorDefinition[]>([])
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>([])
+  const searchParams = useSearchParams()
 
   // Load cities from Supabase
   useEffect(() => {
@@ -140,6 +142,30 @@ export function CompareView() {
     loadAreas()
   }, [selectedCity, selectedGranularity, loadGeoJSON, setSelectedArea, setComparisonArea])
 
+  // Auto-select Area 1 from URL param if present
+  useEffect(() => {
+    const areaParam = searchParams.get("area")
+    if (areaParam && localAvailableAreas && localAvailableAreas.length > 0) {
+      const area = localAvailableAreas.find(a => a.id.toString() === areaParam)
+      if (area) {
+        setSelectedArea({
+          id: area.id ?? 0,
+          name: area.name ?? '',
+          cityId: (area as any).cityId ?? (area as any).city_id ?? 0,
+          city_id: (area as any).city_id ?? (area as any).cityId ?? 0,
+          avgIncome: (area as any).avgIncome ?? (area as any).avg_income ?? 0,
+          avg_income: (area as any).avg_income ?? (area as any).avgIncome ?? 0,
+          disposableIncome: (area as any).disposableIncome ?? (area as any).disposable_income ?? 0,
+          disposable_income: (area as any).disposable_income ?? (area as any).disposableIncome ?? 0,
+          population: (area as any).population ?? 0,
+          surface: (area as any).surface ?? 0,
+          districtId: (area as any).districtId ?? (area as any).district_id ?? 0,
+          district_id: (area as any).district_id ?? (area as any).districtId ?? 0,
+        } as unknown as Area)
+      }
+    }
+  }, [searchParams, localAvailableAreas, setSelectedArea])
+
   // Render comparison data
   const renderComparisonData = () => {
     if (!selectedArea || !comparisonArea) {
@@ -220,7 +246,20 @@ export function CompareView() {
                     onValueChange={(value) => {
                       const area = localAvailableAreas.find((a) => a.id === Number.parseInt(value))
                       if (area) {
-                        setSelectedArea(area)
+                        setSelectedArea({
+                          id: area.id ?? 0,
+                          name: area.name ?? '',
+                          cityId: (area as any).cityId ?? (area as any).city_id ?? 0,
+                          city_id: (area as any).city_id ?? (area as any).cityId ?? 0,
+                          avgIncome: (area as any).avgIncome ?? (area as any).avg_income ?? 0,
+                          avg_income: (area as any).avg_income ?? (area as any).avgIncome ?? 0,
+                          disposableIncome: (area as any).disposableIncome ?? (area as any).disposable_income ?? 0,
+                          disposable_income: (area as any).disposable_income ?? (area as any).disposableIncome ?? 0,
+                          population: (area as any).population ?? 0,
+                          surface: (area as any).surface ?? 0,
+                          districtId: (area as any).districtId ?? (area as any).district_id ?? 0,
+                          district_id: (area as any).district_id ?? (area as any).districtId ?? 0,
+                        } as unknown as Area)
                       }
                     }}
                     disabled={localAvailableAreas.length === 0}
@@ -245,7 +284,20 @@ export function CompareView() {
                     onValueChange={(value) => {
                       const area = localAvailableAreas.find((a) => a.id === Number.parseInt(value))
                       if (area) {
-                        setComparisonArea(area)
+                        setComparisonArea({
+                          id: area.id ?? 0,
+                          name: area.name ?? '',
+                          cityId: (area as any).cityId ?? (area as any).city_id ?? 0,
+                          city_id: (area as any).city_id ?? (area as any).cityId ?? 0,
+                          avgIncome: (area as any).avgIncome ?? (area as any).avg_income ?? 0,
+                          avg_income: (area as any).avg_income ?? (area as any).avgIncome ?? 0,
+                          disposableIncome: (area as any).disposableIncome ?? (area as any).disposable_income ?? 0,
+                          disposable_income: (area as any).disposable_income ?? (area as any).disposableIncome ?? 0,
+                          population: (area as any).population ?? 0,
+                          surface: (area as any).surface ?? 0,
+                          districtId: (area as any).districtId ?? (area as any).district_id ?? 0,
+                          district_id: (area as any).district_id ?? (area as any).districtId ?? 0,
+                        } as unknown as Area)
                       }
                     }}
                     disabled={localAvailableAreas.length === 0}
