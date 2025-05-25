@@ -576,23 +576,30 @@ export function MapProvider({ children }: { children: ReactNode }) {
     (granularity: GranularityLevel | null) => {
       // Only update if the value actually changed
       if (granularity?.level !== selectedGranularity?.level) {
-        globalSelectedGranularity = granularity
-        _setSelectedGranularity(granularity)
+        // Clear area selection and remove from URL BEFORE changing granularity
+        setSelectedArea(null);
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("area")) {
+          params.delete("area");
+          window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+        }
+
+        globalSelectedGranularity = granularity;
+        _setSelectedGranularity(granularity);
 
         // Reset filter ranges loaded flag
-        filterRangesLoadedRef.current = false
+        filterRangesLoadedRef.current = false;
 
         // If this is the first time selecting a granularity, mark it
         if (granularity && !hasSelectedGranularity) {
-          setHasSelectedGranularity(true)
+          setHasSelectedGranularity(true);
         }
 
         // If we have both city and granularity, load the data immediately
         if (selectedCity && granularity && mapInitialized) {
-          console.log("Granularity changed, loading data:", granularity.level)
-          loadGeoJSON(selectedCity.id, granularity.level)
-          loadAvailableAreas(selectedCity.id, granularity.level)
-          loadFilterRanges(selectedCity.id, granularity.level)
+          loadGeoJSON(selectedCity.id, granularity.level);
+          loadAvailableAreas(selectedCity.id, granularity.level);
+          loadFilterRanges(selectedCity.id, granularity.level);
         }
       }
     },
@@ -733,11 +740,6 @@ export function MapProvider({ children }: { children: ReactNode }) {
       return changed ? updated : prev
     })
   }, [dynamicPointTypes])
-
-  // Reset selected area when granularity changes
-  useEffect(() => {
-    setSelectedArea(null)
-  }, [selectedGranularity])
 
   // Ensure hasSelectedGranularity always reflects selectedGranularity
   useEffect(() => {

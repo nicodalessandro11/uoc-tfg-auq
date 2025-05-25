@@ -45,11 +45,19 @@ export function MapView() {
   useEffect(() => {
     const areaParam = searchParams.get("area")
     const levelParam = searchParams.get("level")
+
     // Always clear selectedArea if areaParam is null
     if (!areaParam && selectedArea) {
       setSelectedArea(null)
       return
     }
+
+    // Only set area if:
+    // - areaParam exists
+    // - levelParam matches current granularity
+    // - area is valid for the current availableAreas
+    // - selectedArea is not already set to this area
+    // - areaParam was not just cleared due to a granularity change
     if (
       areaParam &&
       levelParam === selectedGranularity?.level &&
@@ -58,28 +66,20 @@ export function MapView() {
       (!selectedArea || selectedArea.id.toString() !== areaParam)
     ) {
       const area = availableAreas.find(a => a.id.toString() === areaParam)
+      // Guard: Only set if area is valid for this granularity
       if (area) {
         setSelectedArea(area)
         console.log("[SYNC] Área seleccionada desde URL:", area)
       } else {
+        // If area is not valid for this granularity, clear it from state and URL
         setSelectedArea(null)
         const params = new URLSearchParams(window.location.search)
         params.delete("area")
         router.push(`?${params.toString()}`, { scroll: false })
-        console.log("[SYNC] Área no encontrada, limpiando selección y URL")
+        console.log("[SYNC] Área no encontrada o inválida para esta granularidad, limpiando selección y URL")
       }
     }
   }, [searchParams, availableAreas, setSelectedArea, selectedGranularity, router, pathname, selectedArea])
-
-  // Reset selected area and remove area param when granularity changes
-  useEffect(() => {
-    setSelectedArea(null)
-    resetFilters && resetFilters()
-    // Remove area param from URL
-    const params = new URLSearchParams(window.location.search)
-    params.delete("area")
-    router.push(`?${params.toString()}`, { scroll: false })
-  }, [selectedGranularity])
 
   // Update URL when tab changes
   useEffect(() => {

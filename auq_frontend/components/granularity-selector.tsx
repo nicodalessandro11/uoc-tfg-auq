@@ -21,6 +21,8 @@ export function GranularitySelector() {
     loadGeoJSON,
     triggerRefresh,
     selectedGranularity,
+    setSelectedArea,
+    setSelectedGranularity,
   } = useMapContext()
 
   const [granularityLevels] = useState<GranularityLevel[]>([
@@ -32,14 +34,20 @@ export function GranularitySelector() {
   const hasGranularity = !!selectedGranularity;
 
   const handleGranularityChange = (value: string) => {
-    if (!value || !selectedCity) return
-    const params = new URLSearchParams(window.location.search)
-    params.set("level", value)
-    router.replace(`?${params.toString()}`)
-    setTimeout(() => {
-      loadGeoJSON(selectedCity.id, value)
-      triggerRefresh()
-    }, 0)
+    if (!value || !selectedCity) return;
+
+    // 1. Clear area from state
+    setSelectedArea(null);
+
+    // 2. Update granularity in state
+    const newGranularity = granularityLevels.find(g => g.level === value) || null;
+    setSelectedGranularity(newGranularity);
+
+    // 3. Update the URL (after state is set)
+    const params = new URLSearchParams(window.location.search);
+    params.delete("area");
+    params.set("level", value);
+    router.replace(`?${params.toString()}`);
   }
 
   return (
