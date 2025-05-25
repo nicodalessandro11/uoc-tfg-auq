@@ -29,6 +29,7 @@ export function MapView() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
+  const prevCityIdRef = useRef<number | null>(null);
 
   // Handle responsive sidebar
   const [isMobile, setIsMobile] = useState(false)
@@ -43,6 +44,9 @@ export function MapView() {
 
   // Auto-select area from URL param if present and level matches
   useEffect(() => {
+    // Only run this effect on the root route
+    if (pathname !== "/") return;
+
     const areaParam = searchParams.get("area")
     const levelParam = searchParams.get("level")
 
@@ -60,24 +64,24 @@ export function MapView() {
     // - areaParam was not just cleared due to a granularity change
     if (
       areaParam &&
-      levelParam === selectedGranularity?.level &&
-      availableAreas &&
-      availableAreas.length > 0 &&
-      (!selectedArea || selectedArea.id.toString() !== areaParam)
+      levelParam === selectedGranularity?.level
     ) {
-      const area = availableAreas.find(a => a.id.toString() === areaParam)
-      // Guard: Only set if area is valid for this granularity
-      if (area) {
-        setSelectedArea(area)
-        console.log("[SYNC] Área seleccionada desde URL:", area)
-      } else {
-        // If area is not valid for this granularity, clear it from state and URL
-        setSelectedArea(null)
-        const params = new URLSearchParams(window.location.search)
-        params.delete("area")
-        router.push(`?${params.toString()}`, { scroll: false })
-        console.log("[SYNC] Área no encontrada o inválida para esta granularidad, limpiando selección y URL")
+      if (availableAreas && availableAreas.length > 0) {
+        const area = availableAreas.find(a => a.id.toString() === areaParam)
+        // Guard: Only set if area is valid for this granularity
+        if (area) {
+          setSelectedArea(area)
+          console.log("[SYNC] Área seleccionada desde URL:", area)
+        } else {
+          setSelectedArea(null)
+          const params = new URLSearchParams(window.location.search)
+          params.delete("area")
+          console.trace("[MapView] router.push: removing area param")
+          router.push(`?${params.toString()}`, { scroll: false })
+          console.log("[SYNC] Área no encontrada o inválida para esta granularidad, limpiando selección y URL")
+        }
       }
+      // If availableAreas is empty, do nothing (wait for it to load)
     }
   }, [searchParams, availableAreas, setSelectedArea, selectedGranularity, router, pathname, selectedArea])
 
@@ -148,17 +152,25 @@ export function MapView() {
     }, 300)
   }
 
-  // Clear area when city changes
+  // Clear area when city actually changes
   useEffect(() => {
-    if (selectedArea) {
-      setSelectedArea(null)
+    if (
+      selectedCity &&
+      prevCityIdRef.current !== null &&
+      selectedCity.id !== prevCityIdRef.current
+    ) {
+      // City actually changed
+      if (selectedArea) {
+        setSelectedArea(null);
+      }
+      const params = new URLSearchParams(window.location.search);
+      if (params.has("area")) {
+        params.delete("area");
+        router.push(`?${params.toString()}`, { scroll: false });
+      }
     }
-    const params = new URLSearchParams(window.location.search)
-    if (params.has("area")) {
-      params.delete("area")
-      router.push(`?${params.toString()}`, { scroll: false })
-    }
-  }, [selectedCity])
+    prevCityIdRef.current = selectedCity ? selectedCity.id : null;
+  }, [selectedCity]);
 
   return (
     <div className="h-[calc(100vh-8rem)] flex w-full" ref={mapContainerRef}>

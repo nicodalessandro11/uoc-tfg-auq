@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-25 | Enhanced map and compare view components
+
+- Updated the compare-view.tsx and map-view.tsx files in the auq_frontend/components directory.
+- The changes were made to improve the user interface and provide a better user experience.
+- The React library was used for the component updates, and TypeScript was used for static typing.
+
+This update should significantly improve the usability of our application's map and comparison features.
+
 ## 📦 Feature | 2025-05-22 | Enhanced Point Features and Improved Data Upload
 
 - Updated `insert_ready_point_features_bcn.json` and `insert_ready_point_features_madrid.json` in `auq_data_engine/data/processed` for enhanced point features

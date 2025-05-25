@@ -13,7 +13,7 @@ import { getCities, getDistricts, getNeighborhoodsByCity, getIndicatorDefinition
 import { DistrictComparisonChart } from "@/components/district-comparison-chart"
 import { MultiSelect } from "@/components/ui/multi-select"
 import type { IndicatorDefinition, City, Area, Neighborhood, District } from "@/lib/api-types"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 
 export function CompareView() {
   const {
@@ -36,9 +36,12 @@ export function CompareView() {
   const [availableIndicators, setAvailableIndicators] = useState<IndicatorDefinition[]>([])
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>([])
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   // Track previous granularity to detect changes
   const prevGranularityRef = useRef<string | null>(null)
+
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
 
   // Effect to reset area selection when level changes
   useEffect(() => {
@@ -114,9 +117,15 @@ export function CompareView() {
     async function loadAreas() {
       if (!selectedCity || !selectedGranularity) return
 
+      // 1. Use cached data from context if available
+      if (availableAreas && availableAreas.length > 0) {
+        setLocalAvailableAreas(availableAreas)
+        return
+      }
+
       setIsLoading(true)
       try {
-        // Load GeoJSON data to ensure it's available
+        // Load GeoJSON data to ensure it's available (will use cache if present)
         await loadGeoJSON(selectedCity.id, selectedGranularity.level)
 
         // Get areas from GeoJSON data
@@ -157,19 +166,38 @@ export function CompareView() {
     }
 
     loadAreas()
-  }, [selectedCity, selectedGranularity, loadGeoJSON])
+  }, [selectedCity, selectedGranularity, loadGeoJSON, availableAreas])
 
   // Auto-select Area 1 from URL param if present
   useEffect(() => {
+    // Only run this effect on the /compare route
+    if (pathname !== "/compare") return;
+
     const areaParam = searchParams.get("area")
-    if (areaParam && localAvailableAreas && localAvailableAreas.length > 0) {
-      const area = localAvailableAreas.find(a => a.id.toString() === areaParam)
-      console.log('[CompareView] Sync from URL areaParam:', areaParam, 'found:', !!area, area)
-      if (area) {
-        setSelectedArea(toFullArea(area))
+    if (areaParam) {
+      if (localAvailableAreas && localAvailableAreas.length > 0) {
+        const area = localAvailableAreas.find(a => a.id.toString() === areaParam)
+        console.log('[CompareView] Sync from URL areaParam:', areaParam, 'found:', !!area, area)
+        if (area) {
+          setSelectedArea(toFullArea(area))
+        } else {
+          setSelectedArea(null)
+          const params = new URLSearchParams(window.location.search)
+          params.delete("area")
+          console.trace("[CompareView] router.replace: removing area param")
+          router.replace(`?${params.toString()}`)
+        }
       }
+      // If localAvailableAreas is empty, do nothing (wait for it to load)
     }
-  }, [searchParams, localAvailableAreas, setSelectedArea])
+  }, [searchParams, localAvailableAreas, setSelectedArea, pathname])
+
+  // 1. Clear comparisonArea when leaving CompareView (unmount)
+  useEffect(() => {
+    return () => {
+      setComparisonArea(null)
+    }
+  }, [setComparisonArea])
 
   // Render comparison data
   const renderComparisonData = () => {
@@ -252,6 +280,18 @@ export function CompareView() {
                       const area = localAvailableAreas.find((a) => a.id === Number.parseInt(value))
                       if (area) {
                         setSelectedArea(toFullArea(area))
+                        // Sync Area 1 to the URL
+                        const params = new URLSearchParams(window.location.search)
+                        params.set("area", area.id.toString())
+                        console.trace("[CompareView] router.replace: setting area param")
+                        router.replace(`?${params.toString()}`)
+                      } else {
+                        setSelectedArea(null)
+                        // Remove area from URL if not found
+                        const params = new URLSearchParams(window.location.search)
+                        params.delete("area")
+                        console.trace("[CompareView] router.replace: removing area param")
+                        router.replace(`?${params.toString()}`)
                       }
                     }}
                     disabled={localAvailableAreas.length === 0}
