@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-25 | Enhanced visualization and comparison views
+
+- Updated the compare-view.tsx and visualize-view.tsx components in the auq_frontend
+- Improved the user interface and functionality for better user experience
+- Leveraged React's powerful state and props system to manage data and component rendering
+
+This update will provide users with a more intuitive and interactive way to compare and visualize data. It is a significant step towards our goal of making data analysis more accessible and user-friendly.
+
 ## 📄 Docs | 2025-05-25 | Update git_history.md
 
 - Modified the file shared/scripts/data/git_history.md

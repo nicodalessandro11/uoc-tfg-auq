@@ -224,10 +224,16 @@ export function VisualizeView() {
           </CardContent>
         </Card>
 
-        {isLoading || !indicatorDef ? (
+        {isLoading && selectedIndicator ? (
           <div className="flex justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
+        ) : !selectedIndicator ? (
+          <Card>
+            <CardContent className="h-[400px] flex items-center justify-center">
+              <p className="text-muted-foreground">Please select an indicator to visualize.</p>
+            </CardContent>
+          </Card>
         ) : (
           <VisualizeChart
             areas={areas}

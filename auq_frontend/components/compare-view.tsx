@@ -35,6 +35,7 @@ export function CompareView() {
   const [loadingCities, setLoadingCities] = useState(true)
   const [availableIndicators, setAvailableIndicators] = useState<IndicatorDefinition[]>([])
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>([])
+  const [showIndicatorLimit, setShowIndicatorLimit] = useState(false)
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -335,20 +336,31 @@ export function CompareView() {
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-sm font-medium">Indicators to Compare (max 2)</Label>
+                  <Label className="text-sm font-medium">Indicators to compare</Label>
+                  <div
+                    className={`text-xs mt-1 ${showIndicatorLimit ? "text-red-500" : "text-muted-foreground"}`}
+                    style={{ minHeight: "1.25em" }}
+                  >
+                    {showIndicatorLimit
+                      ? "You can only compare up to 2 indicators."
+                      : "Select up to 2 indicators to compare."}
+                  </div>
                   <MultiSelect
                     options={availableIndicators.map(ind => ({
                       label: ind.name,
                       value: ind.name,
                       description: ind.description,
-                      unit: ind.unit
+                      unit: ind.unit,
+                      disabled: selectedIndicators.length >= 2 && !selectedIndicators.includes(ind.name),
                     }))}
                     selected={selectedIndicators}
                     onChange={(newSelected) => {
-                      // Limit to 2 selections
-                      if (newSelected.length <= 2) {
-                        setSelectedIndicators(newSelected)
+                      if (newSelected.length > 2) {
+                        setShowIndicatorLimit(true);
+                        setTimeout(() => setShowIndicatorLimit(false), 2000);
+                        return;
                       }
+                      setSelectedIndicators(newSelected)
                     }}
                     placeholder="Select up to 2 indicators to compare..."
                     className="modern-input"
