@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📄 Docs | 2025-05-25 | Update git_history.md
+
+- Modified the file shared/scripts/data/git_history.md
+- The update was necessary to reflect the most recent changes in the project's Git history
+- Markdown was used for the documentation
+
+This update ensures that the project's Git history is up-to-date and accurately reflects the project's evolution.
+
 ## 📦 Feature | 2025-05-25 | Enhanced map and compare view components
 
 - Updated the compare-view.tsx and map-view.tsx files in the auq_frontend/components directory.
@@ -7,6 +15,36 @@
 - The React library was used for the component updates, and TypeScript was used for static typing.
 
 This update should significantly improve the usability of our application's map and comparison features.
+
+## 🐛 Fix | 2025-05-25 | Granularity/area sync: instant, robust, no race
+    
+    - Updated granularity change logic in components/granularity-selector.tsx to clear area and update both state and URL in a single handler
+    - Removed global/effect-based area clearing on granularity change, preventing race conditions and double updates
+    - Ensured area selection persists and only clears when user changes level, never on unrelated state changes
+    - Fixed issue where UI/URL could get out of sync or require double-tap to change level
+    
+    This checkpoint guarantees immediate, reliable sync between area, level, and URL, with a professional user experience.
+
+## 🐛 Fix | 2025-05-25| Robust city/area state sync and URL update logic
+    
+    - Refactored setSelectedCity in contexts/map-context.tsx to update the URL before state, ensuring correct sync between UI, state, and URL
+    - Fixed bug where changing city with an area selected would revert to the previous city due to race condition between state and URL effects
+    - Removed redundant effect that double-loaded data on city/granularity change, preventing race conditions and UI flicker
+    - Ensured area is always cleared and removed from URL when city changes, and that all map data, filters, and points reload as expected
+    - Selecting the same city now does nothing, preventing unnecessary data clearing
+    
+    This checkpoint ensures robust, professional state and URL management for city/area selection, eliminating desynchronization and bounce-back issues.
+
+## 📦 Feature | 2025-05-24 | Checkpoint: stateless area selection & highlight sync
+    
+    - All area selection and polygon highlight logic now fully stateless and URL-driven (components/map-view.tsx, components/leaflet-map.jsx)
+    - Changing level (district/neighborhood) resets area selection and removes 'area' param from URL
+    - Polygon highlight is always cleared when no area is selected, preventing stale UI
+    - Lays the foundation for robust, predictable navigation and state sync across the app
+    
+    Checkpoint commit: ensures future features build on a clean, stateless, and user-friendly selection model.
+
+## Checkpoint: working persistent point features state (per city/granularity) and code ready for cleanup
 
 ## 📦 Feature | 2025-05-22 | Enhanced Point Features and Improved Data Upload
 
