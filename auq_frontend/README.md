@@ -80,6 +80,22 @@ auq_frontend/
 * **Context**: `map-context.tsx` handles selected city, view mode, filters
 * **Consumers**: UI components subscribe to changes and update display
 
+
+## User Flowchart & Data Load
+
+| Action                                 | Component(s)                                         | URL State                                 | Endpoint/API Called                                 | Notes                                                                 |
+|-----------------------------------------|------------------------------------------------------|--------------------------------------------|-----------------------------------------------------|-----------------------------------------------------------------------|
+| 1. User lands on `/`                    | components/map-view.tsx                              | `/?tab=points`                             | (none)                                              | Welcome banner shown, no city or level selected. Tab defaults to 'points'. |
+| 2. Select city                          | components/city-selector.tsx                         | `/?tab=points&city=[city]`                 | `getCities`, `getCityPointFeatures`                 | URL updates, point features for city are loaded.                       |
+| 3. Select granularity (level)           | components/granularity-selector.tsx                  | `/?tab=points&city=[city]&level=[level]`    | `getGeographicalLevels`, `getEnrichedGeoJSON`        | URL updates, polygons and data for the level are loaded.               |
+| 4. Select area/polygon                  | components/map-view.tsx                              | `/?tab=points&city=[city]&level=[level]&area=[area]` | (none, cached)                                      | Area is selected, highlight and info shown.                            |
+| 5. Change visible point type            | components/point-features-toggle.tsx                 | (no change)                                | (none, cached)                                      | Changes visibility of point types on the map.                          |
+| 6. Change city or level                 | components/city-selector.tsx / components/granularity-selector.tsx | `/?tab=points&city=[city2]&level=[level]` or `/?tab=points&city=[city]&level=[other-level]` | `getCityPointFeatures` (if city changes), `getEnrichedGeoJSON` (if level changes) | Area selection is reset, data is reloaded as needed.                   |
+| 7. Change level with area selected      | components/granularity-selector.tsx                  | `/?tab=points&city=[city]&level=[other-level]` | `getEnrichedGeoJSON`                                 | Selected area is reset, `area` param removed from URL, filters reset, info disappears. |
+
+> **Note:** All endpoints use local cache and only fetch if no data is in memory.
+
+
 ## Development Workflow
 
 ### 1. Setup
@@ -138,3 +154,4 @@ for the UOC Final Degree Project (TFG) — "Are U Query-ous?"
 
 All frontend code is released under the [MIT License](../LICENSE).
 You are free to use, modify, and distribute it with attribution.
+

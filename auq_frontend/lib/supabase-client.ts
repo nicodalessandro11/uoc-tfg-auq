@@ -649,3 +649,49 @@ export async function getEnrichedGeoJSON(cityId: number, level: string): Promise
     return geojson
   })
 }
+
+export async function fetchIndicators(cityId: number, level: string): Promise<Indicator[]> {
+  console.log(`Fetching indicators for city ${cityId}, level ${level} (geo_level_id: ${getGeoLevelId(level)})`)
+
+  // Try to get indicators from cache first
+  const cacheKey = `indicators_${cityId}_${level}`
+  const cachedData = getCachedData(cacheKey)
+  if (cachedData) {
+    console.log("Using cached indicators data")
+    return cachedData
+  }
+
+  // If not in cache, fetch from Supabase
+  const { data, error } = await supabase
+    .from("current_indicators_view")
+    .select("*")
+    .eq("city_id", cityId)
+    .eq("geo_level_id", getGeoLevelId(level))
+
+  if (error) {
+    console.error("Error fetching indicators:", error)
+    throw error
+  }
+
+  console.log("Fetched indicators:", data)
+
+  // Transform the data to match the Indicator type
+  const transformedData = data.map((item: any) => ({
+    id: item.id,
+    geoId: item.geo_id,
+    geoLevelId: item.geo_level_id,
+    cityId: item.city_id,
+    indicatorName: item.indicator_name,
+    value: item.value,
+    year: item.year,
+    source: item.source,
+    description: item.description,
+  }))
+
+  console.log("Transformed indicators:", transformedData)
+
+  // Cache the transformed data
+  setCachedData(cacheKey, transformedData)
+
+  return transformedData
+}

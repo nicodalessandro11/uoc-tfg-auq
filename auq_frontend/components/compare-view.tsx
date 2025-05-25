@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
@@ -9,10 +9,10 @@ import { Badge } from "@/components/ui/badge"
 import { GitCompare, ArrowLeft, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { getCities, getDistricts, getIndicatorDefinitions, getCityIndicators } from "@/lib/api-service"
+import { getCities, getDistricts, getNeighborhoodsByCity, getIndicatorDefinitions, getCityIndicators, getGeoJSON } from "@/lib/api-service"
 import { DistrictComparisonChart } from "@/components/district-comparison-chart"
 import { MultiSelect } from "@/components/ui/multi-select"
-import type { IndicatorDefinition, City, Area } from "@/lib/api-types"
+import type { IndicatorDefinition, City, Area, Neighborhood, District } from "@/lib/api-types"
 import { useSearchParams } from "next/navigation"
 
 export function CompareView() {
@@ -37,6 +37,20 @@ export function CompareView() {
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>([])
   const searchParams = useSearchParams()
 
+  // Track previous granularity to detect changes
+  const prevGranularityRef = useRef<string | null>(null)
+
+  // Effect to reset area selection when level changes
+  useEffect(() => {
+    if (!selectedGranularity) return
+    if (prevGranularityRef.current && prevGranularityRef.current !== selectedGranularity.level) {
+      console.log('[CompareView] Granularity changed from', prevGranularityRef.current, 'to', selectedGranularity.level, '- resetting selected areas')
+      setSelectedArea(null)
+      setComparisonArea(null)
+    }
+    prevGranularityRef.current = selectedGranularity.level
+  }, [selectedGranularity, setSelectedArea, setComparisonArea])
+
   // Load cities from Supabase
   useEffect(() => {
     async function loadCities() {
@@ -60,14 +74,6 @@ export function CompareView() {
       setSelectedCity(cities[0])
     }
   }, [selectedCity, cities, setSelectedCity])
-
-  // Set default granularity to "district" if not already set
-  useEffect(() => {
-    if (!selectedGranularity && selectedCity) {
-      const defaultGranularity = { id: 1, name: "Districts", level: "district" }
-      setSelectedGranularity(defaultGranularity)
-    }
-  }, [selectedGranularity, selectedCity, setSelectedGranularity])
 
   // Load available indicators when city or granularity changes
   useEffect(() => {
@@ -113,55 +119,54 @@ export function CompareView() {
         // Load GeoJSON data to ensure it's available
         await loadGeoJSON(selectedCity.id, selectedGranularity.level)
 
-        // Fetch districts directly
-        const areas = await getDistricts(selectedCity.id)
+        // Get areas from GeoJSON data
+        const geoJsonData = await getGeoJSON(selectedCity.id, selectedGranularity.level)
+        if (!geoJsonData || !geoJsonData.features) {
+          throw new Error("No GeoJSON data available")
+        }
 
         // Transform to expected format
-        const formattedAreas = areas.map((area) => ({
-          id: area.id,
-          name: area.name,
-          cityId: area.city_id,
-          population: area.population || 0,
-          avgIncome: area.avg_income || 0,
-          surface: area.surface || 0,
-          disposableIncome: area.disposable_income || 0,
-        }))
+        const formattedAreas: Area[] = geoJsonData.features.map((feature: any) => {
+          // Ensure all numeric fields have a value, defaulting to 0 if undefined
+          const population = typeof feature.properties.population === 'number' ? feature.properties.population : 0
+          const avgIncome = typeof feature.properties.avg_income === 'number' ? feature.properties.avg_income : 0
+          const surface = typeof feature.properties.surface === 'number' ? feature.properties.surface : 0
+          const disposableIncome = typeof feature.properties.disposable_income === 'number' ? feature.properties.disposable_income : 0
 
+          return {
+            id: feature.properties.id,
+            name: feature.properties.name,
+            cityId: feature.properties.city_id,
+            city_id: feature.properties.city_id,
+            district_id: feature.properties.district_id,
+            population,
+            avgIncome,
+            surface,
+            disposableIncome,
+          }
+        })
+
+        console.log(`[CompareView] Loaded ${formattedAreas.length} ${selectedGranularity.level}s for city ${selectedCity.id}`)
         setLocalAvailableAreas(formattedAreas)
-
-        // Reset selections when areas change
-        setSelectedArea(null)
-        setComparisonArea(null)
       } catch (error) {
         console.error("Error loading areas:", error)
+        setLocalAvailableAreas([])
       } finally {
         setIsLoading(false)
       }
     }
 
     loadAreas()
-  }, [selectedCity, selectedGranularity, loadGeoJSON, setSelectedArea, setComparisonArea])
+  }, [selectedCity, selectedGranularity, loadGeoJSON])
 
   // Auto-select Area 1 from URL param if present
   useEffect(() => {
     const areaParam = searchParams.get("area")
     if (areaParam && localAvailableAreas && localAvailableAreas.length > 0) {
       const area = localAvailableAreas.find(a => a.id.toString() === areaParam)
+      console.log('[CompareView] Sync from URL areaParam:', areaParam, 'found:', !!area, area)
       if (area) {
-        setSelectedArea({
-          id: area.id ?? 0,
-          name: area.name ?? '',
-          cityId: (area as any).cityId ?? (area as any).city_id ?? 0,
-          city_id: (area as any).city_id ?? (area as any).cityId ?? 0,
-          avgIncome: (area as any).avgIncome ?? (area as any).avg_income ?? 0,
-          avg_income: (area as any).avg_income ?? (area as any).avgIncome ?? 0,
-          disposableIncome: (area as any).disposableIncome ?? (area as any).disposable_income ?? 0,
-          disposable_income: (area as any).disposable_income ?? (area as any).disposableIncome ?? 0,
-          population: (area as any).population ?? 0,
-          surface: (area as any).surface ?? 0,
-          districtId: (area as any).districtId ?? (area as any).district_id ?? 0,
-          district_id: (area as any).district_id ?? (area as any).districtId ?? 0,
-        } as unknown as Area)
+        setSelectedArea(toFullArea(area))
       }
     }
   }, [searchParams, localAvailableAreas, setSelectedArea])
@@ -246,20 +251,7 @@ export function CompareView() {
                     onValueChange={(value) => {
                       const area = localAvailableAreas.find((a) => a.id === Number.parseInt(value))
                       if (area) {
-                        setSelectedArea({
-                          id: area.id ?? 0,
-                          name: area.name ?? '',
-                          cityId: (area as any).cityId ?? (area as any).city_id ?? 0,
-                          city_id: (area as any).city_id ?? (area as any).cityId ?? 0,
-                          avgIncome: (area as any).avgIncome ?? (area as any).avg_income ?? 0,
-                          avg_income: (area as any).avg_income ?? (area as any).avgIncome ?? 0,
-                          disposableIncome: (area as any).disposableIncome ?? (area as any).disposable_income ?? 0,
-                          disposable_income: (area as any).disposable_income ?? (area as any).disposableIncome ?? 0,
-                          population: (area as any).population ?? 0,
-                          surface: (area as any).surface ?? 0,
-                          districtId: (area as any).districtId ?? (area as any).district_id ?? 0,
-                          district_id: (area as any).district_id ?? (area as any).districtId ?? 0,
-                        } as unknown as Area)
+                        setSelectedArea(toFullArea(area))
                       }
                     }}
                     disabled={localAvailableAreas.length === 0}
@@ -284,20 +276,7 @@ export function CompareView() {
                     onValueChange={(value) => {
                       const area = localAvailableAreas.find((a) => a.id === Number.parseInt(value))
                       if (area) {
-                        setComparisonArea({
-                          id: area.id ?? 0,
-                          name: area.name ?? '',
-                          cityId: (area as any).cityId ?? (area as any).city_id ?? 0,
-                          city_id: (area as any).city_id ?? (area as any).cityId ?? 0,
-                          avgIncome: (area as any).avgIncome ?? (area as any).avg_income ?? 0,
-                          avg_income: (area as any).avg_income ?? (area as any).avgIncome ?? 0,
-                          disposableIncome: (area as any).disposableIncome ?? (area as any).disposable_income ?? 0,
-                          disposable_income: (area as any).disposable_income ?? (area as any).disposableIncome ?? 0,
-                          population: (area as any).population ?? 0,
-                          surface: (area as any).surface ?? 0,
-                          districtId: (area as any).districtId ?? (area as any).district_id ?? 0,
-                          district_id: (area as any).district_id ?? (area as any).districtId ?? 0,
-                        } as unknown as Area)
+                        setComparisonArea(toFullArea(area))
                       }
                     }}
                     disabled={localAvailableAreas.length === 0}
@@ -362,4 +341,24 @@ export function CompareView() {
       </div>
     </div>
   )
+}
+
+// Helper to ensure all required fields for Area
+function toFullArea(area: any): Area {
+  return {
+    id: area.id ?? 0,
+    name: area.name ?? '',
+    cityId: area.cityId ?? area.city_id ?? 0,
+    city_id: area.city_id ?? area.cityId ?? 0,
+    avgIncome: area.avgIncome ?? area.avg_income ?? 0,
+    avg_income: area.avg_income ?? area.avgIncome ?? 0,
+    disposableIncome: area.disposableIncome ?? area.disposable_income ?? 0,
+    disposable_income: area.disposable_income ?? area.disposableIncome ?? 0,
+    population: area.population ?? 0,
+    surface: area.surface ?? 0,
+    districtId: area.districtId ?? area.district_id ?? undefined,
+    district_id: area.district_id ?? area.districtId ?? undefined,
+    neighbourhood_code: area.neighbourhood_code ?? undefined,
+    district_code: area.district_code ?? undefined,
+  } as Area
 }

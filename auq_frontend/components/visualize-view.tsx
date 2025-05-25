@@ -13,7 +13,7 @@ import { UnemploymentChart } from "@/components/unemployment-chart"
 import { PopulationDensityChart } from "@/components/population-density-chart"
 import { ArrowLeft, BarChart2, Loader2 } from "lucide-react"
 import Link from "next/link"
-import { getDistricts, getCityIndicators, getIndicatorDefinitions } from "@/lib/api-service"
+import { getDistricts, getCityIndicators, getIndicatorDefinitions, getGeoJSON } from "@/lib/api-service"
 import type { IndicatorDefinition, District, Area } from "@/lib/api-types"
 import { VisualizeChart } from "@/components/visualize-chart"
 
@@ -32,16 +32,6 @@ export function VisualizeView() {
     selectedGranularity,
     availableIndicators: availableIndicators.length
   })
-
-  // Set default granularity to "district" if not already set
-  useEffect(() => {
-    console.log('Checking default granularity:', { selectedGranularity, selectedCity })
-    if (!selectedGranularity && selectedCity) {
-      const defaultGranularity = { id: 1, name: "Districts", level: "district" }
-      console.log('Setting default granularity:', defaultGranularity)
-      setSelectedGranularity(defaultGranularity)
-    }
-  }, [selectedGranularity, selectedCity, setSelectedGranularity])
 
   // Load available indicators when city or granularity changes
   useEffect(() => {
@@ -108,21 +98,26 @@ export function VisualizeView() {
         // Load GeoJSON data to ensure it's available
         await loadGeoJSON(selectedCity.id, selectedGranularity.level)
 
-        // Fetch districts directly
-        const areas = await getDistricts(selectedCity.id)
+        // Get areas from GeoJSON data
+        const geoJsonData = await getGeoJSON(selectedCity.id, selectedGranularity.level)
+        if (!geoJsonData || !geoJsonData.features) {
+          throw new Error("No GeoJSON data available")
+        }
 
         // Transform to expected format
-        const formattedAreas: Area[] = areas.map((area: District) => {
+        const formattedAreas: Area[] = geoJsonData.features.map((feature: any) => {
           // Ensure all numeric fields have a value, defaulting to 0 if undefined
-          const population = typeof area.population === 'number' ? area.population : 0
-          const avgIncome = typeof area.avg_income === 'number' ? area.avg_income : 0
-          const surface = typeof area.surface === 'number' ? area.surface : 0
-          const disposableIncome = typeof area.disposable_income === 'number' ? area.disposable_income : 0
+          const population = typeof feature.properties.population === 'number' ? feature.properties.population : 0
+          const avgIncome = typeof feature.properties.avg_income === 'number' ? feature.properties.avg_income : 0
+          const surface = typeof feature.properties.surface === 'number' ? feature.properties.surface : 0
+          const disposableIncome = typeof feature.properties.disposable_income === 'number' ? feature.properties.disposable_income : 0
 
           return {
-            id: area.id,
-            name: area.name,
-            cityId: area.city_id,
+            id: feature.properties.id,
+            name: feature.properties.name,
+            cityId: feature.properties.city_id,
+            city_id: feature.properties.city_id,
+            district_id: feature.properties.district_id,
             population,
             avgIncome,
             surface,
@@ -130,10 +125,13 @@ export function VisualizeView() {
           }
         })
 
+        console.log(`Loaded ${formattedAreas.length} ${selectedGranularity.level}s for city ${selectedCity.id}`)
         setLocalAvailableAreas(formattedAreas)
         setAreas(formattedAreas)
       } catch (error) {
         console.error("Error loading areas:", error)
+        setLocalAvailableAreas([])
+        setAreas([])
       } finally {
         setIsLoading(false)
       }

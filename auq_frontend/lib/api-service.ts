@@ -26,6 +26,7 @@ import {
   getGeographicalUnits as getSupabaseGeographicalUnits,
   getEnrichedGeoJSON,
 } from "./supabase-client"
+import { supabase } from "./supabase-client"
 
 // Flag to determine whether to use Supabase or API
 // Default to true for development, but respect the environment variable if set
@@ -185,6 +186,28 @@ export async function getCityIndicators(cityId: number, level: string, year?: nu
         year: year ? year.toString() : undefined,
       })
       return await fetchAPI(endpoint)
+    }
+  })
+}
+
+/**
+ * Get all neighborhoods for a city
+ */
+export async function getNeighborhoodsByCity(cityId: number): Promise<Neighborhood[]> {
+  return getCachedData(`neighborhoods_city_${cityId}`, async () => {
+    if (USE_SUPABASE) {
+      if (!supabase) throw new Error("Supabase client not available")
+      // Query the neighborhoods table or view for all neighborhoods in the city
+      const { data, error } = await supabase
+        .from("neighbourhoods")
+        .select("*")
+        .eq("city_id", cityId)
+        .order("id")
+      if (error) throw new Error(error.message)
+      return data || []
+    } else {
+      // REST endpoint for all neighborhoods in a city
+      return await fetchAPI(`/api/cities/${cityId}/neighborhoods`)
     }
   })
 }

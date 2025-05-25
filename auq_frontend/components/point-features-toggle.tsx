@@ -24,33 +24,6 @@ import { useMapContext } from "@/contexts/map-context"
 import { getFeatureDefinitions } from "@/lib/api-service"
 import { Button } from "@/components/ui/button"
 
-// Feature type mapping - consistent with database seed
-const featureTypeMap = {
-  "1": "library",
-  "2": "cultural_center",
-  "3": "auditorium",
-  "4": "heritage_space",
-  "5": "creation_factory",
-  "6": "museum",
-  "7": "cinema",
-  "8": "exhibition_center",
-  "9": "archive",
-  "10": "live_music_venue",
-  "11": "performing_arts_venue",
-  "12": "municipal_market",
-  "13": "park_garden",
-  "14": "educational_center",
-}
-
-// Reverse mapping for lookups
-const reverseFeatureTypeMap = Object.entries(featureTypeMap).reduce(
-  (acc, [id, name]) => {
-    acc[name] = id
-    return acc
-  },
-  {} as Record<string, string>,
-)
-
 // Paleta de colores igual que en leaflet-map.jsx
 const markerIconColors = [
   '#2A81CB', // blue
@@ -72,6 +45,12 @@ const getColorForFeatureType = (featureType: string) => {
   }
   return featureTypeColorMap[featureType]
 }
+
+// Helper para mostrar nombres bonitos
+const getFeatureLabel = (type: string) =>
+  type
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase())
 
 export function PointFeaturesToggle() {
   const { visiblePointTypes, setVisiblePointTypes, dynamicPointTypes } = useMapContext()
@@ -98,18 +77,15 @@ export function PointFeaturesToggle() {
   const handleToggle = useCallback((type: string) => {
     setVisiblePointTypes(prev => {
       const newState = { ...prev }
-      // Si el tipo no existe en el estado, lo añadimos como visible
       if (!(type in newState)) {
         newState[type] = true
       }
-      // Invertimos el estado actual
       newState[type] = !newState[type]
-      console.log(`Toggling ${type} to ${newState[type]}`)
       return newState
     })
   }, [setVisiblePointTypes])
 
-  // Switch for toggling all types
+  // Button for toggling all types
   const allOn = dynamicPointTypes.every(type => visiblePointTypes[type])
   const handleToggleAll = () => {
     setVisiblePointTypes(prev => {
@@ -211,11 +187,13 @@ export function PointFeaturesToggle() {
   return (
     <Card className="p-4">
       <div className="flex justify-end items-center gap-2 my-2">
-        <span className="text-xs font-semibold select-none">{allOn ? "Hide all" : "Show all"}</span>
-        <Switch
-          checked={allOn}
-          onCheckedChange={handleToggleAll}
-        />
+        <Button
+          variant={allOn ? "default" : "outline"}
+          className="h-8 px-4 text-xs font-semibold"
+          onClick={handleToggleAll}
+        >
+          {allOn ? "Hide all" : "Show all"}
+        </Button>
       </div>
       <div className="flex flex-col gap-2">
         {dynamicPointTypes.map((type) => {
@@ -232,7 +210,7 @@ export function PointFeaturesToggle() {
                   borderColor: isVisible ? color : undefined,
                 } as React.CSSProperties}
               />
-              <span className="capitalize text-xs">{type.replace(/_/g, ' ')}</span>
+              <span className="capitalize text-xs">{getFeatureLabel(type)}</span>
             </div>
           )
         })}

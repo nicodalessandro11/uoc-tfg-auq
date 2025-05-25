@@ -326,21 +326,23 @@ export default function LeafletMap({
     if (selectedCity) {
       // Only set the view when the city changes
       if (!prevCityId || prevCityId !== selectedCity.id) {
+        console.log("City changed, updating map view and data")
         setDefaultCityView(map, selectedCity)
         // Store the current city ID for future comparison
         map.prevCityId = selectedCity.id
-      }
 
-      // Load GeoJSON if we have granularity
-      if (selectedGranularity && hasSelectedGranularity) {
-        loadGeoJSON(selectedCity.id, selectedGranularity.level)
+        // Always load data when city changes, regardless of area selection
+        if (selectedGranularity) {
+          console.log("Loading data for new city:", selectedCity.id, selectedGranularity.level)
+          loadGeoJSON(selectedCity.id, selectedGranularity.level)
+        }
       }
     } else {
       // Reset to initial view if no city is selected
       map.setView([40, -4], 5)
       map.prevCityId = null
     }
-  }, [selectedCity, selectedGranularity, hasSelectedGranularity, loadGeoJSON, isMapReady])
+  }, [selectedCity, selectedGranularity, loadGeoJSON, isMapReady])
 
   // Helper function to set default city view
   const setDefaultCityView = (map, selectedCity) => {

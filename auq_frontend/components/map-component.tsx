@@ -106,18 +106,14 @@ export default function MapComponent() {
     }
 
     const filtered = pointFeatures.filter((feature) => {
-      if (!feature.featureType) {
-        console.warn(`[Map] Feature ${feature.id} has no feature type`)
+      const featureType = feature.featureType
+      if (!featureType || typeof featureType !== 'string') {
+        console.warn(`[Map] Feature ${feature.id} has no valid feature type`)
         return false
       }
 
-      const isVisible = visiblePointTypes[feature.featureType]
-      if (isVisible === undefined) {
-        console.warn(`[Map] Feature type ${feature.featureType} not found in visiblePointTypes`)
-        return false
-      }
-
-      return isVisible
+      // Default to visible if type is not found in visiblePointTypes
+      return (visiblePointTypes as Record<string, boolean>)[featureType] ?? true
     })
 
     console.log(`[Map] Total point features after filtering: ${filtered.length}`)

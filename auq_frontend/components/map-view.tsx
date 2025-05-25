@@ -7,7 +7,7 @@ import { DistrictInfo } from "@/components/district-info"
 import { PointFeaturesToggle } from "@/components/point-features-toggle"
 import { ChatSidebar } from "@/components/chat-sidebar"
 import { Filter, Info, MapPin, ChevronLeft, ChevronRight, Bot } from "lucide-react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const MapComponent = dynamic(() => import("@/components/map-component"), {
@@ -20,7 +20,7 @@ const MapComponent = dynamic(() => import("@/components/map-component"), {
 })
 
 export function MapView() {
-  const { selectedCity, selectedArea, setVisiblePointTypes, visiblePointTypes, triggerRefresh, selectedGranularity, availableAreas, setSelectedArea } =
+  const { selectedCity, selectedArea, setVisiblePointTypes, visiblePointTypes, triggerRefresh, selectedGranularity, availableAreas, setSelectedArea, resetFilters } =
     useMapContext()
   const [activeTab, setActiveTab] = useState("points")
   const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false)
@@ -28,6 +28,7 @@ export function MapView() {
   const mapContainerRef = useRef(null)
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathname = usePathname()
 
   // Handle responsive sidebar
   const [isMobile, setIsMobile] = useState(false)
@@ -44,22 +45,36 @@ export function MapView() {
   useEffect(() => {
     const areaParam = searchParams.get("area")
     const levelParam = searchParams.get("level")
+    // Always clear selectedArea if areaParam is null
+    if (!areaParam && selectedArea) {
+      setSelectedArea(null)
+      return
+    }
     if (
       areaParam &&
       levelParam === selectedGranularity?.level &&
       availableAreas &&
-      availableAreas.length > 0
+      availableAreas.length > 0 &&
+      (!selectedArea || selectedArea.id.toString() !== areaParam)
     ) {
       const area = availableAreas.find(a => a.id.toString() === areaParam)
       if (area) {
         setSelectedArea(area)
+        console.log("[SYNC] Área seleccionada desde URL:", area)
+      } else {
+        setSelectedArea(null)
+        const params = new URLSearchParams(window.location.search)
+        params.delete("area")
+        router.push(`?${params.toString()}`, { scroll: false })
+        console.log("[SYNC] Área no encontrada, limpiando selección y URL")
       }
     }
-  }, [searchParams, availableAreas, setSelectedArea, selectedGranularity])
+  }, [searchParams, availableAreas, setSelectedArea, selectedGranularity, router, pathname, selectedArea])
 
   // Reset selected area and remove area param when granularity changes
   useEffect(() => {
     setSelectedArea(null)
+    resetFilters && resetFilters()
     // Remove area param from URL
     const params = new URLSearchParams(window.location.search)
     params.delete("area")
@@ -133,6 +148,18 @@ export function MapView() {
     }, 300)
   }
 
+  // Clear area when city changes
+  useEffect(() => {
+    if (selectedArea) {
+      setSelectedArea(null)
+    }
+    const params = new URLSearchParams(window.location.search)
+    if (params.has("area")) {
+      params.delete("area")
+      router.push(`?${params.toString()}`, { scroll: false })
+    }
+  }, [selectedCity])
+
   return (
     <div className="h-[calc(100vh-8rem)] flex w-full" ref={mapContainerRef}>
       {/* Left Sidebar container - fixed width when visible, 0 when collapsed */}
@@ -203,8 +230,16 @@ export function MapView() {
 
                 {activeTab === "info" && (
                   <div>
-                    {selectedArea && "cityId" in selectedArea && "avgIncome" in selectedArea ? (
-                      <DistrictInfo area={selectedArea as { id: number; name: string; cityId: number; population: number; avgIncome: number; districtId?: number }} />
+                    {(() => { console.log('[INFO TAB] selectedArea:', selectedArea, 'activeTab:', activeTab); return null })()}
+                    {selectedArea && (typeof selectedArea.id !== 'undefined') && (typeof (selectedArea as any)['cityId'] !== 'undefined' || typeof (selectedArea as any)['city_id'] !== 'undefined') ? (
+                      <DistrictInfo area={{
+                        id: selectedArea.id,
+                        name: selectedArea.name,
+                        cityId: ((selectedArea as any)['cityId'] ?? (selectedArea as any)['city_id']),
+                        population: (selectedArea as any)['population'] ?? 0,
+                        avgIncome: (selectedArea as any)['avgIncome'] ?? (selectedArea as any)['avg_income'] ?? 0,
+                        districtId: (selectedArea as any)['districtId'] ?? (selectedArea as any)['district_id']
+                      }} />
                     ) : (
                       <div className="text-center py-8 flex flex-col items-center gap-4">
                         <div className="bg-muted rounded-full p-4">

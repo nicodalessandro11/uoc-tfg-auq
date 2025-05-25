@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { ApiDebug } from "@/components/api-debug"
 import { AuthProvider } from "@/contexts/auth-context"
 import { DebugPanel } from "@/components/debug-panel"
+import { MapProvider } from "@/contexts/map-context"
 
 // Load Manrope font with specific weights
 const manrope = Manrope({
@@ -30,11 +31,13 @@ export default function RootLayout({
       <head>{/* We'll load Leaflet dynamically in the component */}</head>
       <body className="font-manrope">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          <AuthProvider>
-            {children}
-            <ApiDebug />
-            <DebugPanel />
-          </AuthProvider>
+          <MapProvider>
+            <AuthProvider>
+              {children}
+              <ApiDebug />
+              <DebugPanel />
+            </AuthProvider>
+          </MapProvider>
         </ThemeProvider>
       </body>
     </html>
