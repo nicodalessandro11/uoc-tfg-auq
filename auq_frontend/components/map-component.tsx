@@ -26,9 +26,9 @@ const DEBUG_MODE = false
 function debugMadridPoints(points: PointFeature[], visibleTypes: Record<string, boolean>) {
   if (!DEBUG_MODE) return;
 
-  console.group("🔍 Madrid Points Debug")
-  console.log(`Total Madrid points: ${points.length}`)
-  console.groupEnd()
+  // console.group("🔍 Madrid Points Debug")
+  // console.log(`Total Madrid points: ${points.length}`)
+  // console.groupEnd()
 }
 
 // Feature type mapping
@@ -84,7 +84,7 @@ export default function MapComponent() {
         const pointFeaturesData = await getCityPointFeatures(selectedCity.id)
         setPointFeatures(pointFeaturesData)
       } catch (error) {
-        console.error("Error loading point features:", error)
+        // console.error("Error loading point features:", error)
         setPointFeatures([])
       } finally {
         setIsLoadingPoints(false)
@@ -96,19 +96,19 @@ export default function MapComponent() {
 
   // Filter point features based on visible types
   const filteredPointFeatures = useMemo(() => {
-    console.log("[Map] Starting to filter point features")
-    console.log(`[Map] Total point features before filtering: ${pointFeatures.length}`)
-    console.log("[Map] Visible point types:", visiblePointTypes)
+    // console.log("[Map] Starting to filter point features")
+    // console.log(`[Map] Total point features before filtering: ${pointFeatures.length}`)
+    // console.log("[Map] Visible point types:", visiblePointTypes)
 
     if (!pointFeatures || pointFeatures.length === 0) {
-      console.log("[Map] No point features to filter")
+      // console.log("[Map] No point features to filter")
       return []
     }
 
     const filtered = pointFeatures.filter((feature) => {
       const featureType = feature.featureType
       if (!featureType || typeof featureType !== 'string') {
-        console.warn(`[Map] Feature ${feature.id} has no valid feature type`)
+        // console.warn(`[Map] Feature ${feature.id} has no valid feature type`)
         return false
       }
 
@@ -116,15 +116,15 @@ export default function MapComponent() {
       return (visiblePointTypes as Record<string, boolean>)[featureType] ?? true
     })
 
-    console.log(`[Map] Total point features after filtering: ${filtered.length}`)
-    console.log("[Map] Feature types distribution after filtering:",
-      Object.entries(
-        filtered.reduce<Record<string, number>>((acc, f) => {
-          acc[f.featureType] = (acc[f.featureType] || 0) + 1
-          return acc
-        }, {})
-      )
-    )
+    // console.log(`[Map] Total point features after filtering: ${filtered.length}`)
+    // console.log("[Map] Feature types distribution after filtering:",
+    //   Object.entries(
+    //     filtered.reduce<Record<string, number>>((acc, f) => {
+    //       acc[f.featureType] = (acc[f.featureType] || 0) + 1
+    //       return acc
+    //     }, {})
+    //   )
+    // )
 
     return filtered
   }, [pointFeatures, visiblePointTypes])

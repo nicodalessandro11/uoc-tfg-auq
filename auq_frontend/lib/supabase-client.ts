@@ -22,9 +22,7 @@ let supabaseInstance: ReturnType<typeof createClient> | null = null
 export const supabase = (() => {
   if (!supabaseInstance && SUPABASE_URL && SUPABASE_KEY) {
     supabaseInstance = createClient(SUPABASE_URL, SUPABASE_KEY)
-    if (process.env.NODE_ENV === "development") {
-      console.log("Supabase client initialized")
-    }
+    // console.log("Supabase client initialized")
   }
   return supabaseInstance
 })()
@@ -44,9 +42,7 @@ async function getCachedData<T>(cacheKey: string, fetchFn: () => Promise<T>, ttl
 
   // Return cached data if it exists and is not expired
   if (cachedItem && now - cachedItem.timestamp < ttl) {
-    if (process.env.NODE_ENV === "development") {
-      console.log(`Using cached data for ${cacheKey}`)
-    }
+    // console.log(`Using cached data for ${cacheKey}`)
     return cachedItem.data as T
   }
 
@@ -64,9 +60,7 @@ async function getCachedData<T>(cacheKey: string, fetchFn: () => Promise<T>, ttl
  */
 export function clearCache(): void {
   cache.clear()
-  if (process.env.NODE_ENV === "development") {
-    console.log("Cache cleared")
-  }
+  // console.log("Cache cleared")
 }
 
 /**
@@ -74,9 +68,7 @@ export function clearCache(): void {
  */
 export function clearCacheEntry(key: string): void {
   cache.delete(key)
-  if (process.env.NODE_ENV === "development") {
-    console.log(`Cache cleared for ${key}`)
-  }
+  // console.log(`Cache cleared for ${key}`)
 }
 
 /**
@@ -296,7 +288,7 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
   }
 
   return getCachedData(`point_features_${cityId}`, async () => {
-    console.log(`[Supabase] Fetching point features for city ID: ${cityId}`)
+    // console.log(`[Supabase] Fetching point features for city ID: ${cityId}`)
 
     // Primero obtenemos los feature definitions
     const { data: featureDefinitions, error: featureError } = await supabase
@@ -304,7 +296,7 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
       .select("id, name")
 
     if (featureError) {
-      console.error(`[Supabase] Error fetching feature definitions: ${featureError.message}`)
+      // console.error(`[Supabase] Error fetching feature definitions: ${featureError.message}`)
       throw new Error(`Error fetching feature definitions: ${featureError.message}`)
     }
 
@@ -316,7 +308,7 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
       ])
     )
 
-    console.log(`[Supabase] Feature type map created with ${Object.keys(featureTypeMap).length} types`)
+    // console.log(`[Supabase] Feature type map created with ${Object.keys(featureTypeMap).length} types`)
 
     // Ahora obtenemos los point features
     const { data, error } = await supabase
@@ -326,23 +318,23 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
       .limit(10000)
 
     if (error) {
-      console.error(`[Supabase] Error fetching point features: ${error.message}`)
+      // console.error(`[Supabase] Error fetching point features: ${error.message}`)
       throw new Error(`Error fetching point features: ${error.message}`)
     }
 
     if (!data || data.length === 0) {
-      console.error(`[Supabase] No point features found for city ${cityId}`)
+      // console.error(`[Supabase] No point features found for city ${cityId}`)
       throw new Error(`No point features found for city ${cityId}`)
     }
 
-    console.log(`[Supabase] Total point features fetched from database: ${data.length}`)
+    // console.log(`[Supabase] Total point features fetched from database: ${data.length}`)
 
     // Mapeamos los tipos usando el mapa de IDs a nombres
     const mappedData = (data as PointFeature[])
       .map((feature) => {
         const typeString = featureTypeMap[feature.feature_definition_id]
         if (!typeString) {
-          console.warn(`[Supabase] No feature type found for feature ID ${feature.id} with definition_id ${feature.feature_definition_id}`)
+          // console.warn(`[Supabase] No feature type found for feature ID ${feature.id} with definition_id ${feature.feature_definition_id}`)
           return null
         }
         return {
@@ -354,15 +346,15 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
       })
       .filter((feature): feature is PointFeature => feature !== null)
 
-    console.log(`[Supabase] Total point features after mapping: ${mappedData.length}`)
-    console.log(`[Supabase] Feature types distribution:`, 
-      Object.entries(
-        mappedData.reduce<Record<string, number>>((acc, f) => {
-          acc[f.featureType] = (acc[f.featureType] || 0) + 1
-          return acc
-        }, {})
-      )
-    )
+    // console.log(`[Supabase] Total point features after mapping: ${mappedData.length}`)
+    // console.log(`[Supabase] Feature types distribution:`, 
+    //   Object.entries(
+    //     mappedData.reduce<Record<string, number>>((acc, f) => {
+    //       acc[f.featureType] = (acc[f.featureType] || 0) + 1
+    //       return acc
+    //     }, {})
+    //   )
+    // )
 
     return mappedData
   })
@@ -396,42 +388,56 @@ export async function getIndicatorDefinitions(): Promise<IndicatorDefinition[]> 
  */
 export async function getCityIndicators(cityId: number, level: string, year?: number): Promise<Indicator[]> {
   if (!USE_SUPABASE || !supabase) {
-    console.error('Supabase client not available or disabled')
     throw new Error("Supabase client not available or disabled")
   }
 
   const geoLevelId = level === "district" ? 2 : level === "neighborhood" || level === "neighbourhood" ? 3 : level === "city" ? 1 : null
 
   if (geoLevelId === null) {
-    console.error(`Invalid geographical level: ${level}`)
     throw new Error(`Invalid geographical level: ${level}`)
   }
 
-  console.log(`Fetching indicators for city ${cityId}, level ${level} (geo_level_id: ${geoLevelId})`)
+  // Get disabled indicators from localStorage
+  const disabledIndicators = typeof window !== 'undefined' 
+    ? JSON.parse(localStorage.getItem('disabledIndicators') || '[]') 
+    : []
 
   return getCachedData(`indicators_${cityId}_${level}_${year || "latest"}`, async () => {
     try {
-      // Get indicators for the specified city and level
-      const { data, error } = await supabase
+      // First get the indicator definitions to map names to IDs
+      const { data: indicatorDefs, error: defError } = await supabase
+        .from("indicator_definitions")
+        .select("id, name")
+        .in("name", disabledIndicators)
+
+      if (defError) {
+        throw new Error(`Error fetching indicator definitions: ${defError.message}`)
+      }
+
+      const disabledIds = indicatorDefs?.map(def => def.id) || []
+
+      let query = supabase
         .from("current_indicators_view")
         .select("*")
         .eq("city_id", cityId)
         .eq("geo_level_id", geoLevelId)
 
+      // If there are disabled indicators, filter them out by their IDs
+      if (disabledIds.length > 0) {
+        query = query.not('indicator_def_id', 'in', `(${disabledIds.join(',')})`)
+      }
+
+      const { data, error } = await query
+
       if (error) {
-        console.error('Error fetching indicators:', error)
         throw new Error(`Error fetching indicators: ${error.message}`)
       }
 
-      console.log('Fetched indicators:', data)
-
       if (!data || data.length === 0) {
-        console.log('No indicators found for the specified criteria')
         return []
       }
 
-      // Transform the data to match the Indicator type
-      const transformedData = data.map(item => ({
+      return data.map(item => ({
         id: Number(item.id) || 0,
         indicator_def_id: Number(item.indicator_def_id),
         geo_level_id: Number(item.geo_level_id),
@@ -440,11 +446,7 @@ export async function getCityIndicators(cityId: number, level: string, year?: nu
         value: Number(item.value),
         created_at: item.created_at
       }))
-
-      console.log('Transformed indicators:', transformedData)
-      return transformedData
     } catch (error) {
-      console.error('Error in getCityIndicators:', error)
       throw error
     }
   })
@@ -511,7 +513,7 @@ export async function getIndicatorValue(areaId: number, indicatorId: number, lev
   }
 
   if (!supabase) {
-    console.error("Supabase client not available")
+    // console.error("Supabase client not available")
     return null
   }
 
@@ -534,7 +536,7 @@ export async function getIndicatorValue(areaId: number, indicatorId: number, lev
       .limit(1)
 
     if (error) {
-      console.error(`Error fetching indicator value: ${error.message}`)
+      // console.error(`Error fetching indicator value: ${error.message}`)
       return null
     }
 
@@ -549,7 +551,7 @@ export async function getIndicatorValue(areaId: number, indicatorId: number, lev
     indicatorCache.set(cacheKey, { data: value, timestamp: now })
     return value
   } catch (error) {
-    console.error(`Error getting indicator value: ${error}`)
+    // console.error(`Error getting indicator value: ${error}`)
     return null
   }
 }
@@ -569,10 +571,19 @@ export async function getEnrichedGeoJSON(cityId: number, level: string): Promise
     throw new Error("Supabase client not available or disabled")
   }
 
+  // Get disabled indicators from localStorage
+  const disabledIndicators = typeof window !== 'undefined' 
+    ? JSON.parse(localStorage.getItem('disabledIndicators') || '[]') 
+    : []
+
   const cacheKey = `enriched_geojson_${cityId}_${level}`
   return getCachedData(cacheKey, async () => {
     // Build the SQL query string
     let sql = ''
+    const disabledIndicatorsFilter = disabledIndicators.length > 0 
+      ? `AND civ.indicator_name NOT IN (${disabledIndicators.map(name => `'${name}'`).join(',')})`
+      : ''
+
     if (level === 'district') {
       sql = `
         SELECT jsonb_build_object(
@@ -594,6 +605,7 @@ export async function getEnrichedGeoJSON(cityId: number, level: string): Promise
                   WHERE civ.geo_level_id = 2
                     AND civ.city_id = d.city_id
                     AND civ.geo_id = d.id
+                    ${disabledIndicatorsFilter}
                 ) ind
               )
             )
@@ -624,6 +636,7 @@ export async function getEnrichedGeoJSON(cityId: number, level: string): Promise
                   WHERE civ.geo_level_id = 3
                     AND civ.city_id = n.city_id
                     AND civ.geo_id = n.id
+                    ${disabledIndicatorsFilter}
                 ) ind
               )
             )
@@ -641,7 +654,6 @@ export async function getEnrichedGeoJSON(cityId: number, level: string): Promise
     if (error) {
       throw new Error(`Error fetching enriched GeoJSON: ${error.message}`)
     }
-    // The result is an array with one object containing the geojson
     const geojson = data && data[0] && data[0].geojson ? data[0].geojson : null
     if (!geojson) {
       throw new Error('No enriched GeoJSON returned from database')
@@ -651,13 +663,13 @@ export async function getEnrichedGeoJSON(cityId: number, level: string): Promise
 }
 
 export async function fetchIndicators(cityId: number, level: string): Promise<Indicator[]> {
-  console.log(`Fetching indicators for city ${cityId}, level ${level} (geo_level_id: ${getGeoLevelId(level)})`)
+  // console.log(`Fetching indicators for city ${cityId}, level ${level} (geo_level_id: ${getGeoLevelId(level)})`)
 
   // Try to get indicators from cache first
   const cacheKey = `indicators_${cityId}_${level}`
   const cachedData = getCachedData(cacheKey)
   if (cachedData) {
-    console.log("Using cached indicators data")
+    // console.log("Using cached indicators data")
     return cachedData
   }
 
@@ -669,11 +681,11 @@ export async function fetchIndicators(cityId: number, level: string): Promise<In
     .eq("geo_level_id", getGeoLevelId(level))
 
   if (error) {
-    console.error("Error fetching indicators:", error)
+    // console.error("Error fetching indicators:", error)
     throw error
   }
 
-  console.log("Fetched indicators:", data)
+  // console.log("Fetched indicators:", data)
 
   // Transform the data to match the Indicator type
   const transformedData = data.map((item: any) => ({
@@ -688,7 +700,7 @@ export async function fetchIndicators(cityId: number, level: string): Promise<In
     description: item.description,
   }))
 
-  console.log("Transformed indicators:", transformedData)
+  // console.log("Transformed indicators:", transformedData)
 
   // Cache the transformed data
   setCachedData(cacheKey, transformedData)

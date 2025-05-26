@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-26 | Enhanced Map Functionality and Supabase Integration
+
+- Updated various map components and context for improved user experience - files affected: admin-view.tsx, city-selector.tsx, leaflet-map.jsx, map-component.tsx, map-view.tsx, map-context.tsx
+- Improved API service and integrated Supabase client for efficient data handling - files affected: api-service.ts, supabase-client.ts
+- Added new file manifest for Supabase API - file added: api-file-manifest.json
+
+This commit significantly enhances the map functionality, providing users with a more interactive and responsive experience. Additionally, the integration of Supabase client improves data management and delivery.
+
 ## 📦 Feature | 2025-05-25 | Enhanced visualization and comparison views
 
 - Updated the compare-view.tsx and visualize-view.tsx components in the auq_frontend

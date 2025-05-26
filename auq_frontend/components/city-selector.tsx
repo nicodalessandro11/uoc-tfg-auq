@@ -20,16 +20,16 @@ export function CitySelector() {
   useEffect(() => {
     async function loadCities() {
       setIsLoading(true)
-      console.log("CitySelector: Starting to load cities...")
+      // console.log("CitySelector: Starting to load cities...")
       try {
         const citiesData = await getCities()
-        console.log("CitySelector: Cities data received:", citiesData)
+        // console.log("CitySelector: Cities data received:", citiesData)
         setCities(citiesData)
       } catch (error) {
-        console.error("CitySelector: Error loading cities:", error)
+        // console.error("CitySelector: Error loading cities:", error)
       } finally {
         setIsLoading(false)
-        console.log("CitySelector: Finished loading cities")
+        // console.log("CitySelector: Finished loading cities")
       }
     }
 

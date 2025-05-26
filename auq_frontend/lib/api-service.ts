@@ -47,9 +47,7 @@ async function getCachedData<T>(cacheKey: string, fetchFn: () => Promise<T>, ttl
 
   // Return cached data if it exists and is not expired
   if (cachedItem && now - cachedItem.timestamp < ttl) {
-    if (process.env.NODE_ENV === "development") {
-      console.log(`Using cached API data for ${cacheKey}`)
-    }
+    // console.log(`Using cached API data for ${cacheKey}`)
     return cachedItem.data as T
   }
 
@@ -217,9 +215,7 @@ export async function getNeighborhoodsByCity(cityId: number): Promise<Neighborho
  */
 export function clearApiCache(): void {
   apiCache.clear()
-  if (process.env.NODE_ENV === "development") {
-    console.log("API cache cleared")
-  }
+  // console.log("API cache cleared")
 }
 
 /**
@@ -232,9 +228,7 @@ export function clearApiCacheEntry(key: string, subKey?: string): void {
     for (const [cacheKey, value] of entries) {
       if (cacheKey.startsWith(`${key}_${subKey}`)) {
         apiCache.delete(cacheKey)
-        if (process.env.NODE_ENV === "development") {
-          console.log(`API cache cleared for ${cacheKey}`)
-        }
+        // console.log(`API cache cleared for ${cacheKey}`)
       }
     }
   } else {
@@ -243,9 +237,7 @@ export function clearApiCacheEntry(key: string, subKey?: string): void {
     for (const [cacheKey, value] of entries) {
       if (cacheKey.startsWith(key)) {
         apiCache.delete(cacheKey)
-        if (process.env.NODE_ENV === "development") {
-          console.log(`API cache cleared for ${cacheKey}`)
-        }
+        // console.log(`API cache cleared for ${cacheKey}`)
       }
     }
   }

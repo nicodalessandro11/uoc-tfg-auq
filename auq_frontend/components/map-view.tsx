@@ -71,14 +71,14 @@ export function MapView() {
         // Guard: Only set if area is valid for this granularity
         if (area) {
           setSelectedArea(area)
-          console.log("[SYNC] Área seleccionada desde URL:", area)
+          // console.log("[SYNC] Área seleccionada desde URL:", area)
         } else {
           setSelectedArea(null)
           const params = new URLSearchParams(window.location.search)
           params.delete("area")
-          console.trace("[MapView] router.push: removing area param")
+          // console.trace("[MapView] router.push: removing area param")
           router.push(`?${params.toString()}`, { scroll: false })
-          console.log("[SYNC] Área no encontrada o inválida para esta granularidad, limpiando selección y URL")
+          // console.log("[SYNC] Área no encontrada o inválida para esta granularidad, limpiando selección y URL")
         }
       }
       // If availableAreas is empty, do nothing (wait for it to load)
@@ -242,7 +242,7 @@ export function MapView() {
 
                 {activeTab === "info" && (
                   <div>
-                    {(() => { console.log('[INFO TAB] selectedArea:', selectedArea, 'activeTab:', activeTab); return null })()}
+                    {(() => { /* console.log('[INFO TAB] selectedArea:', selectedArea, 'activeTab:', activeTab); */ return null })()}
                     {selectedArea && (typeof selectedArea.id !== 'undefined') && (typeof (selectedArea as any)['cityId'] !== 'undefined' || typeof (selectedArea as any)['city_id'] !== 'undefined') ? (
                       <DistrictInfo area={{
                         id: selectedArea.id,

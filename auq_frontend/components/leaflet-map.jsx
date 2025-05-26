@@ -203,7 +203,7 @@ export default function LeafletMap({
 
       const L = window.L
       if (!L) {
-        console.error("Leaflet not loaded")
+        // console.error("Leaflet not loaded")
         return
       }
 
@@ -246,7 +246,7 @@ export default function LeafletMap({
       } else {
         clusterGroupRef.current = null
         setIsClusterReady(false)
-        console.warn("MarkerClusterGroup is not available yet.")
+        // console.warn("MarkerClusterGroup is not available yet.")
       }
 
       // Store map instance
@@ -285,7 +285,7 @@ export default function LeafletMap({
               clusterGroupRef.current.clearLayers()
               map.removeLayer(clusterGroupRef.current)
             } catch (error) {
-              console.warn("Error removing cluster group during cleanup:", error)
+              // console.warn("Error removing cluster group during cleanup:", error)
             }
           }
           // Limpiar la referencia después de eliminarlo
@@ -326,14 +326,14 @@ export default function LeafletMap({
     if (selectedCity) {
       // Only set the view when the city changes
       if (!prevCityId || prevCityId !== selectedCity.id) {
-        console.log("City changed, updating map view and data")
+        // console.log("City changed, updating map view and data")
         setDefaultCityView(map, selectedCity)
         // Store the current city ID for future comparison
         map.prevCityId = selectedCity.id
 
         // Always load data when city changes, regardless of area selection
         if (selectedGranularity) {
-          console.log("Loading data for new city:", selectedCity.id, selectedGranularity.level)
+          // console.log("Loading data for new city:", selectedCity.id, selectedGranularity.level)
           loadGeoJSON(selectedCity.id, selectedGranularity.level)
         }
       }
@@ -360,12 +360,12 @@ export default function LeafletMap({
         map.setView([40, -4], 5)
       }
     } catch (error) {
-      console.error(`Error setting default view for city ${selectedCity.name}:`, error)
+      // console.error(`Error setting default view for city ${selectedCity.name}:`, error)
       // Fallback to a safe default
       try {
         map.setView([40, -4], 5)
       } catch (fallbackError) {
-        console.error("Error setting fallback view:", fallbackError)
+        // console.error("Error setting fallback view:", fallbackError)
       }
     }
   }
@@ -392,7 +392,7 @@ export default function LeafletMap({
         try {
           map.removeLayer(tileLayerRef.current)
         } catch (error) {
-          console.warn("Error removing tile layer:", error)
+          // console.warn("Error removing tile layer:", error)
         }
       }
 
@@ -407,7 +407,7 @@ export default function LeafletMap({
         tileLayerRef.current.bringToBack()
       }
     } catch (error) {
-      console.error("Error updating map type:", error)
+      // console.error("Error updating map type:", error)
       // Fallback to OSM if there's an error
       try {
         tileLayerRef.current = L.tileLayer(mapTypes.osm.url, {
@@ -415,7 +415,7 @@ export default function LeafletMap({
           maxZoom: 19,
         }).addTo(map)
       } catch (fallbackError) {
-        console.error("Error applying fallback map type:", fallbackError)
+        // console.error("Error applying fallback map type:", fallbackError)
       }
     }
   }, [mapType, isMapReady, currentMapType])
@@ -430,7 +430,7 @@ export default function LeafletMap({
     try {
       geoJsonLayer.clearLayers()
     } catch (error) {
-      console.warn("Error clearing GeoJSON layers:", error)
+      // console.warn("Error clearing GeoJSON layers:", error)
     }
 
     // Get Leaflet from window
@@ -573,7 +573,7 @@ export default function LeafletMap({
         geoJson.addTo(geoJsonLayer)
       }
     } catch (geoJsonError) {
-      console.error("Error rendering GeoJSON:", geoJsonError)
+      // console.error("Error rendering GeoJSON:", geoJsonError)
       setDefaultCityView(map, selectedCity)
     }
   }, [currentGeoJSON, dynamicFilters, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady, router])
@@ -582,11 +582,11 @@ export default function LeafletMap({
   useEffect(() => {
     const map = mapInstanceRef.current
     if (!map || !pointFeatures || pointFeatures.length === 0) {
-      console.log("[Map] No map or no point features to render")
+      // console.log("[Map] No map or no point features to render")
       return
     }
 
-    console.log(`[Map] Rendering ${pointFeatures.length} point features`)
+    // console.log(`[Map] Rendering ${pointFeatures.length} point features`)
 
     // Clear previous markers
     if (markersRef.current) {
@@ -601,7 +601,7 @@ export default function LeafletMap({
       chunks.push(pointFeatures.slice(i, i + chunkSize))
     }
 
-    console.log(`[Map] Split ${pointFeatures.length} markers into ${chunks.length} chunks`)
+    // console.log(`[Map] Split ${pointFeatures.length} markers into ${chunks.length} chunks`)
 
     let totalMarkers = 0
     let invalidMarkers = 0
@@ -613,7 +613,7 @@ export default function LeafletMap({
             const lat = Number.parseFloat(feature.latitude)
             const lng = Number.parseFloat(feature.longitude)
             if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-              console.warn(`[Map] Invalid coordinates for feature ${feature.id}: lat=${lat}, lng=${lng}`)
+              // console.warn(`[Map] Invalid coordinates for feature ${feature.id}: lat=${lat}, lng=${lng}`)
               invalidMarkers++
               return
             }
@@ -685,17 +685,17 @@ export default function LeafletMap({
             markersRef.current.push(marker)
             totalMarkers++
           } catch (error) {
-            console.error(`[Map] Error creating marker for feature ${feature.id}:`, error)
+            // console.error(`[Map] Error creating marker for feature ${feature.id}:`, error)
             invalidMarkers++
           }
         })
 
-        console.log(`[Map] Processed chunk ${chunkIndex + 1}/${chunks.length}`)
+        // console.log(`[Map] Processed chunk ${chunkIndex + 1}/${chunks.length}`)
       }, chunkIndex * 100) // Process each chunk with a delay
     })
 
-    console.log(`[Map] Total markers rendered: ${totalMarkers}`)
-    console.log(`[Map] Invalid markers: ${invalidMarkers}`)
+    // console.log(`[Map] Total markers rendered: ${totalMarkers}`)
+    // console.log(`[Map] Invalid markers: ${invalidMarkers}`)
 
     return () => {
       if (markersRef.current) {

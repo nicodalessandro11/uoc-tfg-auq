@@ -204,9 +204,9 @@ export function MapProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        console.log(`[MapContext] Loading point features for city ${selectedCity.id}`)
+        // console.log(`[MapContext] Loading point features for city ${selectedCity.id}`)
         const features = await getCityPointFeatures(selectedCity.id)
-        console.log(`[MapContext] Loaded ${features.length} point features`)
+        // console.log(`[MapContext] Loaded ${features.length} point features`)
 
         // Get unique feature types
         const uniqueTypes = Array.from(
@@ -216,7 +216,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
               .filter((type): type is string => type !== undefined)
           )
         )
-        console.log(`[MapContext] Found ${uniqueTypes.length} unique feature types:`, uniqueTypes)
+        // console.log(`[MapContext] Found ${uniqueTypes.length} unique feature types:`, uniqueTypes)
 
         // Initialize visibility state for each type
         const initialVisibility = uniqueTypes.reduce<Record<string, boolean>>((acc, type) => {
@@ -224,12 +224,12 @@ export function MapProvider({ children }: { children: ReactNode }) {
           return acc
         }, {})
 
-        console.log("[MapContext] Initial visibility state:", initialVisibility)
+        // console.log("[MapContext] Initial visibility state:", initialVisibility)
 
         setDynamicPointTypes(uniqueTypes)
         setVisiblePointTypes(initialVisibility)
       } catch (error) {
-        console.error("[MapContext] Error loading point types:", error)
+        // console.error("[MapContext] Error loading point types:", error)
         setDynamicPointTypes([])
         setVisiblePointTypes({})
       }
@@ -267,7 +267,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
           surface: district.surface || 0,
           disposableIncome: district.disposable_income || 0,
         }))
-        console.log(`Loaded ${areas.length} districts for city ${cityId}`)
+        // console.log(`Loaded ${areas.length} districts for city ${cityId}`)
       } else if (granularityLevel === "neighborhood" || granularityLevel === "neighbourhood") {
         // For neighborhoods, use the GeoJSON data
         try {
@@ -289,23 +289,23 @@ export function MapProvider({ children }: { children: ReactNode }) {
                 disposableIncome: properties.disposable_income || 0,
               }
             }).filter(area => area.id && area.name) // Filter out any invalid areas
-            console.log(`Loaded ${areas.length} neighborhoods for city ${cityId}`)
+            // console.log(`Loaded ${areas.length} neighborhoods for city ${cityId}`)
           } else {
-            console.error("No features found in GeoJSON data")
+            // console.error("No features found in GeoJSON data")
           }
         } catch (error) {
-          console.error("Error fetching neighborhoods from GeoJSON:", error)
+          // console.error("Error fetching neighborhoods from GeoJSON:", error)
           throw error
         }
       }
 
       if (areas.length === 0) {
-        console.warn(`No areas loaded for city ${cityId} and granularity ${granularityLevel}`)
+        // console.warn(`No areas loaded for city ${cityId} and granularity ${granularityLevel}`)
       }
 
       setAvailableAreas(areas)
     } catch (error) {
-      console.error("Error loading available areas:", error)
+      // console.error("Error loading available areas:", error)
       setAvailableAreas([])
     }
   }, [])
@@ -314,11 +314,11 @@ export function MapProvider({ children }: { children: ReactNode }) {
   const loadGeoJSON = useCallback(
     async (cityId: number, granularityLevel: string) => {
       if (!cityId || !granularityLevel) {
-        console.log("loadGeoJSON: Missing cityId or granularityLevel")
+        // console.log("loadGeoJSON: Missing cityId or granularityLevel")
         return
       }
 
-      console.log(`loadGeoJSON: Loading data for city ${cityId}, granularity ${granularityLevel}`)
+      // console.log(`loadGeoJSON: Loading data for city ${cityId}, granularity ${granularityLevel}`)
 
       const cacheKey = `${cityId}_${granularityLevel}`
 
@@ -327,21 +327,19 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
       // If we already have the data in cache, use it
       if (geoJSONCache[cacheKey]) {
-        console.log("Using GeoJSON data from cache:", cacheKey)
+        // console.log("Using GeoJSON data from cache:", cacheKey)
         setCurrentGeoJSON(geoJSONCache[cacheKey])
 
         // Even when using cached data, we should still load available areas
         // but we don't need to wait for it to complete
-        loadAvailableAreas(cityId, granularityLevel).catch((error) =>
-          console.error("Error loading available areas from cache:", error),
-        )
+        loadAvailableAreas(cityId, granularityLevel)
 
         triggerRefresh() // Force refresh when using cached data
         return
       }
 
       // If not in cache, load it
-      console.log("Loading GeoJSON data:", cacheKey)
+      // console.log("Loading GeoJSON data:", cacheKey)
       setIsLoadingGeoJSON(true)
 
       try {
@@ -350,22 +348,22 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
         // Check if this request is still the latest
         if (lastLoadRequestRef.current !== cacheKey) {
-          console.log("Request cancelled, there's a more recent one:", cacheKey)
+          // console.log("Request cancelled, there's a more recent one:", cacheKey)
           setIsLoadingGeoJSON(false)
           return
         }
 
         if (!data) {
-          console.error("Failed to get GeoJSON data for:", cacheKey)
+          // console.error("Failed to get GeoJSON data for:", cacheKey)
           setIsLoadingGeoJSON(false)
           return
         }
 
         // Log the data structure to help with debugging
-        console.log(
-          `GeoJSON data structure for ${cacheKey}:`,
-          data.type ? `Type: ${data.type}, Features: ${data.features?.length || 0}` : "Unexpected data format",
-        )
+        // console.log(
+        //   `GeoJSON data structure for ${cacheKey}:`,
+        //   data.type ? `Type: ${data.type}, Features: ${data.features?.length || 0}` : "Unexpected data format",
+        // )
 
         // Save to cache
         setGeoJSONCache((prevCache) => ({
@@ -378,15 +376,13 @@ export function MapProvider({ children }: { children: ReactNode }) {
         setIsLoadingGeoJSON(false)
 
         // Load available areas in parallel
-        loadAvailableAreas(cityId, granularityLevel).catch((error) =>
-          console.error("Error loading available areas:", error),
-        )
+        loadAvailableAreas(cityId, granularityLevel)
 
         triggerRefresh() // Force refresh when loading new data
 
-        console.log("GeoJSON data loaded and saved to cache:", cacheKey)
+        // console.log("GeoJSON data loaded and saved to cache:", cacheKey)
       } catch (error) {
-        console.error("Error loading GeoJSON data:", error)
+        // console.error("Error loading GeoJSON data:", error)
         setIsLoadingGeoJSON(false)
       }
     },
@@ -404,7 +400,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    console.log(`Loading filter ranges for: ${cityId}_${granularityLevel}`)
+    // console.log(`Loading filter ranges for: ${cityId}_${granularityLevel}`)
 
     try {
       let areas: any[] = []
@@ -427,7 +423,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
             }))
           }
         } catch (error) {
-          console.error("Error fetching neighborhoods from GeoJSON:", error)
+          // console.error("Error fetching neighborhoods from GeoJSON:", error)
           throw error // Re-throw to be caught by the outer try-catch
         }
       }
@@ -459,7 +455,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
           disposableIncome: { min: disposableIncomeMin, max: disposableIncomeMax },
         }
 
-        console.log("Setting new filter ranges:", newRanges)
+        // console.log("Setting new filter ranges:", newRanges)
         setFilterRanges(newRanges)
 
         // Reset filters to full range when city or granularity changes
@@ -474,7 +470,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
             disposableIncomeMin,
             disposableIncomeMax,
           }
-          console.log("Resetting filters to full range:", newFilters)
+          // console.log("Resetting filters to full range:", newFilters)
           _setFilters(newFilters)
         }
 
@@ -484,7 +480,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
         filterRangesLoadedRef.current = true
       }
     } catch (error) {
-      console.error("Error loading filter ranges:", error)
+      // console.error("Error loading filter ranges:", error)
     }
   }, [])
 
@@ -518,7 +514,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
   // Function to clear point features cache
   const clearPointFeaturesCache = useCallback((cityId?: number) => {
-    console.log(`Clearing point features cache${cityId ? ` for city ${cityId}` : ""}`)
+    // console.log(`Clearing point features cache${cityId ? ` for city ${cityId}` : ""}`)
     if (cityId) {
       clearApiCacheEntry("pointFeatures", cityId.toString())
       clearSupabaseCacheEntry("pointFeatures")
@@ -566,7 +562,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
         loadAvailableAreas(city.id, selectedGranularity.level),
         loadFilterRanges(city.id, selectedGranularity.level)
       ]).catch(error => {
-        console.error("Error loading data for new city:", error);
+        // console.error("Error loading data for new city:", error);
       });
     }
   }, [selectedCity, selectedGranularity, loadGeoJSON, loadAvailableAreas, loadFilterRanges, triggerRefresh]);
@@ -652,7 +648,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
   const setMapType = useCallback(
     (type: MapType) => {
       if (type !== mapType) {
-        console.log(`Setting map type from ${mapType} to ${type}`)
+        // console.log(`Setting map type from ${mapType} to ${type}`)
         globalMapType = type
         _setMapType(type)
         // Force a refresh after changing the map type
@@ -667,7 +663,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
   // Effect to load data when map is initialized and we have both city and granularity
   useEffect(() => {
     if (mapInitialized && selectedCity && selectedGranularity) {
-      console.log("Map initialized and we have city and granularity, loading data")
+      // console.log("Map initialized and we have city and granularity, loading data")
       loadGeoJSON(selectedCity.id, selectedGranularity.level)
       loadAvailableAreas(selectedCity.id, selectedGranularity.level)
       loadFilterRanges(selectedCity.id, selectedGranularity.level)
