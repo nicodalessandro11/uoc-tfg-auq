@@ -150,7 +150,7 @@ export function CompareView() {
         })
 
         console.log(`[CompareView] Loaded ${formattedAreas.length} ${selectedGranularity.level}s for city ${selectedCity.id}`)
-        setLocalAvailableAreas(formattedAreas)
+        setLocalAvailableAreas(formattedAreas.map(a => toFullArea(a)))
       } catch (error) {
         console.error("Error loading areas:", error)
         setLocalAvailableAreas([])
@@ -391,19 +391,23 @@ export function CompareView() {
 // Helper to ensure all required fields for Area
 function toFullArea(area: any): Area {
   return {
+    // District
     id: area.id ?? 0,
     name: area.name ?? '',
-    cityId: area.cityId ?? area.city_id ?? 0,
-    city_id: area.city_id ?? area.cityId ?? 0,
-    avgIncome: area.avgIncome ?? area.avg_income ?? 0,
-    avg_income: area.avg_income ?? area.avgIncome ?? 0,
-    disposableIncome: area.disposableIncome ?? area.disposable_income ?? 0,
-    disposable_income: area.disposable_income ?? area.disposableIncome ?? 0,
-    population: area.population ?? 0,
-    surface: area.surface ?? 0,
-    districtId: area.districtId ?? area.district_id ?? undefined,
-    district_id: area.district_id ?? area.districtId ?? undefined,
-    neighbourhood_code: area.neighbourhood_code ?? undefined,
     district_code: area.district_code ?? undefined,
+    city_id: area.city_id ?? area.cityId ?? 0,
+    population: area.population ?? 0,
+    avg_income: area.avg_income ?? 0,
+    surface: area.surface ?? 0,
+    disposable_income: area.disposable_income ?? 0,
+    created_at: area.created_at ?? undefined,
+    // Neighborhood
+    neighbourhood_code: area.neighbourhood_code ?? undefined,
+    district_id: area.district_id ?? undefined,
+    // Para compatibilidad con el resto del código
+    cityId: area.cityId ?? area.city_id ?? 0,
+    avgIncome: area.avgIncome ?? area.avg_income ?? 0,
+    disposableIncome: area.disposableIncome ?? area.disposable_income ?? 0,
+    districtId: area.districtId ?? area.district_id ?? undefined,
   } as Area
 }

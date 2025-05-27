@@ -143,8 +143,8 @@ function AvailablePointFeatures() {
 }
 
 export function AdminView() {
+  const { user } = useAuth()
   const [activeTab, setActiveTab] = useState("datasets")
-  const { user, logout } = useAuth()
   const [cities, setCities] = useState<City[]>([])
   const [indicatorDefinitions, setIndicatorDefinitions] = useState<IndicatorDefinition[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -275,9 +275,6 @@ export function AdminView() {
     loadData()
   }, [])
 
-  const handleLogout = async () => {
-    await logout()
-  }
 
   // Handler to prevent disabling all features
   const handleFeatureToggle = (feature: 'map' | 'compare' | 'visualize', value: boolean) => {
@@ -325,10 +322,6 @@ export function AdminView() {
             <Badge variant="outline" className="px-3 py-1">
               {user?.email || "Admin"}
             </Badge>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2">
-              <LogOut className="h-4 w-4" />
-              Logout
-            </Button>
           </div>
         </div>
 

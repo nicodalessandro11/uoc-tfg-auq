@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-27 | Updated frontend components and configuration
+
+- Modified admin, config pages and various components in auq_frontend/app and auq_frontend/components directories
+- Changes made to enhance user interface and improve user experience
+- Technical details: Updated React components, improved TypeScript typings, and revised JSX structure
+
+This update aims to make the application more intuitive and user-friendly. With the revised UI/UX, we expect an increase in user engagement and satisfaction.
+
 ## 📦 Feature | 2025-05-27 | Major frontend and database enhancements
 
 - Added new files and modified existing ones in the `auq_frontend` and `auq_database` directories to implement user signup, profile, and authentication features

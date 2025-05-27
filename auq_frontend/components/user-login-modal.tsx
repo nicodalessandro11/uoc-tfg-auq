@@ -14,32 +14,47 @@ import Link from "next/link"
 type UserLoginModalProps = {
     isOpen: boolean
     onClose: () => void
+    error?: string | null
+    isLoading?: boolean
+    email?: string
+    password?: string
+    setEmail?: (v: string) => void
+    setPassword?: (v: string) => void
+    onSubmit?: (e: React.FormEvent) => void
 }
 
-export function UserLoginModal({ isOpen, onClose }: UserLoginModalProps) {
-    const { login, isLoading } = useAuth()
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [error, setError] = useState<string | null>(null)
+export function UserLoginModal({ isOpen, onClose, error, isLoading, email, password, setEmail, setPassword, onSubmit }: UserLoginModalProps) {
+    const { login, isLoading: ctxLoading } = useAuth()
+    const [internalEmail, setInternalEmail] = useState("")
+    const [internalPassword, setInternalPassword] = useState("")
+    const [internalError, setInternalError] = useState<string | null>(null)
+    const [internalLoading, setInternalLoading] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
+        if (onSubmit) return onSubmit(e)
         e.preventDefault()
-        setError(null)
-
-        if (!email || !password) {
-            setError("Please enter both email and password")
+        setInternalError(null)
+        setInternalLoading(true)
+        if (!internalEmail || !internalPassword) {
+            setInternalError("Please enter both email and password")
+            setInternalLoading(false)
             return
         }
-
-        const result = await login(email, password)
-
-        if (!result.success) {
-            setError(result.error || "Login failed")
-        } else {
-            // Reset form
-            setEmail("")
-            setPassword("")
+        try {
+            const result = await login(internalEmail, internalPassword)
+            if (!result.success) {
+                setInternalError(result.error || "Login failed")
+                setInternalLoading(false)
+                return
+            }
+            setInternalEmail("")
+            setInternalPassword("")
+            setInternalError(null)
+            setInternalLoading(false)
             onClose()
+        } catch (err: any) {
+            setInternalError(err.message || "An unexpected error occurred")
+            setInternalLoading(false)
         }
     }
 
@@ -54,23 +69,23 @@ export function UserLoginModal({ isOpen, onClose }: UserLoginModalProps) {
                     </DialogDescription>
                 </DialogHeader>
 
-                {error && (
+                {(error ?? internalError) && (
                     <Alert variant="destructive" className="my-2">
                         <AlertCircle className="h-4 w-4" />
-                        <AlertDescription>{error}</AlertDescription>
+                        <AlertDescription>{error ?? internalError}</AlertDescription>
                     </Alert>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+                <form onSubmit={onSubmit || handleSubmit} className="space-y-4 pt-4">
                     <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
                         <Input
                             id="email"
                             type="email"
                             placeholder="your@email.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            disabled={isLoading}
+                            value={email !== undefined ? email : internalEmail}
+                            onChange={(e) => (setEmail ? setEmail(e.target.value) : setInternalEmail(e.target.value))}
+                            disabled={isLoading ?? internalLoading ?? ctxLoading}
                             className="w-full"
                         />
                     </div>
@@ -81,16 +96,16 @@ export function UserLoginModal({ isOpen, onClose }: UserLoginModalProps) {
                             id="password"
                             type="password"
                             placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={isLoading}
+                            value={password !== undefined ? password : internalPassword}
+                            onChange={(e) => (setPassword ? setPassword(e.target.value) : setInternalPassword(e.target.value))}
+                            disabled={isLoading ?? internalLoading ?? ctxLoading}
                             className="w-full"
                         />
                     </div>
 
                     <div className="flex flex-col space-y-4 pt-2">
-                        <Button type="submit" disabled={isLoading} className="w-full">
-                            {isLoading ? (
+                        <Button type="submit" disabled={isLoading ?? internalLoading ?? ctxLoading} className="w-full">
+                            {(isLoading ?? internalLoading ?? ctxLoading) ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     Signing in...

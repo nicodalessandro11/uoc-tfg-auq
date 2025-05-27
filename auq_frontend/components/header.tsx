@@ -37,9 +37,50 @@ export function Header() {
   const searchParams = useSearchParams()
   const queryString = searchParams.toString()
   const enabledFeatures = useEnabledFeatures()
-  const { user, logout, isAuthenticated, isLoading } = useAuth()
+  const { user, logout, isAuthenticated, isLoading, login } = useAuth()
   console.log("[Header] Auth user:", user)
   const [showLoginModal, setShowLoginModal] = useState(false)
+  const [loginError, setLoginError] = useState<string | null>(null)
+  const [loginLoading, setLoginLoading] = useState(false)
+  const [loginEmail, setLoginEmail] = useState("")
+  const [loginPassword, setLoginPassword] = useState("")
+
+  const handleLogout = async () => {
+    await logout()
+    // Limpiar localStorage
+    localStorage.removeItem('enabledFeatures')
+    localStorage.removeItem('disabledIndicators')
+    // Refrescar la página
+    window.location.href = '/'
+  }
+
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoginError(null)
+    setLoginLoading(true)
+    if (!loginEmail || !loginPassword) {
+      setLoginError("Please enter both email and password")
+      setLoginLoading(false)
+      return
+    }
+    try {
+      const result = await login(loginEmail, loginPassword)
+      if (!result.success) {
+        setLoginError(result.error || "Login failed")
+        setLoginLoading(false)
+        return
+      }
+      // Reset form and close modal
+      setLoginEmail("")
+      setLoginPassword("")
+      setShowLoginModal(false)
+      setLoginError(null)
+    } catch (err: any) {
+      setLoginError(err.message || "An unexpected error occurred")
+    } finally {
+      setLoginLoading(false)
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full modern-header">
@@ -59,6 +100,7 @@ export function Header() {
         {/* Navigation Links - Hidden on mobile */}
         <div className="flex items-center gap-4 ml-auto">
           <div className="hidden md:flex items-center ml-8 space-x-1">
+            <ModeToggle />
             {enabledFeatures.map && (
               <Link href={`/${queryString ? "?" + queryString : ""}`}>
                 <Button variant="ghost" className={`text-primary-foreground ${pathname === "/" ? "bg-white/10" : ""}`}>
@@ -97,17 +139,6 @@ export function Header() {
                 >
                   <Settings strokeWidth={2} className="mr-2 h-5 w-5" />
                   Admin
-                </Button>
-              </Link>
-            )}
-            {isAuthenticated && (
-              <Link href={`/config${queryString ? "?" + queryString : ""}`}>
-                <Button
-                  variant="ghost"
-                  className={`text-primary-foreground ${pathname === "/config" ? "bg-white/10" : ""}`}
-                >
-                  <Settings strokeWidth={2} className="mr-2 h-5 w-5" />
-                  Config
                 </Button>
               </Link>
             )}
@@ -150,20 +181,12 @@ export function Header() {
                   Admin
                 </DropdownMenuItem>
               </Link>
-              {isAuthenticated && (
-                <Link href={`/config${queryString ? "?" + queryString : ""}`}>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Config
-                  </DropdownMenuItem>
-                </Link>
-              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
         <div className="flex items-center gap-4">
-          <ModeToggle />
+
           <div className="flex items-center gap-2 ml-2">
             {isLoading ? (
               <div style={{ width: 120, height: 40 }} />
@@ -184,7 +207,12 @@ export function Header() {
                     <DropdownMenuItem asChild>
                       <a href="/profile">Profile</a>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={logout} className="text-red-600 cursor-pointer">
+                    {user?.is_admin !== true && (
+                      <DropdownMenuItem asChild>
+                        <a href="/config">Configuration</a>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
                       Sign Out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -193,7 +221,17 @@ export function Header() {
             ) : (
               <>
                 <Button variant="activeNav" onClick={() => setShowLoginModal(true)}>Sign In</Button>
-                <UserLoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+                <UserLoginModal
+                  isOpen={showLoginModal}
+                  onClose={() => setShowLoginModal(false)}
+                  error={loginError}
+                  isLoading={loginLoading}
+                  email={loginEmail}
+                  password={loginPassword}
+                  setEmail={setLoginEmail}
+                  setPassword={setLoginPassword}
+                  onSubmit={handleLoginSubmit}
+                />
                 <Link href="/signup" target="_blank" rel="noopener noreferrer">
                   <Button variant="secondary">Sign Up</Button>
                 </Link>

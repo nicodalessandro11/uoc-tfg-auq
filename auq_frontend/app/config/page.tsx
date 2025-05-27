@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { MapProvider } from "@/contexts/map-context"
 import { Header } from "@/components/header"
 import { ConfigView } from "@/components/config-view"
@@ -11,13 +11,6 @@ import { Loader2 } from "lucide-react"
 export default function AdminPage() {
   const { isAuthenticated, isLoading } = useAuth()
   const [showLoginModal, setShowLoginModal] = useState(false)
-
-  useEffect(() => {
-    // Show login modal if not authenticated
-    if (!isLoading && !isAuthenticated) {
-      setShowLoginModal(true)
-    }
-  }, [isAuthenticated, isLoading])
 
   if (isLoading) {
     return (
