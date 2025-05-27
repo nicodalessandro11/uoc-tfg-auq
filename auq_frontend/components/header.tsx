@@ -6,9 +6,10 @@ import { MapPin, BarChart2, Settings, Diff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuPortal } from "@/components/ui/dropdown-menu"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { UserLoginModal } from "@/components/user-login-modal"
 import { useAuth } from "@/contexts/auth-context"
+import { Skeleton } from "@/components/ui/skeleton"
 
 function useEnabledFeatures() {
   const [enabledFeatures, setEnabledFeatures] = useState({ map: true, compare: true, visualize: true })
@@ -32,13 +33,40 @@ function useEnabledFeatures() {
   return enabledFeatures
 }
 
+function AuthSkeleton() {
+  const [width, setWidth] = useState(120)
+  const measureRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (measureRef.current) {
+      const actualWidth = measureRef.current.offsetWidth
+      setWidth(actualWidth)
+    }
+  }, [])
+
+  return (
+    <div className="flex items-center gap-2 ml-2">
+      <div ref={measureRef} className="absolute opacity-0 pointer-events-none">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+            U
+          </div>
+          <span className="text-sm font-medium">User</span>
+        </div>
+      </div>
+      <div className="h-10 flex items-center text-sm text-primary-foreground/80">
+        Loading profile data...
+      </div>
+    </div>
+  )
+}
+
 export function Header() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const queryString = searchParams.toString()
+  const queryString = searchParams?.toString() || ""
   const enabledFeatures = useEnabledFeatures()
   const { user, logout, isAuthenticated, isLoading, login } = useAuth()
-  console.log("[Header] Auth user:", user)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [loginError, setLoginError] = useState<string | null>(null)
   const [loginLoading, setLoginLoading] = useState(false)
@@ -47,10 +75,8 @@ export function Header() {
 
   const handleLogout = async () => {
     await logout()
-    // Limpiar localStorage
     localStorage.removeItem('enabledFeatures')
     localStorage.removeItem('disabledIndicators')
-    // Refrescar la página
     window.location.href = '/'
   }
 
@@ -70,7 +96,6 @@ export function Header() {
         setLoginLoading(false)
         return
       }
-      // Reset form and close modal
       setLoginEmail("")
       setLoginPassword("")
       setShowLoginModal(false)
@@ -92,13 +117,13 @@ export function Header() {
             <div>
               <img src="/mascot-blue.svg" alt="Mascot" className="h-14 w-14" />
             </div>
-            <span className="text-lg font-semibold">Are u query-ous?</span>
+            <span className="text-lg font-semibold">Are-u-Query-ous?</span>
           </Link>
         </div>
 
         {/* RIGHT */}
-        {/* Navigation Links - Hidden on mobile */}
         <div className="flex items-center gap-4 ml-auto">
+          {/* Navigation Links - Hidden on mobile */}
           <div className="hidden md:flex items-center ml-8 space-x-1">
             <ModeToggle />
             {enabledFeatures.map && (
@@ -145,7 +170,7 @@ export function Header() {
           </div>
         </div>
 
-        {/* TODO: Mobile Navigation Menu */}
+        {/* Mobile Navigation Menu */}
         <div className="md:hidden ml-auto mr-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -175,25 +200,27 @@ export function Header() {
                   </DropdownMenuItem>
                 </Link>
               )}
-              <Link href={`/admin${queryString ? "?" + queryString : ""}`}>
-                <DropdownMenuItem className="cursor-pointer">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Admin
-                </DropdownMenuItem>
-              </Link>
+              {user?.is_admin && (
+                <Link href={`/admin${queryString ? "?" + queryString : ""}`}>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Admin
+                  </DropdownMenuItem>
+                </Link>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
+        {/* Auth Section */}
         <div className="flex items-center gap-4">
-
-          <div className="flex items-center gap-2 ml-2">
+          <div className="flex items-center gap-2 ml-2 min-w-[100px]">
             {isLoading ? (
-              <div style={{ width: 120, height: 40 }} />
+              <AuthSkeleton />
             ) : isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 px-3 py-1 rounded bg-white/10 focus:outline-none">
+                  <button className="flex items-center gap-2 px-3 py-1 rounded-xl bg-white/5 hover:bg-white/20 transition-colors focus:outline-none">
                     <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                       {(user.display_name || "U").charAt(0).toUpperCase()}
                     </div>
@@ -219,7 +246,7 @@ export function Header() {
                 </DropdownMenuPortal>
               </DropdownMenu>
             ) : (
-              <>
+              <div className="flex items-center gap-2 animate-in fade-in duration-200">
                 <Button variant="activeNav" onClick={() => setShowLoginModal(true)}>Sign In</Button>
                 <UserLoginModal
                   isOpen={showLoginModal}
@@ -235,7 +262,7 @@ export function Header() {
                 <Link href="/signup" target="_blank" rel="noopener noreferrer">
                   <Button variant="secondary">Sign Up</Button>
                 </Link>
-              </>
+              </div>
             )}
           </div>
         </div>

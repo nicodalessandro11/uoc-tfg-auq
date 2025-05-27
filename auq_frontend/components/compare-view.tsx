@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label"
 import { useMapContext } from "@/contexts/map-context"
 import { Badge } from "@/components/ui/badge"
-import { GitCompare, ArrowLeft, Loader2 } from "lucide-react"
+import { GitCompare, ArrowLeft, Loader2, ChartBarBig } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { getCities, getDistricts, getNeighborhoodsByCity, getIndicatorDefinitions, getCityIndicators, getGeoJSON } from "@/lib/api-service"
@@ -214,24 +214,14 @@ export function CompareView() {
 
   return (
     <div className="container mx-auto py-4 md:py-6 px-2 space-y-4">
-      <div className="flex items-center gap-3 mb-4">
-        <Link href="/" className="md:hidden">
-          <Button variant="outline" size="sm" className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
-        </Link>
-        <h1 className="text-lg md:text-xl font-bold">Compare Areas</h1>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-4 items-start">
-        <Card className="w-full md:w-1/3">
+      <div className="flex flex-col md:flex-row gap-6 md:items-stretch h-full">
+        <Card className="w-full md:w-1/3 flex flex-col shadow-none md:sticky md:top-6">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-primary text-base">
-              <GitCompare className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-primary text-xl">
+              <ChartBarBig className="h-5 w-5" />
               Compare Areas
             </CardTitle>
-            <CardDescription className="text-xs">
+            <CardDescription className="text-s">
               Select two {selectedGranularity?.level === "district" ? "districts" : "neighborhoods"} to compare their indicators
             </CardDescription>
           </CardHeader>
@@ -330,14 +320,6 @@ export function CompareView() {
 
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">Indicators to compare</Label>
-                  <div
-                    className={`text-xs mt-1 ${showIndicatorLimit ? "text-red-500" : "text-muted-foreground"}`}
-                    style={{ minHeight: "1.25em" }}
-                  >
-                    {showIndicatorLimit
-                      ? "You can only compare up to 2 indicators."
-                      : "Select up to 2 indicators to compare."}
-                  </div>
                   <MultiSelect
                     options={availableIndicators.map(ind => ({
                       label: ind.name,
@@ -359,20 +341,20 @@ export function CompareView() {
                     className="modern-input"
                   />
                 </div>
+                <div
+                  className={`text-xs text-center mt-4 ${showIndicatorLimit ? "text-red-500" : "text-muted-foreground"}`}
+                  style={{ minHeight: "1.25em" }}
+                >
+                  {showIndicatorLimit
+                    ? "You can only compare up to 2 indicators."
+                    : "Select up to 2 indicators to compare."}
+                </div>
               </>
             )}
           </CardContent>
         </Card>
 
-        <Card className="w-full md:w-2/3">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-primary text-base">Comparison Results</CardTitle>
-            <CardDescription className="text-xs">
-              {selectedArea && comparisonArea
-                ? `Comparing ${selectedArea.name} with ${comparisonArea.name}`
-                : `Select two ${selectedGranularity?.level === "district" ? "districts" : "neighborhoods"} to see the comparison`}
-            </CardDescription>
-          </CardHeader>
+        <Card className="w-full md:w-2/3 flex flex-col">
           <CardContent className="p-4">
             {isLoading ? (
               <div className="flex justify-center py-6">

@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { type SupabaseClient, type User as SupabaseUser } from "@supabase/supabase-js"
 import { supabase, getUserProfile } from "@/lib/supabase-client"
+import { analyticsLogger } from "@/lib/analytics/logger"
 
 // Extended user type
 export type User = {
@@ -90,6 +91,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) {
         setIsLoading(false)
+        // Log error
+        await analyticsLogger.logEvent({
+          user_id: 'anonymous',
+          event_type: 'auth.login',
+          event_details: {
+            method: 'email',
+            success: false,
+            error: error.message
+          }
+        })
         return { success: false, error: error.message }
       }
       if (data.user) {
@@ -100,6 +111,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           display_name: profile?.display_name,
           is_admin: profile?.is_admin,
         })
+        // Log successful login
+        await analyticsLogger.logEvent({
+          user_id: data.user.id,
+          event_type: 'auth.login',
+          event_details: {
+            method: 'email',
+            success: true
+          }
+        })
         setIsLoading(false)
         return { success: true }
       }
@@ -107,6 +127,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: "Authentication failed" }
     } catch (error: any) {
       setIsLoading(false)
+      // Log error
+      await analyticsLogger.logError(error, 'anonymous', 'auth-context')
       return { success: false, error: error.message || "An unexpected error occurred" }
     }
   }
@@ -116,7 +138,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const logout = async () => {
     setIsLoading(true)
-    if (supabase) {
+    if (supabase && user) {
+      // Log logout
+      await analyticsLogger.logEvent({
+        user_id: user.id,
+        event_type: 'auth.logout'
+      })
       await supabase.auth.signOut()
       setUser(null)
     }

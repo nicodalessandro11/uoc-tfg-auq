@@ -12,7 +12,36 @@ import { getFeatureDefinitions, getCityPointFeatures } from "@/lib/api-service"
 import { getIndicatorDefinitions, clearCache } from "@/lib/supabase-client"
 import { Loader2 } from "lucide-react"
 import type { IndicatorDefinition, FeatureDefinition, PointFeature } from "@/lib/api-types"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { createContext, useContext } from 'react'
+
+// Context for modal state
+const ConfigLeaveModalContext = createContext<any>(null)
+function useConfigLeaveModal() {
+  return useContext(ConfigLeaveModalContext)
+}
+
+// Custom AdminLink that intercepts navigation outside /config
+function ConfigLink({ href, children, ...props }: any) {
+  const { showLeaveModal, setShowLeaveModal, setPendingNavigation } = useConfigLeaveModal()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    const url = typeof href === 'string' ? href : href?.pathname || ''
+    if (url !== '/config' && url !== pathname) {
+      e.preventDefault()
+      setShowLeaveModal(true)
+      setPendingNavigation(url)
+    }
+  }
+  return (
+    <Link href={href} {...props} onClick={handleClick}>
+      {children}
+    </Link>
+  )
+}
 
 // Custom hook to sync state with localStorage and listen for changes
 function useLocalStorageState<T>(key: string, defaultValue: T): [T, (value: T) => void] {
@@ -109,9 +138,12 @@ function AvailablePointFeatures() {
   )
 }
 
-export function AdminView() {
+export function ConfigView() {
   const { user } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
+  const [showLeaveModal, setShowLeaveModal] = useState(false)
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(null)
 
   // Feature toggles for Available Features
   const [enabledFeatures, setEnabledFeatures] = useState(() => {
@@ -122,6 +154,99 @@ export function AdminView() {
     return { map: true, compare: true, visualize: true }
   })
   const [featureError, setFeatureError] = useState<string | null>(null)
+
+  // Clean URL on mount (remove query params/hash)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href)
+      if (url.pathname === "/config" && (url.search || url.hash)) {
+        router.replace("/config")
+      }
+    }
+  }, [router])
+
+  // Intercept navigation away from /config and show modal
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    // Intercept browser navigation (back/forward)
+    const handleRouteChange = (e: PopStateEvent) => {
+      const currentPath = window.location.pathname
+      if (currentPath !== "/config") {
+        e.preventDefault?.()
+        setShowLeaveModal(true)
+        setPendingNavigation(currentPath)
+        window.history.pushState(null, '', '/config')
+      }
+    }
+    window.addEventListener('popstate', handleRouteChange)
+
+    // Intercept link clicks inside the config panel
+    const handleLinkClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      const anchor = target.closest('a') as HTMLAnchorElement | null
+      if (anchor && anchor.href) {
+        const url = new URL(anchor.href)
+        if (url.pathname !== '/config' && url.origin === window.location.origin) {
+          e.preventDefault()
+          setShowLeaveModal(true)
+          setPendingNavigation(url.pathname + url.search + url.hash)
+        }
+      }
+    }
+    const configRoot = document.getElementById('config-root')
+    if (configRoot) {
+      configRoot.addEventListener('click', handleLinkClick)
+    }
+
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange)
+      if (configRoot) {
+        configRoot.removeEventListener('click', handleLinkClick)
+      }
+    }
+  }, [])
+
+  // Wrap router.push and router.replace to intercept navigation
+  useEffect(() => {
+    const origPush = router.push
+    const origReplace = router.replace
+    router.push = (url: string, ...args: any[]) => {
+      if (url !== '/config' && url !== pathname) {
+        setShowLeaveModal(true)
+        setPendingNavigation(url)
+        return
+      }
+      return origPush(url, ...args)
+    }
+    router.replace = (url: string, ...args: any[]) => {
+      if (url !== '/config' && url !== pathname) {
+        setShowLeaveModal(true)
+        setPendingNavigation(url)
+        return
+      }
+      return origReplace(url, ...args)
+    }
+    return () => {
+      router.push = origPush
+      router.replace = origReplace
+    }
+  }, [router, pathname])
+
+  // Handler for confirming navigation
+  const handleConfirmLeave = () => {
+    setShowLeaveModal(false)
+    if (pendingNavigation) {
+      window.location.href = pendingNavigation
+    } else {
+      window.location.reload()
+    }
+  }
+
+  // Handler for canceling navigation
+  const handleCancelLeave = () => {
+    setShowLeaveModal(false)
+    setPendingNavigation(null)
+  }
 
   // Handler to prevent disabling all features
   const handleFeatureToggle = (feature: 'map' | 'compare' | 'visualize', value: boolean) => {
@@ -140,96 +265,114 @@ export function AdminView() {
   }
 
   return (
-    <div id="config-root" className="container mx-auto py-4 md:py-8 px-4 space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Link href="/" className="md:hidden">
-          <Button variant="outline" size="sm" className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
-        </Link>
-        <h1 className="text-xl md:text-2xl font-bold">User Settings</h1>
-        <div className="ml-auto flex items-center gap-3">
-          <Badge variant="outline" className="px-3 py-1">
-            {user?.email || "User"}
-          </Badge>
-        </div>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-primary flex items-center gap-2">
-            <EyeOff className="h-5 w-5" />
-            Map & Insights Settings
-          </CardTitle>
-          <CardDescription>Hi! Here you can manage your map and insights settings.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AvailableIndicators />
-
-          <div className="space-y-4 pt-4">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-medium text-primary flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                Available Features
-              </h3>
-              <div className="min-h-[20px] ml-4">
-                {featureError && (
-                  <span className="text-red-500 text-sm">{featureError}</span>
-                )}
-              </div>
+    <ConfigLeaveModalContext.Provider value={{ showLeaveModal, setShowLeaveModal, setPendingNavigation }}>
+      <div id="config-root" className="container mx-auto py-4 md:py-8 px-4 space-y-6">
+        {/* Leave confirmation modal */}
+        <Dialog open={showLeaveModal} onOpenChange={setShowLeaveModal}>
+          <DialogContent className="z-[9999]">
+            <DialogHeader>
+              <DialogTitle>Leave Configuration?</DialogTitle>
+            </DialogHeader>
+            <div className="py-2">
+              <p>You are about to leave the configuration page. Any changes will be applied. Are you sure you want to continue?</p>
             </div>
-            <div className="modern-card flex items-center justify-between">
-              <div>
-                <p className="font-medium">Map Visualization</p>
-                <p className="text-sm text-muted-foreground">Interactive map with district highlighting</p>
-              </div>
-              <Switch
-                checked={enabledFeatures.map}
-                onCheckedChange={v => handleFeatureToggle('map', v)}
-              />
-            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={handleCancelLeave}>Cancel</Button>
+              <Button variant="destructive" onClick={handleConfirmLeave}>Confirm</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
-            <div className="modern-card flex items-center justify-between">
-              <div>
-                <p className="font-medium">Area Comparison</p>
-                <p className="text-sm text-muted-foreground">Compare indicators between two areas</p>
-              </div>
-              <Switch
-                checked={enabledFeatures.compare}
-                onCheckedChange={v => handleFeatureToggle('compare', v)}
-              />
-            </div>
-
-            <div className="modern-card flex items-center justify-between">
-              <div>
-                <p className="font-medium">Data Visualization</p>
-                <p className="text-sm text-muted-foreground">Charts and graphs for data analysis</p>
-              </div>
-              <Switch
-                checked={enabledFeatures.visualize}
-                onCheckedChange={v => handleFeatureToggle('visualize', v)}
-              />
-            </div>
-
-            <div className="modern-card flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2">
-                  <p className="font-medium">Natural Language Query</p>
-                  <Badge variant="outline" className="text-xs">
-                    Beta
-                  </Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">Feature not implemented yet</p>
-              </div>
-              <Switch />
-            </div>
+        <div className="flex items-center gap-4 mb-6">
+          <ConfigLink href="/" className="md:hidden">
+            <Button variant="outline" size="sm" className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+          </ConfigLink>
+          <h1 className="text-xl md:text-2xl font-bold">User Settings</h1>
+          <div className="ml-auto flex items-center gap-3">
+            <Badge variant="outline" className="px-3 py-1">
+              {user?.email || "User"}
+            </Badge>
           </div>
+        </div>
 
-          <AvailablePointFeatures />
-        </CardContent>
-      </Card>
-    </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-primary flex items-center gap-2">
+              <EyeOff className="h-5 w-5" />
+              Map & Insights Settings
+            </CardTitle>
+            <CardDescription>Hi! Here you can manage your map and insights settings.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AvailableIndicators />
+
+            <div className="space-y-4 pt-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-medium text-primary flex items-center gap-2">
+                  <Settings className="h-5 w-5" />
+                  Available Features
+                </h3>
+                <div className="min-h-[20px] ml-4">
+                  {featureError && (
+                    <span className="text-red-500 text-sm">{featureError}</span>
+                  )}
+                </div>
+              </div>
+              <div className="modern-card flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Map Visualization</p>
+                  <p className="text-sm text-muted-foreground">Interactive map with district highlighting</p>
+                </div>
+                <Switch
+                  checked={enabledFeatures.map}
+                  onCheckedChange={v => handleFeatureToggle('map', v)}
+                />
+              </div>
+
+              <div className="modern-card flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Area Comparison</p>
+                  <p className="text-sm text-muted-foreground">Compare indicators between two areas</p>
+                </div>
+                <Switch
+                  checked={enabledFeatures.compare}
+                  onCheckedChange={v => handleFeatureToggle('compare', v)}
+                />
+              </div>
+
+              <div className="modern-card flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Data Visualization</p>
+                  <p className="text-sm text-muted-foreground">Charts and graphs for data analysis</p>
+                </div>
+                <Switch
+                  checked={enabledFeatures.visualize}
+                  onCheckedChange={v => handleFeatureToggle('visualize', v)}
+                />
+              </div>
+
+              <div className="modern-card flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium">Natural Language Query</p>
+                    <Badge variant="outline" className="text-xs">
+                      Beta
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Feature not implemented yet</p>
+                </div>
+                <Switch />
+              </div>
+            </div>
+
+            <AvailablePointFeatures />
+          </CardContent>
+        </Card>
+      </div>
+    </ConfigLeaveModalContext.Provider>
   )
 }
 
@@ -313,5 +456,3 @@ function AvailableIndicators() {
     </div>
   )
 }
-
-export { AdminView as ConfigView }

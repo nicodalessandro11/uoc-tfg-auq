@@ -186,35 +186,43 @@ export function PointFeaturesToggle() {
 
   return (
     <Card className="p-4">
-      <div className="flex justify-end items-center gap-2 my-2">
-        <Button
-          variant={allOn ? "default" : "outline"}
-          className="h-8 px-4 text-xs font-semibold"
-          onClick={handleToggleAll}
-        >
-          {allOn ? "Hide all" : "Show all"}
-        </Button>
-      </div>
-      <div className="flex flex-col gap-2">
-        {dynamicPointTypes.map((type) => {
-          const isVisible = visiblePointTypes[type] ?? true
-          const color = getColorForFeatureType(type)
-          return (
-            <div key={type} className="flex items-center gap-2">
-              <Switch
-                checked={isVisible}
-                onCheckedChange={() => handleToggle(type)}
-                style={{
-                  '--switch-checked-bg': isVisible ? color : undefined,
-                  backgroundColor: isVisible ? color : undefined,
-                  borderColor: isVisible ? color : undefined,
-                } as React.CSSProperties}
-              />
-              <span className="capitalize text-xs">{getFeatureLabel(type)}</span>
-            </div>
-          )
-        })}
-      </div>
+      {dynamicPointTypes.length > 0 ? (
+        <>
+          <div className="flex justify-end items-center gap-2 my-2">
+            <Button
+              variant={allOn ? "default" : "outline"}
+              className="h-8 px-4 text-xs font-semibold"
+              onClick={handleToggleAll}
+            >
+              {allOn ? "Hide all" : "Show all"}
+            </Button>
+          </div>
+          <div className="flex flex-col gap-2">
+            {dynamicPointTypes.map((type) => {
+              const isVisible = visiblePointTypes[type] ?? true
+              const color = getColorForFeatureType(type)
+              return (
+                <div key={type} className="flex items-center gap-2">
+                  <Switch
+                    checked={isVisible}
+                    onCheckedChange={() => handleToggle(type)}
+                    style={{
+                      '--switch-checked-bg': isVisible ? color : undefined,
+                      backgroundColor: isVisible ? color : undefined,
+                      borderColor: isVisible ? color : undefined,
+                    } as React.CSSProperties}
+                  />
+                  <span className="capitalize text-xs">{getFeatureLabel(type)}</span>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      ) : (
+        <div className="text-center py-8 text-muted-foreground">
+          No points available for this city/level
+        </div>
+      )}
     </Card>
   )
 }

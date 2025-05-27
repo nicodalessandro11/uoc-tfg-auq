@@ -66,7 +66,7 @@ export function DistrictInfo({ area }: AreaInfoProps) {
         <div className="flex items-center gap-2 mb-1">
           <h3 className="text-xl font-bold tracking-tight text-primary-foreground">{area.name}</h3>
         </div>
-        <p className="text-sm text-primary-foreground/80">
+        <p className="text-xs text-primary-foreground/80">
           {selectedGranularity.level === "district" ? "District Profile" : "Neighborhood Profile"}
         </p>
       </div>
@@ -80,13 +80,13 @@ export function DistrictInfo({ area }: AreaInfoProps) {
             >
               <div className="flex items-center gap-3 mb-1">
                 <div>
-                  <h4 className="text-base font-semibold text-foreground dark:text-white">{def.name}{def.unit ? ` (${def.unit})` : ''}</h4>
+                  <h4 className="text-base font-semibold text-foreground dark:text-white">{def.name}</h4>
                   {def.description && (
-                    <p className="text-xs text-muted-foreground mt-1">{def.description}</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">{def.description}</p>
                   )}
                 </div>
               </div>
-              <p className="text-xl text-center font-bold text-primary dark:text-primary-400">
+              <p className="text-[18px] font-bold text-primary dark:text-primary-400">
                 {indicatorValues[def.name]?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 {def.unit && !isNaN(Number(indicatorValues[def.name])) && ` ${def.unit}`}
               </p>

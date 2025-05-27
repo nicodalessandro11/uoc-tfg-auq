@@ -31,6 +31,7 @@ export function MultiSelect({
     const inputRef = React.useRef<HTMLInputElement>(null)
     const [open, setOpen] = React.useState(false)
     const [inputValue, setInputValue] = React.useState("")
+    const [menuPosition, setMenuPosition] = React.useState<'top' | 'bottom'>('bottom')
 
     const handleUnselect = (option: string) => {
         onChange(selected.filter((s) => s !== option))
@@ -53,6 +54,27 @@ export function MultiSelect({
         [selected, onChange]
     )
 
+    const updateMenuPosition = React.useCallback(() => {
+        if (inputRef.current) {
+            const rect = inputRef.current.getBoundingClientRect()
+            const spaceBelow = window.innerHeight - rect.bottom
+            const spaceAbove = rect.top
+            setMenuPosition(spaceBelow < 200 && spaceAbove > spaceBelow ? 'top' : 'bottom')
+        }
+    }, [])
+
+    React.useEffect(() => {
+        if (open) {
+            updateMenuPosition()
+            window.addEventListener('scroll', updateMenuPosition)
+            window.addEventListener('resize', updateMenuPosition)
+            return () => {
+                window.removeEventListener('scroll', updateMenuPosition)
+                window.removeEventListener('resize', updateMenuPosition)
+            }
+        }
+    }, [open, updateMenuPosition])
+
     const selectables = options.filter((option) => !selected.includes(option.value))
 
     return (
@@ -60,7 +82,7 @@ export function MultiSelect({
             onKeyDown={handleKeyDown}
             className={`overflow-visible bg-transparent ${className}`}
         >
-            <div className="group rounded-md bg-gray-100/80 px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+            <div className="group rounded-md bg-gray-200/50 px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
                 <div className="flex flex-wrap gap-1">
                     {selected.map((selectedValue) => {
                         const option = options.find((o) => o.value === selectedValue)
@@ -69,7 +91,7 @@ export function MultiSelect({
                             <Badge
                                 key={option.value}
                                 variant="secondary"
-                                className="rounded-sm px-1 font-normal bg-white/80 text-black hover:bg-white dark:bg-gray-800 dark:text-white"
+                                className="rounded-sm px-1 font-normal text-xxs bg-white/80 text-black hover:bg-white dark:bg-gray-800 dark:text-white"
                             >
                                 {option.label}
                                 <button
@@ -103,8 +125,11 @@ export function MultiSelect({
             </div>
             <div className="relative mt-2">
                 {open && selectables.length > 0 ? (
-                    <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-                        <CommandGroup className="h-full overflow-auto">
+                    <div
+                        className={`absolute z-50 w-[var(--radix-command-trigger-width)] rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in ${menuPosition === 'top' ? 'bottom-full mb-2' : 'top-0'
+                            }`}
+                    >
+                        <CommandGroup className="max-h-[200px] overflow-y-auto">
                             {selectables.map((option) => {
                                 return (
                                     <CommandItem

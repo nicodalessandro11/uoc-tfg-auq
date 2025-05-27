@@ -12,13 +12,14 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
 import { getCities, getFeatureDefinitions, getCityPointFeatures } from "@/lib/api-service"
-import { getIndicatorDefinitions, clearCache } from "@/lib/supabase-client"
+import { getIndicatorDefinitions, clearCache, supabase, getUserEvents } from "@/lib/supabase-client"
 import { Loader2 } from "lucide-react"
 import apiFileManifest from "../supabase/api-file-manifest.json"
 import type { City, IndicatorDefinition, FeatureDefinition, PointFeature } from "@/lib/api-types"
 import { useRouter, usePathname } from "next/navigation"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { createContext, useContext } from 'react'
+import type { UserEvent } from "@/lib/analytics/types"
 
 // Custom hook to sync state with localStorage and listen for changes
 function useLocalStorageState<T>(key: string, defaultValue: T): [T, (value: T) => void] {
@@ -297,7 +298,7 @@ export function AdminView() {
       <div id="admin-root" className="container mx-auto py-4 md:py-8 px-4 space-y-6">
         {/* Leave confirmation modal */}
         <Dialog open={showLeaveModal} onOpenChange={setShowLeaveModal}>
-          <DialogContent>
+          <DialogContent className="z-[9999]">
             <DialogHeader>
               <DialogTitle>Leave Admin Panel?</DialogTitle>
             </DialogHeader>
@@ -426,61 +427,7 @@ export function AdminView() {
               </TabsContent>
 
               <TabsContent value="analytics" className="space-y-6 py-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-primary" />
-                        Daily Active Users
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="h-[200px] flex items-center justify-center">
-                        <LineChart className="h-16 w-16 text-muted-foreground" />
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base flex items-center gap-2">
-                        <BarChart className="h-4 w-4 text-primary" />
-                        Query Distribution
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="h-[200px] flex items-center justify-center">
-                        <BarChart className="h-16 w-16 text-muted-foreground" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <Card>
-                  <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <AlertCircle className="h-4 w-4 text-primary" />
-                      System Logs
-                    </CardTitle>
-                    <Badge variant="outline" className="text-xs">
-                      Live
-                    </Badge>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="bg-muted p-4 rounded-lg text-xs overflow-auto h-[200px] font-mono">
-                      <p className="text-green-500">2025-04-19 10:15:22 INFO: User login successful (admin)</p>
-                      <p className="text-red-500">2025-04-19 10:15:22 ERROR: Dataset upload failed - invalid format</p>
-                      <p className="text-green-500">
-                        2025-04-19 10:15:22 INFO: New dataset uploaded (Barcelona-Demographics-2025)
-                      </p>
-                      <p className="text-green-500">2025-04-19 10:14:15 INFO: User viewed Barcelona map</p>
-                      <p className="text-green-500">
-                        2025-04-19 10:13:45 INFO: User compared Eixample and Gràcia districts
-                      </p>
-                      <p className="text-green-500">2025-04-19 10:12:30 INFO: System startup complete</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <UserEventsAnalytics />
 
                 <div className="flex items-center justify-between pt-4">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -651,6 +598,254 @@ function AvailableIndicators() {
           </div>
         ))
       )}
+    </div>
+  )
+}
+
+function UserEventsAnalytics() {
+  const { user } = useAuth()
+  const [events, setEvents] = useState<UserEvent[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [stats, setStats] = useState({
+    totalEvents: 0,
+    uniqueUsers: 0,
+    eventTypes: {} as Record<string, number>,
+    last24Hours: 0
+  })
+
+  useEffect(() => {
+    async function fetchEvents() {
+      if (!supabase || !user) {
+        setError('No se pudo inicializar Supabase o el usuario no está autenticado')
+        setLoading(false)
+        return
+      }
+
+      setLoading(true)
+      setError(null)
+      try {
+        // Verificar si el usuario es admin
+        console.log('Checking admin status for user:', user.id)
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('is_admin')
+          .eq('user_id', user.id)
+          .single()
+
+        console.log('Profile data:', profile, 'Error:', profileError)
+
+        if (profileError) {
+          console.error('Error fetching profile:', profileError)
+          setError('Error al verificar permisos de administrador')
+          setLoading(false)
+          return
+        }
+
+        if (!profile?.is_admin) {
+          console.log('User is not admin')
+          setError('No tienes permisos para ver los eventos')
+          setLoading(false)
+          return
+        }
+
+        console.log('User is admin, fetching events...')
+
+        // Fetch events using getUserEvents
+        const eventsData = await getUserEvents({ limit: 100 })
+        console.log('Fetched events:', eventsData)
+
+        // Fetch stats for last 24 hours
+        const last24HoursData = await getUserEvents({
+          limit: 1000 // Get more events for stats
+        })
+        console.log('Fetched stats data:', last24HoursData)
+
+        // Process stats
+        const eventTypes: Record<string, number> = {}
+        const uniqueUsers = new Set<string>()
+        let last24Hours = 0
+
+        last24HoursData.forEach(event => {
+          // Count event types
+          eventTypes[event.event_type] = (eventTypes[event.event_type] || 0) + 1
+          // Count unique users
+          uniqueUsers.add(event.user_id)
+          // Count last 24 hours
+          last24Hours++
+        })
+
+        setStats({
+          totalEvents: eventsData.length,
+          uniqueUsers: uniqueUsers.size,
+          eventTypes,
+          last24Hours
+        })
+
+        setEvents(eventsData)
+      } catch (error) {
+        console.error('Error fetching analytics:', error)
+        setError(error instanceof Error ? error.message : 'Error al cargar los eventos')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchEvents()
+    // Refresh every minute
+    const interval = setInterval(fetchEvents, 60000)
+    return () => clearInterval(interval)
+  }, [user])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
+        <AlertCircle className="h-8 w-8 text-destructive" />
+        <p className="text-destructive">{error}</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Events
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalEvents}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Unique Users
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.uniqueUsers}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Last 24 Hours
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.last24Hours}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Event Types
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{Object.keys(stats.eventTypes).length}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Event Type Distribution */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <BarChart className="h-4 w-4 text-primary" />
+            Event Type Distribution
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {Object.entries(stats.eventTypes).map(([type, count]) => (
+              <div key={type} className="flex items-center gap-4">
+                <div className="w-32 text-sm text-muted-foreground">
+                  {type.replace(/_/g, ' ')}
+                </div>
+                <div className="flex-1">
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary rounded-full"
+                      style={{
+                        width: `${(count / Math.max(...Object.values(stats.eventTypes))) * 100}%`
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="w-12 text-sm font-medium text-right">
+                  {count}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Recent Events */}
+      <Card>
+        <CardHeader className="pb-2 flex flex-row items-center justify-between">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Activity className="h-4 w-4 text-primary" />
+            Recent Events
+          </CardTitle>
+          <Badge variant="outline" className="text-xs">
+            Live
+          </Badge>
+        </CardHeader>
+        <CardContent>
+          <div className="bg-muted rounded-lg overflow-hidden">
+            <div className="overflow-auto max-h-[400px]">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50 sticky top-0">
+                  <tr>
+                    <th className="text-left p-3 font-medium">Time</th>
+                    <th className="text-left p-3 font-medium">User</th>
+                    <th className="text-left p-3 font-medium">Type</th>
+                    <th className="text-left p-3 font-medium">Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {events.map(ev => (
+                    <tr key={ev.id} className="border-t border-border/50">
+                      <td className="p-3 whitespace-nowrap">
+                        {new Date(ev.created_at).toLocaleString()}
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <Badge variant="secondary" className="text-xs">
+                          {ev.user_id}
+                        </Badge>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <Badge variant="outline" className="text-xs">
+                          {ev.event_type}
+                        </Badge>
+                      </td>
+                      <td className="p-3">
+                        <pre className="text-xs overflow-x-auto">
+                          {JSON.stringify(ev.event_details, null, 2)}
+                        </pre>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

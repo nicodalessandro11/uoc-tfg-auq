@@ -8,13 +8,13 @@ const manrope = Manrope({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700", "800"],
   display: "swap",
-  variable: "--font-manrope", // Create a CSS variable
+  variable: "--font-manrope",
 })
 
 export const metadata = {
-  title: "Are U Query-ous?",
+  title: "Are-u-Query-ous?",
   description: "A Web-Based Platform for Democratizing Open Geospatial Data Access",
-  generator: "v0.dev",
+  generator: "Nicolas D'Alessandro Calderon",
 }
 
 export default function RootLayout({

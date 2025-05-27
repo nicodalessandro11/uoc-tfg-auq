@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { upsertProfile } from "@/lib/supabase-client"
 import { ArrowLeft } from "lucide-react"
+import { analyticsLogger } from "@/lib/analytics/logger"
 
 export default function ProfilePage() {
     const { user, isAuthenticated, isLoading, refreshUser } = useAuth()
@@ -30,12 +31,27 @@ export default function ProfilePage() {
         setSaving(true)
         try {
             if (user) {
+                const oldDisplayName = user.display_name
                 await upsertProfile({ user_id: user.id, display_name: displayName })
                 await refreshUser()
+
+                // Log profile update
+                await analyticsLogger.logEvent({
+                    user_id: user.id,
+                    event_type: 'profile.update',
+                    event_details: {
+                        updated_fields: ['display_name'],
+                        old_values: { display_name: oldDisplayName },
+                        new_values: { display_name: displayName }
+                    }
+                })
             }
             setEditName(false)
         } catch (err) {
-            // Optionally show error
+            // Log error
+            if (user) {
+                await analyticsLogger.logError(err as Error, user.id, 'profile-page')
+            }
         } finally {
             setSaving(false)
         }

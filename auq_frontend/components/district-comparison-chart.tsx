@@ -94,8 +94,8 @@ export function DistrictComparisonChart({
 
   // Generate colors for the areas
   const areaColors = {
-    [district1.name]: "hsl(220, 70%, 50%)", // Azul
-    [district2.name]: "hsl(150, 70%, 50%)", // Verde
+    [district1.name]: "hsl(220, 70%, 50%)",
+    [district2.name]: "hsl(150, 70%, 50%)",
   }
 
   // Custom tooltip component
@@ -147,10 +147,11 @@ export function DistrictComparisonChart({
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg text-center">
-          {district1.name} vs {district2.name}
+    <Card className="border-0 shadow-none
+    ">
+      <CardHeader className="pb-2 ">
+        <CardTitle className="text-lg text-center mb-6">
+          Comparing {district1.name} vs {district2.name}
         </CardTitle>
       </CardHeader>
       <CardContent>

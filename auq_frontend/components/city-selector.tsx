@@ -9,9 +9,12 @@ import { getCities } from "@/lib/api-service"
 import type { City } from "@/lib/api-types"
 import { GranularitySelector } from "@/components/granularity-selector"
 import { useRouter } from "next/navigation"
+import { analyticsLogger } from "@/lib/analytics/logger"
+import { useAuth } from "@/contexts/auth-context"
 
 export function CitySelector() {
   const { selectedCity, setSelectedCity } = useMapContext()
+  const { user } = useAuth()
   const [cities, setCities] = useState<Array<{ id: number; name: string }>>([])
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -46,7 +49,18 @@ export function CitySelector() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCity])
 
-  const handleCityChange = (city: City) => {
+  const handleCityChange = async (city: City) => {
+    // Log city selection
+    if (user) {
+      await analyticsLogger.logEvent({
+        user_id: user.id,
+        event_type: 'map.view',
+        event_details: {
+          city: city.name,
+          city_id: city.id
+        }
+      })
+    }
     // Always set, even if same city, to force area clearing and state sync
     setSelectedCity(city)
   }

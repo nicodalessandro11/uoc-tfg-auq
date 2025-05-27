@@ -1,21 +1,17 @@
 "use client"
 
-import { ThemeProvider } from "@/components/theme-provider"
-import { ApiDebug } from "@/components/api-debug"
+import { ThemeProvider } from "next-themes"
 import { AuthProvider } from "@/contexts/auth-context"
-import { DebugPanel } from "@/components/debug-panel"
 import { MapProvider } from "@/contexts/map-context"
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-            <MapProvider>
-                <AuthProvider>
+            <AuthProvider>
+                <MapProvider>
                     {children}
-                    <ApiDebug />
-                    <DebugPanel />
-                </AuthProvider>
-            </MapProvider>
+                </MapProvider>
+            </AuthProvider>
         </ThemeProvider>
     )
 } 

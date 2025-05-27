@@ -45,6 +45,7 @@ CREATE POLICY "Users can delete their own profile"
 ON profiles FOR DELETE
 USING (auth.uid() = user_id);
 
+
 -- ================================================
 -- End of migration 015_create_profile_on_signup.sql
 -- ================================================

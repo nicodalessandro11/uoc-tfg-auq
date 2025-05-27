@@ -1,5 +1,17 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-27 | Added user event logging and profile creation on signup
+
+- Created new profile on user signup in `auq_database/migrations/015_create_profile_on_signup.sql`
+- Added new page for indicators in `auq_frontend/app/indicators/page.tsx`
+- Updated layout, profile page, and various components in `auq_frontend/app` and `auq_frontend/components` to integrate user event logging
+- Added new analytics library in `auq_frontend/lib/analytics` for user event tracking
+- Added new API endpoint for logging user events in `auq_frontend/pages/api/log-user-event.ts`
+- Added new Supabase function for logging user events in `auq_frontend/supabase/functions/log_user_event/index.ts`
+- Deprecated old map page in `auq_frontend/zz_deprecated/map/page.tsx`
+
+This commit introduces user event logging to help us understand user interactions better and improve the application based on these insights. It also automatically creates a user profile on signup, enhancing the user experience.
+
 ## 📦 Feature | 2025-05-27 | Updated frontend components and configuration
 
 - Modified admin, config pages and various components in auq_frontend/app and auq_frontend/components directories

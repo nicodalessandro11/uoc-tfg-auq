@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useState, useCallback, useRef, type ReactNode, useEffect } from "react"
 import { useSearchParams } from 'next/navigation'
+import { useAuth } from "@/contexts/auth-context"
+import { analyticsLogger } from "@/lib/analytics/logger"
 
 // Import cache clearing functions
 import { clearCacheEntry as clearSupabaseCacheEntry } from "@/lib/supabase-client"
@@ -127,10 +129,11 @@ const defaultFilterRanges: FilterRanges = {
 }
 
 export function MapProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth()
   // Use the global variables as initial state
   const [selectedCity, _setSelectedCity] = useState<City | null>(globalSelectedCity)
   const [selectedGranularity, _setSelectedGranularity] = useState<GranularityLevel | null>(globalSelectedGranularity)
-  const [selectedArea, setSelectedArea] = useState<Area | null>(null)
+  const [selectedArea, _setSelectedArea] = useState<Area | null>(null)
   const [comparisonArea, setComparisonArea] = useState<Area | null>(null)
   const [availableAreas, setAvailableAreas] = useState<Area[]>([])
   const [filters, _setFilters] = useState<Filters>(globalFilters || defaultFilters)
@@ -170,15 +173,19 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
   // Sync selectedCity with the ?city= param in the URL
   useEffect(() => {
+    if (!searchParams) return;
+
     // Solo actualizamos el estado si hay un cambio en la URL después del montaje inicial
     const cityIdParam = searchParams.get("city");
     if (cityIdParam && selectedCity?.id !== Number(cityIdParam)) {
       _setSelectedCity({ id: Number(cityIdParam), name: "" });
     }
-  }, [searchParams]);
+  }, [searchParams, selectedCity]);
 
   // Sync selectedGranularity with the ?level= param in the URL
   useEffect(() => {
+    if (!searchParams) return;
+
     const levelParam = searchParams.get("level");
     if (levelParam && (!selectedGranularity || selectedGranularity.level !== levelParam)) {
       // Try to find a matching granularity level
@@ -530,6 +537,18 @@ export function MapProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    // Log city selection
+    if (user && city) {
+      analyticsLogger.logEvent({
+        user_id: user.id,
+        event_type: 'map.view',
+        event_details: {
+          city: city.name,
+          city_id: city.id
+        }
+      })
+    }
+
     // Update the URL first
     const params = new URLSearchParams(window.location.search);
     if (city?.id) {
@@ -565,7 +584,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
         // console.error("Error loading data for new city:", error);
       });
     }
-  }, [selectedCity, selectedGranularity, loadGeoJSON, loadAvailableAreas, loadFilterRanges, triggerRefresh]);
+  }, [selectedCity, selectedGranularity, loadGeoJSON, loadAvailableAreas, loadFilterRanges, triggerRefresh, user]);
 
   // Custom setter for selectedGranularity that also updates the global variable
   const setSelectedGranularity = useCallback(
@@ -622,16 +641,21 @@ export function MapProvider({ children }: { children: ReactNode }) {
   )
 
   // Custom setter for filters that also updates the global variable
-  const setFilters = useCallback(
-    (newFilters: Filters) => {
-      // Only update if values actually changed
-      if (JSON.stringify(newFilters) !== JSON.stringify(filters)) {
-        globalFilters = newFilters
-        _setFilters(newFilters)
-      }
-    },
-    [filters],
-  )
+  const setFilters = useCallback((filters: Filters) => {
+    if (user) {
+      analyticsLogger.logEvent({
+        user_id: user.id,
+        event_type: 'map.filter',
+        event_details: {
+          city: selectedCity?.name,
+          city_id: selectedCity?.id,
+          granularity: selectedGranularity?.level,
+          filters
+        }
+      })
+    }
+    _setFilters(filters);
+  }, [selectedCity, selectedGranularity, user]);
 
   // Custom setter for visiblePointTypes (no global variable)
   const setVisiblePointTypes = useCallback(
@@ -741,6 +765,24 @@ export function MapProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     _setHasSelectedGranularity(!!selectedGranularity)
   }, [selectedGranularity])
+
+  // Custom setter for selectedArea
+  const setSelectedArea = useCallback((area: Area | null) => {
+    if (area && user) {
+      analyticsLogger.logEvent({
+        user_id: user.id,
+        event_type: 'area.select',
+        event_details: {
+          area_id: area.id,
+          area_name: area.name,
+          city: selectedCity?.name,
+          city_id: selectedCity?.id,
+          granularity: selectedGranularity?.level
+        }
+      })
+    }
+    _setSelectedArea(area);
+  }, [selectedCity, selectedGranularity, user]);
 
   return (
     <MapContext.Provider
