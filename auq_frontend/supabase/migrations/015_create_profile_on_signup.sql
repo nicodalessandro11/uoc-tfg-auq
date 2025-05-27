@@ -1,8 +1,11 @@
 -- ====================================
 -- Migration: 015_create_profile_on_signup.sql
 -- Description: Create trigger to insert profile on user signup
--- Author: [Tu Nombre]
--- Date: [Fecha]
+-- Author: Nico D'Alessandro Calderon
+-- Email: nicodalessandro11@gmail.com
+-- Date: 2025-05-26
+-- Version: 1.0.0
+-- License: MIT License
 -- ====================================
 
 -- Function to create profile

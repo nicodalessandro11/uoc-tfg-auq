@@ -1,154 +1,89 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
 import { useMapContext } from "@/contexts/map-context"
-import { PopulationChart } from "@/components/population-chart"
-import { IncomeChart } from "@/components/income-chart"
-import { EducationChart } from "@/components/education-chart"
-import { UnemploymentChart } from "@/components/unemployment-chart"
-import { PopulationDensityChart } from "@/components/population-density-chart"
-import { ArrowLeft, BarChart2, Loader2 } from "lucide-react"
-import Link from "next/link"
-import { getDistricts, getCityIndicators, getIndicatorDefinitions, getGeoJSON } from "@/lib/api-service"
-import type { IndicatorDefinition, District, Area } from "@/lib/api-types"
+import { Activity, ChartColumnBig, Loader2 } from "lucide-react"
+import { getDistricts, getCityIndicators, getIndicatorDefinitions, getGeoJSON, getIndicatorTimeSeries } from "@/lib/api-service"
+import type { IndicatorDefinition, Area } from "@/lib/api-types"
 import { VisualizeChart } from "@/components/visualize-chart"
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from "recharts"
+import { DataDisclaimer } from "@/components/data-disclaimer"
 
 export function VisualizeView() {
-  const { selectedCity, setSelectedCity, selectedGranularity, setSelectedGranularity, loadGeoJSON } = useMapContext()
+  const { selectedCity, selectedGranularity, loadGeoJSON } = useMapContext()
   const [selectedIndicator, setSelectedIndicator] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [localAvailableAreas, setLocalAvailableAreas] = useState<Area[]>([])
-  const [availableIndicators, setAvailableIndicators] = useState<IndicatorDefinition[]>([])
   const [areas, setAreas] = useState<Area[]>([])
   const [indicatorValues, setIndicatorValues] = useState<Record<number, number>>({})
+  const [availableIndicators, setAvailableIndicators] = useState<IndicatorDefinition[]>([])
   const [topN, setTopN] = useState(5)
+  const [selectedAreaId, setSelectedAreaId] = useState<number | null>(null)
+  const [timeSeries, setTimeSeries] = useState<{ year: number, value: number }[]>([])
+  const [isLoadingTimeSeries, setIsLoadingTimeSeries] = useState(false)
 
-  console.log('VisualizeView rendered with:', {
-    selectedCity,
-    selectedGranularity,
-    availableIndicators: availableIndicators.length
-  })
-
-  // Load available indicators when city or granularity changes
+  // Combined effect to load indicators and areas
   useEffect(() => {
-    console.log('Effect triggered for loading indicators:', {
-      hasCity: !!selectedCity,
-      hasGranularity: !!selectedGranularity,
-      cityName: selectedCity?.name,
-      granularityLevel: selectedGranularity?.level
-    })
-
-    async function loadIndicators() {
-      if (!selectedCity || !selectedGranularity) {
-        console.log('Missing required data for loading indicators:', {
-          selectedCity,
-          selectedGranularity
-        })
-        return
-      }
-
-      setIsLoading(true)
-      try {
-        console.log('Loading indicators for:', {
-          city: selectedCity.name,
-          level: selectedGranularity.level
-        })
-
-        // Get all indicator definitions
-        const definitions = await getIndicatorDefinitions()
-        console.log('Loaded indicator definitions:', definitions)
-
-        // Get indicators for the selected city and level
-        const indicators = await getCityIndicators(selectedCity.id, selectedGranularity.level)
-        console.log('Loaded indicators:', indicators)
-
-        // Filter definitions to only include those that have data
-        const availableDefinitions = definitions.filter(def =>
-          indicators.some(ind => ind.indicator_def_id === def.id)
-        )
-        console.log('Available indicator definitions:', availableDefinitions)
-
-        setAvailableIndicators(availableDefinitions)
-
-        // Reset selected indicator if it's no longer available
-        if (selectedIndicator && !availableDefinitions.some(def => def.name === selectedIndicator)) {
-          setSelectedIndicator('')
-        }
-      } catch (error) {
-        console.error('Error loading indicators:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadIndicators()
-  }, [selectedCity, selectedGranularity, selectedIndicator])
-
-  // Load available areas when city or granularity changes
-  useEffect(() => {
-    async function loadAreas() {
+    async function loadData() {
       if (!selectedCity || !selectedGranularity) return
 
       setIsLoading(true)
       try {
-        // Load GeoJSON data to ensure it's available
-        await loadGeoJSON(selectedCity.id, selectedGranularity.level)
+        // Load GeoJSON and indicators in parallel
+        const [geoJsonData, definitions, indicators] = await Promise.all([
+          getGeoJSON(selectedCity.id, selectedGranularity.level),
+          getIndicatorDefinitions(),
+          getCityIndicators(selectedCity.id, selectedGranularity.level)
+        ])
 
-        // Get areas from GeoJSON data
-        const geoJsonData = await getGeoJSON(selectedCity.id, selectedGranularity.level)
-        if (!geoJsonData || !geoJsonData.features) {
-          throw new Error("No GeoJSON data available")
-        }
-
-        // Transform to expected format
-        const formattedAreas: Area[] = geoJsonData.features.map((feature: any) => {
-          // Ensure all numeric fields have a value, defaulting to 0 if undefined
-          const population = typeof feature.properties.population === 'number' ? feature.properties.population : 0
-          const avgIncome = typeof feature.properties.avg_income === 'number' ? feature.properties.avg_income : 0
-          const surface = typeof feature.properties.surface === 'number' ? feature.properties.surface : 0
-          const disposableIncome = typeof feature.properties.disposable_income === 'number' ? feature.properties.disposable_income : 0
-
-          return {
+        // Process GeoJSON data
+        if (geoJsonData?.features) {
+          const formattedAreas: Area[] = geoJsonData.features.map((feature: any) => ({
             id: feature.properties.id,
             name: feature.properties.name,
             cityId: feature.properties.city_id,
             city_id: feature.properties.city_id,
             district_id: feature.properties.district_id,
-            population,
-            avgIncome,
-            surface,
-            disposableIncome,
-          }
-        })
+            population: feature.properties.population || 0,
+            avgIncome: feature.properties.avg_income || 0,
+            surface: feature.properties.surface || 0,
+            disposableIncome: feature.properties.disposable_income || 0,
+          }))
+          setAreas(formattedAreas)
+        }
 
-        console.log(`Loaded ${formattedAreas.length} ${selectedGranularity.level}s for city ${selectedCity.id}`)
-        setLocalAvailableAreas(formattedAreas)
-        setAreas(formattedAreas)
+        // Process indicators
+        const availableDefinitions = definitions.filter(def =>
+          indicators.some(ind => ind.indicator_def_id === def.id)
+        )
+        setAvailableIndicators(availableDefinitions)
+
+        // Reset selected indicator if no longer available
+        if (selectedIndicator && !availableDefinitions.some(def => def.name === selectedIndicator)) {
+          setSelectedIndicator('')
+        }
       } catch (error) {
-        console.error("Error loading areas:", error)
-        setLocalAvailableAreas([])
-        setAreas([])
+        console.error('Error loading data:', error)
       } finally {
         setIsLoading(false)
       }
     }
 
-    loadAreas()
-  }, [selectedCity, selectedGranularity, loadGeoJSON])
+    loadData()
+  }, [selectedCity, selectedGranularity])
 
-  // Load values for the selected indicator
+  // Load indicator values when selection changes
   useEffect(() => {
     async function loadValues() {
       if (!selectedCity || !selectedGranularity || !selectedIndicator) return
+
       setIsLoading(true)
       try {
-        const definitions = await getIndicatorDefinitions()
-        const indicatorDef = definitions.find(def => def.name === selectedIndicator)
+        const indicatorDef = availableIndicators.find(def => def.name === selectedIndicator)
         if (!indicatorDef) return
+
         const indicators = await getCityIndicators(selectedCity.id, selectedGranularity.level)
         const values: Record<number, number> = {}
         indicators.forEach(ind => {
@@ -164,27 +99,60 @@ export function VisualizeView() {
       }
     }
     loadValues()
-  }, [selectedCity, selectedGranularity, selectedIndicator])
+  }, [selectedCity, selectedGranularity, selectedIndicator, availableIndicators])
 
-  // Opciones de Top N dinámicas
+  // Load time series when area and indicator are selected
+  useEffect(() => {
+    async function fetchTimeSeries() {
+      if (!selectedCity || !selectedGranularity || !selectedIndicator || !selectedAreaId) return
+      const indicatorDef = availableIndicators.find(def => def.name === selectedIndicator)
+      if (!indicatorDef) return
+      setIsLoadingTimeSeries(true)
+      try {
+        const data = await getIndicatorTimeSeries(selectedAreaId, indicatorDef.id, selectedGranularity.level, selectedCity.id)
+        setTimeSeries((data || []).map((d: any) => ({
+          year: Number(d.year),
+          value: Number(d.value)
+        })))
+      } catch (e) {
+        console.error('Error fetching time series:', e)
+        setTimeSeries([])
+      } finally {
+        setIsLoadingTimeSeries(false)
+      }
+    }
+    fetchTimeSeries()
+  }, [selectedAreaId, selectedIndicator, selectedGranularity, selectedCity, availableIndicators])
+
   const topOptions = [3, 5, 10, 15, 20].filter(n => n <= areas.length)
-  if (!topOptions.includes(topN) && topOptions.length > 0) {
-    setTopN(topOptions[topOptions.length - 1])
-  }
-
   const indicatorDef = availableIndicators.find(def => def.name === selectedIndicator)
+  const areaOptions = areas.map(area => ({ value: area.id, label: area.name }))
+  const selectedArea = areas.find(a => a.id === selectedAreaId)
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <div className="grid gap-6">
-        <Card>
-          <CardContent className="space-y-6 p-4">
+    <div className="container mx-auto py-8 max-w-6xl space-y-8">
+      {/* Main Title and Subtitle */}
+      <div className="mb-2">
+        <h1 className="flex items-center gap-2 text-3xl font-bold text-primary mb-1">
+          <ChartColumnBig className="w-6 h-6" />
+          Visualize City Indicators
+        </h1>
+
+        <p className="text-base text-muted-foreground max-w-8xl">
+          Explore and compare city indicators by selecting an indicator, viewing its description, analyzing its evolution over time for a specific area, and discovering the top areas for each metric.
+        </p>
+      </div>
+
+      {/* Indicator Selection + Description in the same card */}
+      <Card>
+        <CardContent className="p-6 space-y-4">
+          <div className="flex flex-row md:justify-between md:items-end md:items-end gap-4 mb-2">
+            <h2 className="text-xl font-bold text-primary mb-2">Step 1: Select an indicator to visualize...</h2>
             <div className="flex flex-col md:flex-row gap-4 items-end">
-              <div className="flex-1 space-y-1">
-                <Label className="text-sm font-medium text-primary">Select Indicator</Label>
+              <div className="flex-1">
                 <Select value={selectedIndicator} onValueChange={setSelectedIndicator}>
                   <SelectTrigger className="modern-input border-primary text-black dark:text-white focus:ring-primary focus:border-primary h-10 text-sm">
-                    <SelectValue placeholder="Select indicator to visualize..." />
+                    <SelectValue placeholder="Select option..." />
                   </SelectTrigger>
                   <SelectContent>
                     {availableIndicators.map((indicator) => (
@@ -195,59 +163,146 @@ export function VisualizeView() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-32 space-y-1">
-                <Label className="text-sm font-medium text-primary">Top N</Label>
+            </div>
+          </div>
+          {selectedIndicator && (
+            <div className="mt-4 pt-4 pb-4 p-4 text-muted-foreground">
+              <p className="text-sm mb-2">
+                <Label className="text-sm font-bold text-black">Description: </Label>{indicatorDef?.description || `No description available for this indicator.`}
+              </p>
+              <p className="text-sm">
+                <Label className="text-sm font-bold text-black">Unit of Measurement: </Label>{indicatorDef?.unit || `No unit of measurement available for this indicator.`}
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Area Selection & Time Series Section */}
+      {selectedIndicator && (
+        <Card>
+          <CardContent className="p-6 space-y-10">
+            <div className="flex flex-row md:justify-between md:items-end md:items-end gap-4 mb-2">
+              <h2 className="text-xl font-bold text-primary mb-2"><u>Viz Option 1:</u> View Indicator Evolution Over Time [for a specific {selectedGranularity?.level === "district" ? "district" : "neighborhood"}]</h2>
+              <div className="flex flex-col md:flex-row gap-4 items-end">
+                <div className="flex-1">
+                  <Select value={selectedAreaId?.toString() || ""} onValueChange={v => setSelectedAreaId(Number(v))}>
+                    <SelectTrigger className="modern-input border-primary text-black dark:text-white focus:ring-primary focus:border-primary h-10 text-sm">
+                      <SelectValue placeholder="Select an area..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {areaOptions.map(opt => (
+                        <SelectItem key={opt.value} value={opt.value.toString()}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            <div className="border border-gray-200 rounded-md p-2">
+              {selectedArea ? (
+                <div className="mt-4">
+                  {isLoadingTimeSeries ? (
+                    <div className="flex items-center justify-center h-32"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+                  ) : timeSeries.length === 0 ? (
+                    <div className="text-muted-foreground text-sm">No data available for this area and indicator.</div>
+                  ) : (
+                    <div style={{ padding: '40px 32px 8px 32px' }}>
+                      <ResponsiveContainer width="100%" height={220}>
+                        <LineChart
+                          data={timeSeries}
+                          margin={{ left: 0, right: 0, top: 40, bottom: 0 }}
+                        >
+                          <XAxis
+                            dataKey="year"
+                            tick={{ fontSize: 14, fontWeight: 'bold' }}
+                            interval={0}
+                            padding={{ left: 20, right: 20 }}
+                          />
+                          <YAxis hide={true} />
+                          <Tooltip
+                            formatter={(value: number) => [value.toFixed(1), '']}
+                            labelFormatter={label => `Year: ${label}`}
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="value"
+                            stroke="#2563eb"
+                            strokeWidth={2}
+                            dot={{ r: 7, stroke: '#2563eb', strokeWidth: 2, fill: '#fff' }}
+                          >
+                            <LabelList
+                              dataKey="value"
+                              position="top"
+                              offset={22}
+                              fontSize={12}
+                              formatter={(value: number) => value.toFixed(1)}
+                            />
+                          </Line>
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-muted-foreground text-center py-8 text-base">Select an area to visualize...</div>
+              )}
+            </div>
+
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Top N Chart Section */}
+      {selectedIndicator && indicatorDef && (
+        <Card>
+          <CardContent className="p-6 space-y-8">
+            <div className="flex flex-row md:justify-between md:items-end md:items-end gap-4 mb-2">
+              <h2 className="text-xl font-bold text-primary mb-2"><u>Viz Option 2:</u> Explore Top areas for the selected indicator [across all {selectedGranularity?.level === "district" ? "districts" : "neighborhoods"}]</h2>
+              <div className="w-32">
                 <Select value={topN.toString()} onValueChange={v => setTopN(Number(v))}>
                   <SelectTrigger className="modern-input border-primary text-black dark:text-white focus:ring-primary focus:border-primary h-10 text-sm">
                     <SelectValue placeholder="Top N" />
                   </SelectTrigger>
                   <SelectContent>
                     {topOptions.map(n => (
-                      <SelectItem key={n} value={n.toString()}>
-                        Top {n}
-                      </SelectItem>
+                      <SelectItem key={n} value={n.toString()}>Top {n}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
-
-            <div className="modern-card bg-primary/5 p-3">
-              <p className="text-sm text-muted-foreground leading-snug">
-                {indicatorDef?.description
-                  ? indicatorDef.description
-                  : selectedIndicator
-                    ? `This visualization shows ${selectedIndicator} data for all areas in ${selectedCity?.name || "the selected city"}. Select an indicator from the dropdown above to explore different metrics.`
-                    : `Select an indicator from the dropdown above to visualize data for ${selectedCity?.name || "the selected city"}.`}
-              </p>
+            <div className="mt-8 p-2">
+              <VisualizeChart
+                areas={areas}
+                indicator={indicatorDef}
+                indicatorValues={indicatorValues}
+                topN={topN}
+              />
             </div>
           </CardContent>
         </Card>
+      )
+      }
 
-        {isLoading && selectedIndicator ? (
-          <div className="flex justify-center py-8">
+      {/* Loader or empty state if no indicator selected */}
+      {
+        isLoading && !selectedIndicator && (
+          <div className="flex justify-center py-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        ) : !selectedIndicator ? (
+        )
+      }
+      {
+        !selectedIndicator && !isLoading && (
           <Card>
-            <CardContent className="h-[400px] flex items-center justify-center">
+            <CardContent className="h-[200px] flex items-center justify-center">
               <p className="text-muted-foreground">Please select an indicator to visualize.</p>
             </CardContent>
           </Card>
-        ) : (
-          <VisualizeChart
-            areas={areas}
-            indicator={indicatorDef}
-            indicatorValues={indicatorValues}
-            topN={topN}
-          />
-        )}
-      </div>
-    </div>
+        )
+      }
+      <DataDisclaimer />
+    </div >
   )
-}
-
-// Helper function to get a human-readable name for the indicator
-function getIndicatorName(indicator: string): string {
-  return indicator.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }

@@ -705,15 +705,36 @@ export default function LeafletMap({
     }
   }, [pointFeatures])
 
-  // Switch map type based on theme
+  // Nuevo efecto para cambiar el tile layer según el theme
   useEffect(() => {
-    if (!theme) return;
-    if (theme === "dark") {
-      setMapType && setMapType("dark")
-    } else if (theme === "light") {
-      setMapType && setMapType("grayscale")
+    const map = mapInstanceRef.current;
+    if (!map || !isMapReady || !theme) return;
+    const L = window.L;
+    if (!L) return;
+
+    // Usa los mismos mapTypes que el selector
+    const selectedMapType = theme === "dark" ? mapTypes.dark : mapTypes.grayscale;
+
+    // Elimina el tile layer anterior si existe
+    if (tileLayerRef.current) {
+      try {
+        map.removeLayer(tileLayerRef.current);
+      } catch (error) {
+        // console.warn("Error removing tile layer on theme change:", error);
+      }
     }
-  }, [theme, setMapType])
+
+    // Añade el nuevo tile layer
+    tileLayerRef.current = L.tileLayer(selectedMapType.url, {
+      attribution: selectedMapType.attribution,
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Asegura que el tile layer está en el fondo
+    if (tileLayerRef.current) {
+      tileLayerRef.current.bringToBack();
+    }
+  }, [theme, isMapReady]);
 
   // Sync polygon highlight with selectedArea from context
   useEffect(() => {

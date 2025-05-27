@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { Header } from "@/components/header"
 import { CitySelector } from "@/components/city-selector"
 import { MapView } from "@/components/map-view"
+import { DataDisclaimer } from "@/components/data-disclaimer"
 
 export default function HomeContent() {
   const [enabled, setEnabled] = useState(true)

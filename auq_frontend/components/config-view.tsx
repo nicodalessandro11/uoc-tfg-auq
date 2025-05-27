@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
 import { getFeatureDefinitions, getCityPointFeatures } from "@/lib/api-service"
-import { getIndicatorDefinitions, clearCache } from "@/lib/supabase-client"
+import { getIndicatorDefinitions, clearCache, getUserConfig, upsertUserConfig } from "@/lib/supabase-client"
 import { Loader2 } from "lucide-react"
 import type { IndicatorDefinition, FeatureDefinition, PointFeature } from "@/lib/api-types"
 import { useRouter, usePathname } from "next/navigation"
@@ -155,6 +155,27 @@ export function ConfigView() {
   })
   const [featureError, setFeatureError] = useState<string | null>(null)
 
+  // Load user config from Supabase on mount
+  useEffect(() => {
+    async function loadUserConfig() {
+      if (!user?.id) return
+      try {
+        const config = await getUserConfig(user.id)
+        if (config?.custom_features) {
+          setEnabledFeatures(config.custom_features)
+          localStorage.setItem('enabledFeatures', JSON.stringify(config.custom_features))
+        }
+        if (config?.custom_indicators) {
+          const disabledIndicators = config.custom_indicators.disabled || []
+          localStorage.setItem('disabledIndicators', JSON.stringify(disabledIndicators))
+        }
+      } catch (error) {
+        console.error('Error loading user config:', error)
+      }
+    }
+    loadUserConfig()
+  }, [user?.id])
+
   // Clean URL on mount (remove query params/hash)
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -249,7 +270,7 @@ export function ConfigView() {
   }
 
   // Handler to prevent disabling all features
-  const handleFeatureToggle = (feature: 'map' | 'compare' | 'visualize', value: boolean) => {
+  const handleFeatureToggle = async (feature: 'map' | 'compare' | 'visualize', value: boolean) => {
     const activeCount = Object.values(enabledFeatures).filter(Boolean).length
     if (!value && activeCount === 1) {
       setFeatureError('At least one feature must be enabled.')
@@ -261,6 +282,17 @@ export function ConfigView() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('enabledFeatures', JSON.stringify(updated))
       window.dispatchEvent(new Event('enabledFeaturesChanged'))
+    }
+    // Save to Supabase
+    if (user?.id) {
+      try {
+        await upsertUserConfig({
+          user_id: user.id,
+          custom_features: updated
+        })
+      } catch (error) {
+        console.error('Error saving user config:', error)
+      }
     }
   }
 
@@ -377,6 +409,7 @@ export function ConfigView() {
 }
 
 function AvailableIndicators() {
+  const { user } = useAuth()
   const [indicatorDefinitions, setIndicatorDefinitions] = useState<IndicatorDefinition[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [disabledIndicators, setDisabledIndicators] = useLocalStorageState<string[]>(
@@ -384,6 +417,22 @@ function AvailableIndicators() {
     []
   )
   const [indicatorError, setIndicatorError] = useState<string | null>(null)
+
+  // Load user config from Supabase on mount
+  useEffect(() => {
+    async function loadUserConfig() {
+      if (!user?.id) return
+      try {
+        const config = await getUserConfig(user.id)
+        if (config?.custom_indicators?.disabled) {
+          setDisabledIndicators(config.custom_indicators.disabled)
+        }
+      } catch (error) {
+        console.error('Error loading user config:', error)
+      }
+    }
+    loadUserConfig()
+  }, [user?.id])
 
   const loadIndicators = async () => {
     setIsLoading(true)
@@ -402,7 +451,7 @@ function AvailableIndicators() {
     loadIndicators()
   }, [])
 
-  const handleToggleIndicator = (indicatorName: string) => {
+  const handleToggleIndicator = async (indicatorName: string) => {
     const enabledCount = indicatorDefinitions.length - disabledIndicators.length
     const isDisabling = !disabledIndicators.includes(indicatorName)
     if (isDisabling && enabledCount === 1) {
@@ -415,6 +464,20 @@ function AvailableIndicators() {
       : [...disabledIndicators, indicatorName]
     setDisabledIndicators(newDisabled)
     clearCache()
+
+    // Save to Supabase
+    if (user?.id) {
+      try {
+        await upsertUserConfig({
+          user_id: user.id,
+          custom_indicators: {
+            disabled: newDisabled
+          }
+        })
+      } catch (error) {
+        console.error('Error saving user config:', error)
+      }
+    }
   }
 
   return (

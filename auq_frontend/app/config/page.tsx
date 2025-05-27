@@ -8,7 +8,7 @@ import { LoginModal } from "@/components/login-modal"
 import { useAuth } from "@/contexts/auth-context"
 import { Loader2 } from "lucide-react"
 
-export default function AdminPage() {
+export default function ConfigPage() {
   const { isAuthenticated, isLoading } = useAuth()
   const [showLoginModal, setShowLoginModal] = useState(false)
 
@@ -31,8 +31,8 @@ export default function AdminPage() {
           ) : (
             <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center">
               <div className="text-center">
-                <h1 className="text-2xl font-bold mb-2">Admin Access Required</h1>
-                <p className="text-muted-foreground mb-4">You need to be logged in to access the admin dashboard.</p>
+                <h1 className="text-2xl font-bold mb-2">Login Required</h1>
+                <p className="text-muted-foreground mb-4">Please log in to access your configuration settings.</p>
                 <button
                   onClick={() => setShowLoginModal(true)}
                   className="px-4 py-2 bg-primary text-primary-foreground rounded-md"

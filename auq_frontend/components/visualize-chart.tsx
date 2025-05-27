@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, TooltipProps } from "recharts"
 import type { Area, IndicatorDefinition } from "@/lib/api-types"
 
 interface VisualizeChartProps {
@@ -12,12 +12,32 @@ interface VisualizeChartProps {
     topN: number
 }
 
+const truncateName = (name: string, maxLength: number = 15) => {
+    return name.length > maxLength ? `${name.substring(0, maxLength)}...` : name
+}
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+    if (active && payload && payload.length) {
+        const area = payload[0].payload
+        return (
+            <div className="bg-white p-3 border rounded-lg shadow-lg">
+                <p className="font-bold">{area.name}</p>
+                <p className="text-sm text-muted-foreground">
+                    {payload[0].value?.toLocaleString()} {payload[0].unit || ''}
+                </p>
+            </div>
+        )
+    }
+    return null
+}
+
 export function VisualizeChart({ areas, indicator, indicatorValues, topN }: VisualizeChartProps) {
     // Ordenar áreas por valor del indicador y tomar el top N
     const sorted = React.useMemo(() => {
         return areas
             .map(area => ({
                 ...area,
+                displayName: truncateName(area.name),
                 value: indicatorValues[area.id] ?? 0
             }))
             .sort((a, b) => b.value - a.value)
@@ -32,19 +52,30 @@ export function VisualizeChart({ areas, indicator, indicatorValues, topN }: Visu
 
     return (
         <Card>
-            <CardHeader className="pb-2">
-                <CardTitle className="text-lg text-center">
-                    Top {topN} areas by {indicator.name}
-                </CardTitle>
-            </CardHeader>
             <CardContent>
-                <div className="h-[320px] w-full">
+                <div className="h-[400px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={sorted} margin={{ top: 10, right: 20, bottom: 10, left: 20 }} barGap={6} barCategoryGap={20}>
-                            <XAxis dataKey="name" tick={{ fontSize: 13, fontWeight: 'bold' }} interval={0} angle={0} textAnchor="middle" height={40} />
-                            <YAxis tickFormatter={formatValue} tick={{ fontSize: 12 }} width={60} />
-                            <Tooltip formatter={formatValue} labelFormatter={name => name} />
-                            <Bar dataKey="value" fill="#2563eb" radius={[4, 4, 0, 0]} label={{ position: 'top', formatter: formatValue, style: { fontSize: '12px', fill: '#666' } }} />
+                            <XAxis
+                                dataKey="displayName"
+                                tick={{ fontSize: 13, fontWeight: 'bold' }}
+                                interval={0}
+                                angle={-45}
+                                textAnchor="end"
+                                height={80}
+                            />
+                            <YAxis hide={true} />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Bar
+                                dataKey="value"
+                                fill="#2563eb"
+                                radius={[4, 4, 0, 0]}
+                                label={{
+                                    position: 'top',
+                                    formatter: formatValue,
+                                    style: { fontSize: '12px', fill: '#222', fontWeight: 'bold' }
+                                }}
+                            />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

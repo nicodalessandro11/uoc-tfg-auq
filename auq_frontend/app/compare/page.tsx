@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { Header } from "@/components/header"
 import { CitySelector } from "@/components/city-selector"
 import { CompareView } from "@/components/compare-view"
+import { DataDisclaimer } from "@/components/data-disclaimer"
 
 export default function ComparePage() {
   const [enabled, setEnabled] = useState(true)
@@ -34,6 +35,7 @@ export default function ComparePage() {
       <main className="flex-1">
         <CompareView />
       </main>
+      <DataDisclaimer />
     </div>
   )
 }

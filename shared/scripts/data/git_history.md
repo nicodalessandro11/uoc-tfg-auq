@@ -1,5 +1,14 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 🗃️ DB | 2025-05-27 | Update database schema and frontend components
+
+- Modified and added new migrations in auq_database/migrations and auq_frontend/supabase/migrations
+- Updated schema.sql in both auq_database and auq_frontend/supabase for database consistency
+- Updated various frontend components in auq_frontend/components for better user interface
+- Modified pages in auq_frontend/app for improved navigation and configuration
+
+This commit aims to enhance the user experience by providing a more intuitive interface and ensuring data consistency across the application. The database schema has been updated to include new views, and the frontend components have been refined for better visualization and interaction. The changes also include an added data disclaimer component, emphasizing transparency in data usage.
+
 ## 📦 Feature | 2025-05-27 | Added user event logging and profile creation on signup
 
 - Created new profile on user signup in `auq_database/migrations/015_create_profile_on_signup.sql`

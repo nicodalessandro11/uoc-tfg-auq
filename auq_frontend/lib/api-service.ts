@@ -321,3 +321,29 @@ export async function upsertProfile(profile: { user_id: string; is_admin?: boole
     throw new Error("API fallback not implemented for upsertProfile")
   }
 }
+
+/**
+ * Get time series (all years) for an indicator in a specific area and level
+ */
+export async function getIndicatorTimeSeries(areaId: number, indicatorId: number, level: string, cityId: number) {
+  return getCachedData(`time_series_${areaId}_${indicatorId}_${level}_${cityId}`, async () => {
+    if (!USE_SUPABASE || !supabase) {
+      throw new Error("Supabase client not available or disabled")
+    }
+
+    const geoLevelId = level === "district" ? 2 : level === "neighborhood" || level === "neighbourhood" ? 3 : level === "city" ? 1 : null;
+    if (geoLevelId === null) throw new Error("Invalid geographical level");
+
+    const { data, error } = await supabase
+      .from("time_series_indicators_view")
+      .select("year, value")
+      .eq("geo_id", areaId)
+      .eq("indicator_def_id", indicatorId)
+      .eq("geo_level_id", geoLevelId)
+      .eq("city_id", cityId)
+      .order("year", { ascending: true });
+
+    if (error) throw error;
+    return data;
+  });
+}

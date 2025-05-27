@@ -33,6 +33,15 @@ function useEnabledFeatures() {
   return enabledFeatures
 }
 
+function VerticalSeparator() {
+  return (
+    <div className="flex items-center justify-center">
+      <div className="h-5 w-[1.5px] mx-2 bg-white/60" />
+    </div>
+  )
+}
+
+
 function AuthSkeleton() {
   const [width, setWidth] = useState(120)
   const measureRef = useRef<HTMLDivElement>(null)
@@ -43,6 +52,7 @@ function AuthSkeleton() {
       setWidth(actualWidth)
     }
   }, [])
+
 
   return (
     <div className="flex items-center gap-2 ml-2">
@@ -123,12 +133,16 @@ export function Header() {
 
         {/* RIGHT */}
         <div className="flex items-center gap-4 ml-auto">
-          {/* Navigation Links - Hidden on mobile */}
+          {/* Navigation Links */}
           <div className="hidden md:flex items-center ml-8 space-x-1">
             <ModeToggle />
+
+
+            <VerticalSeparator />
+
             {enabledFeatures.map && (
               <Link href={`/${queryString ? "?" + queryString : ""}`}>
-                <Button variant="ghost" className={`text-primary-foreground ${pathname === "/" ? "bg-white/10" : ""}`}>
+                <Button variant="ghost" size="header" className={`text-primary-foreground ${pathname === "/" ? "bg-white/10" : ""}`}>
                   <MapPin className="mr-2 h-5 w-5" />
                   Map
                 </Button>
@@ -140,7 +154,7 @@ export function Header() {
                   variant="ghost"
                   className={`text-primary-foreground ${pathname === "/compare" ? "bg-white/10" : ""}`}
                 >
-                  <Diff strokeWidth={2} className="mr-2 h-5 w-5" />
+                  <Diff strokeWidth={2} className="h-5 w-5" />
                   Compare
                 </Button>
               </Link>
@@ -151,7 +165,7 @@ export function Header() {
                   variant="ghost"
                   className={`text-primary-foreground ${pathname === "/visualize" ? "bg-white/10" : ""}`}
                 >
-                  <BarChart2 strokeWidth={3} className="mr-2 h-5 w-5" />
+                  <BarChart2 strokeWidth={3} className="h-5 w-5" />
                   Visualize
                 </Button>
               </Link>
@@ -162,7 +176,7 @@ export function Header() {
                   variant="ghost"
                   className={`text-primary-foreground ${pathname === "/admin" ? "bg-white/10" : ""}`}
                 >
-                  <Settings strokeWidth={2} className="mr-2 h-5 w-5" />
+                  {/* <Settings strokeWidth={2} className="mr-2 h-5 w-5" /> */}
                   Admin
                 </Button>
               </Link>
@@ -170,47 +184,8 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
-        <div className="md:hidden ml-auto mr-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="text-primary-foreground">
-                Navigate
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="z-[2147483647] fixed">
-              {enabledFeatures.map && (
-                <Link href={`/${queryString ? "?" + queryString : ""}`}>
-                  <DropdownMenuItem className="cursor-pointer">Map</DropdownMenuItem>
-                </Link>
-              )}
-              {enabledFeatures.compare && (
-                <Link href={`/compare${queryString ? "?" + queryString : ""}`}>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Diff className="mr-2 h-4 w-4" />
-                    Compare
-                  </DropdownMenuItem>
-                </Link>
-              )}
-              {enabledFeatures.visualize && (
-                <Link href={`/visualize${queryString ? "?" + queryString : ""}`}>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <BarChart2 className="mr-2 h-4 w-4" />
-                    Visualize
-                  </DropdownMenuItem>
-                </Link>
-              )}
-              {user?.is_admin && (
-                <Link href={`/admin${queryString ? "?" + queryString : ""}`}>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Admin
-                  </DropdownMenuItem>
-                </Link>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <VerticalSeparator />
+
 
         {/* Auth Section */}
         <div className="flex items-center gap-4">
@@ -247,7 +222,7 @@ export function Header() {
               </DropdownMenu>
             ) : (
               <div className="flex items-center gap-2 animate-in fade-in duration-200">
-                <Button variant="activeNav" onClick={() => setShowLoginModal(true)}>Sign In</Button>
+                <Button variant="activeNav" className="text-[0.8rem]" size="header" onClick={() => setShowLoginModal(true)}>Sign In</Button>
                 <UserLoginModal
                   isOpen={showLoginModal}
                   onClose={() => setShowLoginModal(false)}
@@ -260,7 +235,7 @@ export function Header() {
                   onSubmit={handleLoginSubmit}
                 />
                 <Link href="/signup" target="_blank" rel="noopener noreferrer">
-                  <Button variant="secondary">Sign Up</Button>
+                  <Button variant="secondary" size="header" className="text-[0.8rem]">Sign Up</Button>
                 </Link>
               </div>
             )}
