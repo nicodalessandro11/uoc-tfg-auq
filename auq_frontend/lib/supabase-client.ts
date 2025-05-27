@@ -22,7 +22,7 @@ let supabaseInstance: ReturnType<typeof createClient> | null = null
 export const supabase = (() => {
   if (!supabaseInstance && SUPABASE_URL && SUPABASE_KEY) {
     supabaseInstance = createClient(SUPABASE_URL, SUPABASE_KEY)
-    // console.log("Supabase client initialized")
+    console.log("Supabase client initialized")
   }
   return supabaseInstance
 })()
@@ -706,4 +706,85 @@ export async function fetchIndicators(cityId: number, level: string): Promise<In
   setCachedData(cacheKey, transformedData)
 
   return transformedData
+}
+
+/**
+ * Insert a user event (for analytics)
+ */
+export async function insertUserEvent(event: { user_id: string; event_type: string; event_details?: any }): Promise<void> {
+  if (!USE_SUPABASE || !supabase) throw new Error("Supabase client not available or disabled")
+  const { error } = await supabase.from("user_events").insert([event])
+  if (error) throw new Error(`Error inserting user event: ${error.message}`)
+}
+
+/**
+ * Get user events (optionally filter by user_id, event_type, limit)
+ */
+export async function getUserEvents({ user_id, event_type, limit = 100 }: { user_id?: string; event_type?: string; limit?: number }): Promise<any[]> {
+  if (!USE_SUPABASE || !supabase) throw new Error("Supabase client not available or disabled")
+  let query = supabase.from("user_events").select("*")
+  if (user_id) query = query.eq("user_id", user_id)
+  if (event_type) query = query.eq("event_type", event_type)
+  if (limit) query = query.limit(limit)
+  const { data, error } = await query.order("created_at", { ascending: false })
+  if (error) throw new Error(`Error fetching user events: ${error.message}`)
+  return data || []
+}
+
+/**
+ * Get user config by user_id
+ */
+export async function getUserConfig(user_id: string): Promise<any | null> {
+  if (!USE_SUPABASE || !supabase) throw new Error("Supabase client not available or disabled")
+  const { data, error } = await supabase.from("user_config").select("*").eq("user_id", user_id).single()
+  if (error && error.code !== 'PGRST116') throw new Error(`Error fetching user config: ${error.message}`)
+  return data || null
+}
+
+/**
+ * Upsert user config (by user_id)
+ */
+export async function upsertUserConfig(config: { user_id: string; custom_features?: any; custom_indicators?: any; other_prefs?: any }): Promise<void> {
+  if (!USE_SUPABASE || !supabase) throw new Error("Supabase client not available or disabled")
+  const { error } = await supabase.from("user_config").upsert([config], { onConflict: "user_id" })
+  if (error) throw new Error(`Error upserting user config: ${error.message}`)
+}
+
+/**
+ * Get profile by user_id
+ */
+export async function getProfile(user_id: string): Promise<any | null> {
+  if (!USE_SUPABASE || !supabase) throw new Error("Supabase client not available or disabled")
+  const { data, error } = await supabase.from("profiles").select("*").eq("user_id", user_id).single()
+  if (error && error.code !== 'PGRST116') throw new Error(`Error fetching profile: ${error.message}`)
+  return data || null
+}
+
+/**
+ * Upsert profile (by user_id)
+ */
+export async function upsertProfile(profile: { user_id: string; is_admin?: boolean; display_name?: string }): Promise<void> {
+  if (!USE_SUPABASE || !supabase) throw new Error("Supabase client not available or disabled")
+  const { error } = await supabase.from("profiles").upsert([profile], { onConflict: "user_id" })
+  if (error) throw new Error(`Error upserting profile: ${error.message}`)
+}
+
+/**
+ * Get user profile by user_id (from 'profiles' table)
+ */
+export async function getUserProfile(user_id: string): Promise<{ display_name?: string; is_admin?: boolean } | null> {
+  if (!USE_SUPABASE || !supabase) throw new Error("Supabase client not available or disabled")
+  console.log("[getUserProfile] CONSULTING profiles with user_id:", user_id)
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("display_name, is_admin")
+    .eq("user_id", user_id)
+    .single()
+  console.log("[getUserProfile] RESULT for user_id:", user_id, "data:", data, "error:", error)
+  if (error && error.code !== 'PGRST116') throw new Error(`Error fetching user profile: ${error.message}`)
+  if (!data) return null
+  return {
+    display_name: typeof data.display_name === "string" ? data.display_name : undefined,
+    is_admin: typeof data.is_admin === "boolean" ? data.is_admin : undefined,
+  }
 }

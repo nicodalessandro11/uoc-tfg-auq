@@ -1,16 +1,21 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-import { createClient, type SupabaseClient } from "@supabase/supabase-js"
+import { type SupabaseClient, type User as SupabaseUser } from "@supabase/supabase-js"
+import { supabase, getUserProfile } from "@/lib/supabase-client"
 
-// Types for our auth context
-type User = {
+// Extended user type
+export type User = {
   id: string
   email: string
-  name?: string
-  role: string
+  display_name?: string
+  is_admin?: boolean
+  role?: string
 }
 
+/**
+ * Auth context type
+ */
 type AuthContextType = {
   user: User | null
   isLoading: boolean
@@ -18,146 +23,120 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
   logout: () => Promise<void>
   supabase: SupabaseClient | null
+  refreshUser: () => Promise<void>
 }
 
-// Create the context
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-// Mock user for development
-const MOCK_USER: User = {
-  id: "mock-user-id",
-  email: "admin@example.com",
-  name: "Admin User",
-  role: "admin",
-}
-
-// Mock credentials for development
-const MOCK_CREDENTIALS = {
-  email: "admin@example.com",
-  password: "password123",
-}
-
-// Environment flag to determine if we're using mock data
-const USE_MOCK_AUTH = true
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [supabase, setSupabase] = useState<SupabaseClient | null>(null)
 
-  // Initialize Supabase client
+  // Initialize auth state and listen for changes
   useEffect(() => {
-    try {
-      // Initialize the Supabase client
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
-      // Handle both possible environment variable names (full and truncated)
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-
-      if (supabaseUrl && supabaseKey && !USE_MOCK_AUTH) {
-        const client = createClient(supabaseUrl, supabaseKey)
-        setSupabase(client)
-
-        // Check for existing session
-        const checkSession = async () => {
-          const { data } = await client.auth.getSession()
-          if (data.session) {
-            const { data: userData } = await client.auth.getUser()
-            if (userData.user) {
-              setUser({
-                id: userData.user.id,
-                email: userData.user.email || "",
-                role: "admin", // You would get this from your user metadata or a separate query
-              })
-            }
-          }
-          setIsLoading(false)
-        }
-
-        checkSession()
-      } else {
-        // Using mock auth
-        // Check if we have a mock session in localStorage
-        const mockSession = localStorage.getItem("mockAuthSession")
-        if (mockSession === "authenticated") {
-          setUser(MOCK_USER)
-        }
-        setIsLoading(false)
-      }
-    } catch (error) {
-      console.error("Error initializing auth:", error)
+    if (!supabase) {
       setIsLoading(false)
+      return
+    }
+    // Listen for auth state changes
+    const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!supabase) return;
+      if (session?.user) {
+        const profile = await getUserProfile(session.user.id)
+        setUser({
+          id: session.user.id,
+          email: session.user.email || "",
+          display_name: profile?.display_name,
+          is_admin: profile?.is_admin,
+        })
+      } else {
+        setUser(null)
+      }
+    })
+
+    // Check for existing session on mount
+    const checkSession = async () => {
+      if (!supabase) {
+        setIsLoading(false)
+        return
+      }
+      const { data } = await supabase.auth.getSession()
+      if (data.session && data.session.user) {
+        const profile = await getUserProfile(data.session.user.id)
+        setUser({
+          id: data.session.user.id,
+          email: data.session.user.email || "",
+          display_name: profile?.display_name,
+          is_admin: profile?.is_admin,
+        })
+      } else {
+        setUser(null)
+      }
+      setIsLoading(false)
+    }
+    checkSession()
+    return () => {
+      listener?.subscription.unsubscribe()
     }
   }, [])
 
-  // Login function
+  /**
+   * Login with email and password
+   */
   const login = async (email: string, password: string) => {
     setIsLoading(true)
-
+    if (!supabase) return { success: false, error: "Supabase not initialized" }
     try {
-      if (USE_MOCK_AUTH) {
-        // Mock authentication
-        await new Promise((resolve) => setTimeout(resolve, 800)) // Simulate API delay
-
-        if (email === MOCK_CREDENTIALS.email && password === MOCK_CREDENTIALS.password) {
-          setUser(MOCK_USER)
-          localStorage.setItem("mockAuthSession", "authenticated")
-          setIsLoading(false)
-          return { success: true }
-        } else {
-          setIsLoading(false)
-          return { success: false, error: "Invalid email or password" }
-        }
-      } else if (supabase) {
-        // Real Supabase authentication
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-
-        if (error) {
-          setIsLoading(false)
-          return { success: false, error: error.message }
-        }
-
-        if (data.user) {
-          setUser({
-            id: data.user.id,
-            email: data.user.email || "",
-            role: "admin", // You would get this from your user metadata or a separate query
-          })
-          setIsLoading(false)
-          return { success: true }
-        }
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        setIsLoading(false)
+        return { success: false, error: error.message }
       }
-
+      if (data.user) {
+        const profile = await getUserProfile(data.user.id)
+        setUser({
+          id: data.user.id,
+          email: data.user.email || "",
+          display_name: profile?.display_name,
+          is_admin: profile?.is_admin,
+        })
+        setIsLoading(false)
+        return { success: true }
+      }
       setIsLoading(false)
       return { success: false, error: "Authentication failed" }
-    } catch (error) {
-      console.error("Login error:", error)
+    } catch (error: any) {
       setIsLoading(false)
-      return { success: false, error: "An unexpected error occurred" }
+      return { success: false, error: error.message || "An unexpected error occurred" }
     }
   }
 
-  // Logout function
+  /**
+   * Logout
+   */
   const logout = async () => {
     setIsLoading(true)
+    if (supabase) {
+      await supabase.auth.signOut()
+      setUser(null)
+    }
+    setIsLoading(false)
+  }
 
-    try {
-      if (USE_MOCK_AUTH) {
-        // Mock logout
-        await new Promise((resolve) => setTimeout(resolve, 500)) // Simulate API delay
-        localStorage.removeItem("mockAuthSession")
-        setUser(null)
-      } else if (supabase) {
-        // Real Supabase logout
-        await supabase.auth.signOut()
-        setUser(null)
-      }
-    } catch (error) {
-      console.error("Logout error:", error)
-    } finally {
-      setIsLoading(false)
+  /**
+   * Refresh the user profile and update context
+   */
+  const refreshUser = async () => {
+    if (!supabase) return
+    const { data } = await supabase.auth.getSession()
+    if (data.session && data.session.user) {
+      const profile = await getUserProfile(data.session.user.id)
+      setUser({
+        id: data.session.user.id,
+        email: data.session.user.email || "",
+        display_name: profile?.display_name,
+        is_admin: profile?.is_admin,
+      })
     }
   }
 
@@ -170,6 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         supabase,
+        refreshUser,
       }}
     >
       {children}

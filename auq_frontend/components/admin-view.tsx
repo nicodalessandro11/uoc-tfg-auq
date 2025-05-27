@@ -73,6 +73,75 @@ function useAdminLeaveModal() {
   return useContext(AdminLeaveModalContext)
 }
 
+function AvailablePointFeatures() {
+  const [featureDefs, setFeatureDefs] = useState<FeatureDefinition[]>([])
+  const [barcelonaFeatures, setBarcelonaFeatures] = useState<PointFeature[]>([])
+  const [madridFeatures, setMadridFeatures] = useState<PointFeature[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true)
+      const [defs, bcn, mad] = await Promise.all([
+        getFeatureDefinitions(),
+        getCityPointFeatures(1), // Barcelona
+        getCityPointFeatures(2), // Madrid
+      ])
+      setFeatureDefs(defs)
+      setBarcelonaFeatures(bcn)
+      setMadridFeatures(mad)
+      setIsLoading(false)
+    }
+    fetchData()
+  }, [])
+
+  function isAvailableInCity(defId: number, features: PointFeature[]) {
+    return features.some(f => f.feature_definition_id === defId)
+  }
+
+  return (
+    <div className="space-y-4 pt-4">
+      <h3 className="text-lg font-medium text-primary flex items-center gap-2">
+        <MapPin className="h-5 w-5" />
+        Available Point Features
+      </h3>
+      {isLoading ? (
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left py-2 px-4">Feature</th>
+                <th className="text-left py-2 px-4">Description</th>
+                <th className="text-center py-2 px-4">Available In</th>
+              </tr>
+            </thead>
+            <tbody>
+              {featureDefs.map((def) => (
+                <tr key={def.id} className="border-b">
+                  <td className="py-2 px-4 font-medium">{def.name}</td>
+                  <td className="py-2 px-4 text-sm text-muted-foreground">{def.description}</td>
+                  <td className="py-2 px-4 text-center">
+                    {isAvailableInCity(def.id, barcelonaFeatures) && (
+                      <Badge variant="outline" className="text-xs mr-1">Barcelona</Badge>
+                    )}
+                    {isAvailableInCity(def.id, madridFeatures) && (
+                      <Badge variant="outline" className="text-xs">Madrid</Badge>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function AdminView() {
   const [activeTab, setActiveTab] = useState("datasets")
   const { user, logout } = useAuth()
@@ -83,6 +152,16 @@ export function AdminView() {
   const pathname = usePathname()
   const [showLeaveModal, setShowLeaveModal] = useState(false)
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null)
+
+  // Feature toggles for Available Features
+  const [enabledFeatures, setEnabledFeatures] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('enabledFeatures')
+      if (stored) return JSON.parse(stored)
+    }
+    return { map: true, compare: true, visualize: true }
+  })
+  const [featureError, setFeatureError] = useState<string | null>(null)
 
   // Clean URL on mount (remove query params/hash)
   useEffect(() => {
@@ -200,6 +279,22 @@ export function AdminView() {
     await logout()
   }
 
+  // Handler to prevent disabling all features
+  const handleFeatureToggle = (feature: 'map' | 'compare' | 'visualize', value: boolean) => {
+    const activeCount = Object.values(enabledFeatures).filter(Boolean).length
+    if (!value && activeCount === 1) {
+      setFeatureError('At least one feature must be enabled.')
+      setTimeout(() => setFeatureError(null), 2000)
+      return
+    }
+    const updated = { ...enabledFeatures, [feature]: value }
+    setEnabledFeatures(updated)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('enabledFeatures', JSON.stringify(updated))
+      window.dispatchEvent(new Event('enabledFeaturesChanged'))
+    }
+  }
+
   return (
     <AdminLeaveModalContext.Provider value={{ showLeaveModal, setShowLeaveModal, setPendingNavigation }}>
       <div id="admin-root" className="container mx-auto py-4 md:py-8 px-4 space-y-6">
@@ -274,20 +369,27 @@ export function AdminView() {
               <TabsContent value="features" className="space-y-6 py-6">
                 <AvailableIndicators />
 
-                <AvailablePointFeatures />
-
                 <div className="space-y-4 pt-4">
-                  <h3 className="text-lg font-medium text-primary flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
-                    Available Features
-                  </h3>
-
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-medium text-primary flex items-center gap-2">
+                      <Settings className="h-5 w-5" />
+                      Available Features
+                    </h3>
+                    <div className="min-h-[20px] ml-4">
+                      {featureError && (
+                        <span className="text-red-500 text-sm">{featureError}</span>
+                      )}
+                    </div>
+                  </div>
                   <div className="modern-card flex items-center justify-between">
                     <div>
                       <p className="font-medium">Map Visualization</p>
                       <p className="text-sm text-muted-foreground">Interactive map with district highlighting</p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch
+                      checked={enabledFeatures.map}
+                      onCheckedChange={v => handleFeatureToggle('map', v)}
+                    />
                   </div>
 
                   <div className="modern-card flex items-center justify-between">
@@ -295,7 +397,10 @@ export function AdminView() {
                       <p className="font-medium">Area Comparison</p>
                       <p className="text-sm text-muted-foreground">Compare indicators between two areas</p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch
+                      checked={enabledFeatures.compare}
+                      onCheckedChange={v => handleFeatureToggle('compare', v)}
+                    />
                   </div>
 
                   <div className="modern-card flex items-center justify-between">
@@ -303,23 +408,28 @@ export function AdminView() {
                       <p className="font-medium">Data Visualization</p>
                       <p className="text-sm text-muted-foreground">Charts and graphs for data analysis</p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch
+                      checked={enabledFeatures.visualize}
+                      onCheckedChange={v => handleFeatureToggle('visualize', v)}
+                    />
                   </div>
 
                   <div className="modern-card flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium">Natural Language Query</p>
-                      <Badge variant="outline" className="text-xs">
-                        Beta
-                      </Badge>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium">Natural Language Query</p>
+                        <Badge variant="outline" className="text-xs">
+                          Beta
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Feature not implemented yet</p>
                     </div>
                     <Switch />
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-4">
-                  <Button className="modern-button">Save Changes</Button>
-                </div>
+                <AvailablePointFeatures />
+
               </TabsContent>
 
               <TabsContent value="analytics" className="space-y-6 py-6">
@@ -387,7 +497,6 @@ export function AdminView() {
                   <Button variant="outline">Export Reports</Button>
                 </div>
               </TabsContent>
-
 
             </Tabs>
           </CardContent>
@@ -478,6 +587,7 @@ function AvailableIndicators() {
     'disabledIndicators',
     []
   )
+  const [indicatorError, setIndicatorError] = useState<string | null>(null)
 
   const loadIndicators = async () => {
     setIsLoading(true)
@@ -497,6 +607,13 @@ function AvailableIndicators() {
   }, [])
 
   const handleToggleIndicator = (indicatorName: string) => {
+    const enabledCount = indicatorDefinitions.length - disabledIndicators.length
+    const isDisabling = !disabledIndicators.includes(indicatorName)
+    if (isDisabling && enabledCount === 1) {
+      setIndicatorError('At least one indicator must be enabled.')
+      setTimeout(() => setIndicatorError(null), 2000)
+      return
+    }
     const newDisabled = disabledIndicators.includes(indicatorName)
       ? disabledIndicators.filter(name => name !== indicatorName)
       : [...disabledIndicators, indicatorName]
@@ -507,10 +624,17 @@ function AvailableIndicators() {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-medium text-primary flex items-center gap-2">
-        <Database className="h-5 w-5" />
-        Available Indicators
-      </h3>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-lg font-medium text-primary flex items-center gap-2">
+          <Database className="h-5 w-5" />
+          Available Indicators
+        </h3>
+        <div className="min-h-[20px] ml-4">
+          {indicatorError && (
+            <span className="text-red-500 text-sm">{indicatorError}</span>
+          )}
+        </div>
+      </div>
       {isLoading ? (
         <div className="flex justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -533,75 +657,6 @@ function AvailableIndicators() {
             </div>
           </div>
         ))
-      )}
-    </div>
-  )
-}
-
-function AvailablePointFeatures() {
-  const [featureDefs, setFeatureDefs] = useState<FeatureDefinition[]>([])
-  const [barcelonaFeatures, setBarcelonaFeatures] = useState<PointFeature[]>([])
-  const [madridFeatures, setMadridFeatures] = useState<PointFeature[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      const [defs, bcn, mad] = await Promise.all([
-        getFeatureDefinitions(),
-        getCityPointFeatures(1), // Barcelona
-        getCityPointFeatures(2), // Madrid
-      ])
-      setFeatureDefs(defs)
-      setBarcelonaFeatures(bcn)
-      setMadridFeatures(mad)
-      setLoading(false)
-    }
-    fetchData()
-  }, [])
-
-  function isAvailableInCity(defId: number, features: PointFeature[]) {
-    return features.some(f => f.feature_definition_id === defId)
-  }
-
-  return (
-    <div className="space-y-4 pt-4">
-      <h3 className="text-lg font-medium text-primary flex items-center gap-2">
-        <MapPin className="h-5 w-5" />
-        Available Point Features
-      </h3>
-      {loading ? (
-        <div className="flex justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-2 px-4">Feature</th>
-                <th className="text-left py-2 px-4">Description</th>
-                <th className="text-center py-2 px-4">Available In</th>
-              </tr>
-            </thead>
-            <tbody>
-              {featureDefs.map((def) => (
-                <tr key={def.id} className="border-b">
-                  <td className="py-2 px-4 font-medium">{def.name}</td>
-                  <td className="py-2 px-4 text-sm text-muted-foreground">{def.description}</td>
-                  <td className="py-2 px-4 text-center">
-                    {isAvailableInCity(def.id, barcelonaFeatures) && (
-                      <Badge variant="outline" className="text-xs mr-1">Barcelona</Badge>
-                    )}
-                    {isAvailableInCity(def.id, madridFeatures) && (
-                      <Badge variant="outline" className="text-xs">Madrid</Badge>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       )}
     </div>
   )

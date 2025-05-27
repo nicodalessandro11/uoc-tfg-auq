@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-27 | Major frontend and database enhancements
+
+- Added new files and modified existing ones in the `auq_frontend` and `auq_database` directories to implement user signup, profile, and authentication features
+- These changes were made to improve user experience and security on the platform
+- Tools involved include Supabase for backend services and TypeScript for frontend development
+
+This commit represents a significant milestone in the development of our platform, establishing key functionalities and setting the stage for future enhancements.
+
 ## 📦 Feature | 2025-05-26 | Enhanced Map Functionality and Supabase Integration
 
 - Updated various map components and context for improved user experience - files affected: admin-view.tsx, city-selector.tsx, leaflet-map.jsx, map-component.tsx, map-view.tsx, map-context.tsx

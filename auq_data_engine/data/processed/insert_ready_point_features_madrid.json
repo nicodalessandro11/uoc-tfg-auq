@@ -41414,7 +41414,7 @@
       "district": "Latina",
       "area": "PuertaAngel",
       "description": "  Metro: Puerta del Ángel (línea 6).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41422,9 +41422,9 @@
   {
     "feature_definition_id": 15,
     "name": "Centro de Salud Casa de Campo",
-    "latitude": 40.42782393254158,
-    "longitude": -3.731494497212358,
-    "geom": "SRID=4326;POINT(-3.731494497212358 40.42782393254158)",
+    "latitude": 40.427830494659894,
+    "longitude": -3.7314860861143333,
+    "geom": "SRID=4326;POINT(-3.7314860861143333 40.427830494659894)",
     "geo_level_id": 3,
     "geo_id": 125,
     "city_id": 2,
@@ -41433,8 +41433,8 @@
       "postal_code": "28008",
       "district": "Moncloa-Aravaca",
       "area": "CasaCampo",
-      "description": "  Bus: 41, 75, 46.  Bicimad: Estación 314 (avenida de Valladolid, 47G, 47).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "description": "  ",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41454,7 +41454,7 @@
       "district": "Salamanca",
       "area": "Recoletos",
       "description": "  Metro: Núñez de Balboa (líneas 5 y 9), Velázquez (línea 4), Lista (línea 4).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41474,7 +41474,7 @@
       "district": "Chamberi",
       "area": "Vallehermoso",
       "description": "  Metro: Canal (líneas 2 y 7).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "C",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41513,8 +41513,8 @@
       "postal_code": "28031",
       "district": "VillaDeVallecas",
       "area": "SantaEugenia",
-      "description": "  Consulta los siguientes enlaces",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "description": "  ",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41534,7 +41534,7 @@
       "district": "Fuencarral-ElPardo",
       "area": "LaPaz",
       "description": "  Metro: Herrera Oria (línea 9).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41554,7 +41554,7 @@
       "district": "Chamartin",
       "area": "CiudadJardin",
       "description": "  Metro: Alfonso XIII (línea 4).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41574,7 +41574,7 @@
       "district": "Carabanchel",
       "area": "Comillas",
       "description": "  Metro: Marqués de Vadillo (línea 5).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41594,7 +41594,7 @@
       "district": "CiudadLineal",
       "area": "Ventas",
       "description": "  Metro: El Carmen (línea 5).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41614,7 +41614,7 @@
       "district": "Arganzuela",
       "area": "PalosFrontera",
       "description": "  Metro: Palos de la Frontera (línea 3).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41634,7 +41634,7 @@
       "district": "Fuencarral-ElPardo",
       "area": "PenaGrande",
       "description": "  Metro: Antonio Machado (línea 7).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41654,7 +41654,7 @@
       "district": "CiudadLineal",
       "area": "PuebloNuevo",
       "description": "  Metro: Ciudad Lineal (línea 5), Pueblo Nuevo (líneas 5 y 7).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41674,7 +41674,7 @@
       "district": "Villaverde",
       "area": "LosRosales",
       "description": "  Metro: Ciudad de los Ángeles (línea 3).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41693,8 +41693,8 @@
       "postal_code": "28048",
       "district": "Fuencarral-ElPardo",
       "area": "ElPardo",
-      "description": "  Consulta los siguientes enlaces:",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "description": "  ",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41714,7 +41714,7 @@
       "district": "Chamberi",
       "area": "Trafalgar",
       "description": "  Metro: Quevedo (línea 2), Iglesia (línea 1).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41734,7 +41734,7 @@
       "district": "Arganzuela",
       "area": "PalosFrontera",
       "description": "  Metro: Embajadores (línea 3), Acacias (línea 5).  Cercanías Renfe: Embajadores (línea C5).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41754,7 +41754,7 @@
       "district": "VillaDeVallecas",
       "area": "EnsancheVallecas",
       "description": "  Metro: Congosto (línea 1).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41774,7 +41774,7 @@
       "district": "PuenteDeVallecas",
       "area": "Entrevias",
       "description": "  Cercanías Renfe: Asamblea de Madrid (líneas C2, C7 y Regional).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41794,7 +41794,7 @@
       "district": "Chamberi",
       "area": "RiosRosas",
       "description": " Este Centro de Salud presta atención continuada como centro de continuidad de cuidados de enfermería de lunes a viernes de 21 a 8 horas y los sábados, domingos y festivos 24 horas. Metro: Ríos Rosas (línea 1), Alonso Cano (línea 7), Gregorio Marañón (líneas 7 y 10).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "Puede consultar más información aquí.",
       "accessibility": "3"
     }
@@ -43334,7 +43334,7 @@
       "district": "Villaverde",
       "area": "VillaverdeAltoCH",
       "description": "  Cercanías Renfe: Puente Alcocer (línea C5).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43354,7 +43354,7 @@
       "district": "Chamartin",
       "area": "Hispanoamerica",
       "description": "  Metro: Colombia (líneas 8 y 9).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43374,7 +43374,7 @@
       "district": "Chamartin",
       "area": "ElViso",
       "description": "  Metro : Avenida de América (líneas 4, 6, 7 y 9).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43394,7 +43394,7 @@
       "district": "Chamartin",
       "area": "Prosperidad",
       "description": "  Metro: Prosperidad (línea 4), Cartagena (línea 7).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43414,7 +43414,7 @@
       "district": "Carabanchel",
       "area": "PuertaBonita",
       "description": "  Metro: Oporto (líneas 5 y 6), Abrantes (línea 11).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43434,7 +43434,7 @@
       "district": "Latina",
       "area": "PuertaAngel",
       "description": "  Metro: Alto de Extremadura (línea 6).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43454,7 +43454,7 @@
       "district": "Carabanchel",
       "area": "SanIsidro",
       "description": "  Metro: Marqués de Vadillo (línea 5).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43494,7 +43494,7 @@
       "district": "Chamberi",
       "area": "Vallehermoso",
       "description": "  Metro: Cuatro Caminos (líneas 1, 2 y 6), Guzmán el Bueno (lineas 6 y 7.",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43513,8 +43513,8 @@
       "postal_code": "28022",
       "district": "SanBlas-Canillejas",
       "area": "Rejas",
-      "description": "  Bus: 77.",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "description": "  ",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43534,7 +43534,7 @@
       "district": "Villaverde",
       "area": "VillaverdeAltoCH",
       "description": "  Metro: Villaverde Alto (línea 3).  Cercanías Renfe: Villaverde Alto (líneas C4, C4b y C5).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43554,7 +43554,7 @@
       "district": "Villaverde",
       "area": "SanCristobal",
       "description": "  Cercanías Renfe: San Cristóbal de Los Ángeles (línea C3).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43594,7 +43594,7 @@
       "district": "Hortaleza",
       "area": "Valdefuentes",
       "description": "  Metro: María Tudor (línea ML1).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43614,7 +43614,7 @@
       "district": "Chamartin",
       "area": "Prosperidad",
       "description": "  Metro: Prosperidad (línea 4), Alfonso XIII (línea 4).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43634,7 +43634,7 @@
       "district": "Centro",
       "area": "Palacio",
       "description": "  Metro: La Latina (línea 5), Tirso de Molina (línea 1).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43654,7 +43654,7 @@
       "district": "Chamartin",
       "area": "ElViso",
       "description": "  Metro: Santiago Bernabéu (línea 10), Concha Espina (línea 9)",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43674,7 +43674,7 @@
       "district": "Hortaleza",
       "area": "Canillas",
       "description": "  Metro: Canillas (línea 4).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43694,7 +43694,7 @@
       "district": "Moratalaz",
       "area": "Vinateros",
       "description": "  Metro: Artilleros (línea 9).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43714,7 +43714,7 @@
       "district": "Vicalvaro",
       "area": "Valdebernardo",
       "description": "  Metro: Valdebernardo (línea 9).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43734,7 +43734,7 @@
       "district": "Moncloa-Aravaca",
       "area": "Valdezarza",
       "description": "  Metro: Valdezarza (línea 7).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43753,8 +43753,8 @@
       "postal_code": "28044",
       "district": "Latina",
       "area": "LasAguilas",
-      "description": "  Consulta los siguientes enlaces.",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "description": "  ",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43774,7 +43774,7 @@
       "district": "Moncloa-Aravaca",
       "area": "Arguelles",
       "description": "  Metro: Ventura Rodríguez (línea 3), Plaza de España (líneas 3 y 10).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43794,7 +43794,7 @@
       "district": "CiudadLineal",
       "area": "Colina",
       "description": "  Metro: Arturo Soria (línea 4).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43829,12 +43829,12 @@
     "geo_id": 185,
     "city_id": 2,
     "properties": {
-      "address": "CALLE FUENTIDUE&amp;Ntilde;A 12",
+      "address": "CALLE FUENTIDUEÑA 12",
       "postal_code": "28031",
       "district": "VillaDeVallecas",
       "area": "CascoHVallecas",
       "description": "  Metro: Congosto (línea 1).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43854,7 +43854,7 @@
       "district": "Tetuan",
       "area": "Berruguete",
       "description": "  Metro: Estrecho (línea 1).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43874,7 +43874,7 @@
       "district": "Vicalvaro",
       "area": "CascoHVicalvaro",
       "description": "  Metro: San Cipriano (línea 9).  Cercanías Renfe: Vicálvaro (líneas C2, C7 y Regional).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43894,7 +43894,7 @@
       "district": "Fuencarral-ElPardo",
       "area": "Valverde",
       "description": "  Metro: Begoña (línea 10).",
-      "services": "Cita previa:    Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }

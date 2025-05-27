@@ -72,13 +72,6 @@ export function CompareView() {
     loadCities()
   }, [])
 
-  // Set default city if not already set
-  useEffect(() => {
-    if (!selectedCity && cities.length > 0) {
-      setSelectedCity(cities[0])
-    }
-  }, [selectedCity, cities, setSelectedCity])
-
   // Load available indicators when city or granularity changes
   useEffect(() => {
     async function loadIndicators() {

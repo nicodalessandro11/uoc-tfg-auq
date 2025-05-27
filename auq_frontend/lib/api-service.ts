@@ -25,6 +25,12 @@ import {
   getGeographicalLevels as getSupabaseGeographicalLevels,
   getGeographicalUnits as getSupabaseGeographicalUnits,
   getEnrichedGeoJSON,
+  insertUserEvent as supabaseInsertUserEvent,
+  getUserEvents as supabaseGetUserEvents,
+  getUserConfig as supabaseGetUserConfig,
+  upsertUserConfig as supabaseUpsertUserConfig,
+  getProfile as supabaseGetProfile,
+  upsertProfile as supabaseUpsertProfile,
 } from "./supabase-client"
 import { supabase } from "./supabase-client"
 
@@ -240,5 +246,78 @@ export function clearApiCacheEntry(key: string, subKey?: string): void {
         // console.log(`API cache cleared for ${cacheKey}`)
       }
     }
+  }
+}
+
+/**
+ * Log a user event (analytics)
+ */
+export async function logUserEvent(event: { user_id: string; event_type: string; event_details?: any }): Promise<void> {
+  if (USE_SUPABASE) {
+    return supabaseInsertUserEvent(event)
+  } else {
+    // Implement API fallback if needed
+    throw new Error("API fallback not implemented for logUserEvent")
+  }
+}
+
+/**
+ * Get user events (optionally filter by user_id, event_type, limit)
+ */
+export async function getUserEvents({ user_id, event_type, limit = 100 }: { user_id?: string; event_type?: string; limit?: number }): Promise<any[]> {
+  return getCachedData(`user_events_${user_id || 'all'}_${event_type || 'all'}_${limit}`, async () => {
+    if (USE_SUPABASE) {
+      return supabaseGetUserEvents({ user_id, event_type, limit })
+    } else {
+      throw new Error("API fallback not implemented for getUserEvents")
+    }
+  })
+}
+
+/**
+ * Get user config by user_id
+ */
+export async function getUserConfig(user_id: string): Promise<any | null> {
+  return getCachedData(`user_config_${user_id}`, async () => {
+    if (USE_SUPABASE) {
+      return supabaseGetUserConfig(user_id)
+    } else {
+      throw new Error("API fallback not implemented for getUserConfig")
+    }
+  })
+}
+
+/**
+ * Upsert user config (by user_id)
+ */
+export async function upsertUserConfig(config: { user_id: string; custom_features?: any; custom_indicators?: any; other_prefs?: any }): Promise<void> {
+  if (USE_SUPABASE) {
+    return supabaseUpsertUserConfig(config)
+  } else {
+    throw new Error("API fallback not implemented for upsertUserConfig")
+  }
+}
+
+/**
+ * Get profile by user_id
+ */
+export async function getProfile(user_id: string): Promise<any | null> {
+  return getCachedData(`profile_${user_id}`, async () => {
+    if (USE_SUPABASE) {
+      return supabaseGetProfile(user_id)
+    } else {
+      throw new Error("API fallback not implemented for getProfile")
+    }
+  })
+}
+
+/**
+ * Upsert profile (by user_id)
+ */
+export async function upsertProfile(profile: { user_id: string; is_admin?: boolean; display_name?: string }): Promise<void> {
+  if (USE_SUPABASE) {
+    return supabaseUpsertProfile(profile)
+  } else {
+    throw new Error("API fallback not implemented for upsertProfile")
   }
 }
