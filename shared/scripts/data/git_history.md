@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-29 | Enhanced Map Visualization 
+
+- Updated various components including filter-panel.tsx, leaflet-map.jsx, map-component.tsx, map-view.tsx, point-features-toggle.tsx, and visualize-view.tsx to improve the map visualization
+- The changes were made to provide a better user experience and to make the map more interactive and user-friendly
+- Technical details: The changes involved updating the map-context.tsx, api-service.ts, api-types.ts, feature-styles.ts, and supabase-client.ts files
+
+This update is a significant step towards our goal of making our application's map feature more robust and interactive. It should greatly improve the user experience and provide users with more control over the map visualization.
+
 ## 📦 Feature | 2025-05-28 | Improved Map Functionality and Added URL Param Cleanup
 
 - Updated various map-related components and layout for better user experience (layout.tsx, city-selector.tsx, compare-view.tsx, filter-panel.tsx, leaflet-map.jsx, map-component.tsx, map-view.tsx, point-features-toggle.tsx)

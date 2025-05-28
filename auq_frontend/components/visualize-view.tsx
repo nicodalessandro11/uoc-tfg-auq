@@ -13,77 +13,64 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList 
 import { DataDisclaimer } from "@/components/data-disclaimer"
 
 export function VisualizeView() {
-  const { selectedCity, selectedGranularity, loadGeoJSON } = useMapContext()
+  const { selectedCity, selectedGranularity, loadGeoJSON, availableIndicators } = useMapContext()
   const [selectedIndicator, setSelectedIndicator] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [areas, setAreas] = useState<Area[]>([])
   const [indicatorValues, setIndicatorValues] = useState<Record<number, number>>({})
-  const [availableIndicators, setAvailableIndicators] = useState<IndicatorDefinition[]>([])
   const [topN, setTopN] = useState(5)
   const [selectedAreaId, setSelectedAreaId] = useState<number | null>(null)
   const [timeSeries, setTimeSeries] = useState<{ year: number, value: number }[]>([])
   const [isLoadingTimeSeries, setIsLoadingTimeSeries] = useState(false)
 
-  // Combined effect to load indicators and areas
+  // Load areas when city or granularity changes
   useEffect(() => {
-    async function loadData() {
+    async function loadAreas() {
       if (!selectedCity || !selectedGranularity) return
-
       setIsLoading(true)
       try {
-        // Load GeoJSON and indicators in parallel
-        const [geoJsonData, definitions, indicators] = await Promise.all([
-          getGeoJSON(selectedCity.id, selectedGranularity.level),
-          getIndicatorDefinitions(),
-          getCityIndicators(selectedCity.id, selectedGranularity.level)
-        ])
-
-        // Process GeoJSON data
-        if (geoJsonData?.features) {
-          const formattedAreas: Area[] = geoJsonData.features.map((feature: any) => ({
-            id: feature.properties.id,
-            name: feature.properties.name,
-            cityId: feature.properties.city_id,
-            city_id: feature.properties.city_id,
-            district_id: feature.properties.district_id,
-            population: feature.properties.population || 0,
-            avgIncome: feature.properties.avg_income || 0,
-            surface: feature.properties.surface || 0,
-            disposableIncome: feature.properties.disposable_income || 0,
-          }))
-          setAreas(formattedAreas)
-        }
-
-        // Process indicators
-        const availableDefinitions = definitions.filter(def =>
-          indicators.some(ind => ind.indicator_def_id === def.id)
-        )
-        setAvailableIndicators(availableDefinitions)
-
-        // Reset selected indicator if no longer available
-        if (selectedIndicator && !availableDefinitions.some(def => def.name === selectedIndicator)) {
-          setSelectedIndicator('')
-        }
+        const geoJsonData = await loadGeoJSON(selectedCity.id, selectedGranularity.level)
+        // If loadGeoJSON returns nothing, try to get from context
+        // (Assume context updates currentGeoJSON)
       } catch (error) {
-        console.error('Error loading data:', error)
+        console.error('Error loading areas:', error)
       } finally {
         setIsLoading(false)
       }
     }
+    loadAreas()
+  }, [selectedCity, selectedGranularity, loadGeoJSON])
 
-    loadData()
-  }, [selectedCity, selectedGranularity])
+  // Update areas from context's currentGeoJSON
+  const { currentGeoJSON } = useMapContext()
+  useEffect(() => {
+    if (currentGeoJSON?.features) {
+      const formattedAreas: Area[] = currentGeoJSON.features.map((feature: any) => ({
+        id: feature.properties.id,
+        name: feature.properties.name,
+        cityId: feature.properties.city_id,
+        city_id: feature.properties.city_id,
+        district_id: feature.properties.district_id,
+        population: feature.properties.population || 0,
+        avgIncome: feature.properties.avg_income || 0,
+        surface: feature.properties.surface || 0,
+        disposableIncome: feature.properties.disposable_income || 0,
+      }))
+      setAreas(formattedAreas)
+    } else {
+      setAreas([])
+    }
+  }, [currentGeoJSON])
 
   // Load indicator values when selection changes
   useEffect(() => {
     async function loadValues() {
       if (!selectedCity || !selectedGranularity || !selectedIndicator) return
-
       setIsLoading(true)
       try {
         const indicatorDef = availableIndicators.find(def => def.name === selectedIndicator)
         if (!indicatorDef) return
-
+        // Fetch values for this indicator and all areas
         const indicators = await getCityIndicators(selectedCity.id, selectedGranularity.level)
         const values: Record<number, number> = {}
         indicators.forEach(ind => {
@@ -186,14 +173,22 @@ export function VisualizeView() {
               <h2 className="text-xl font-bold text-primary mb-2"><u>Viz Option 1:</u> View Indicator Evolution Over Time [for a specific {selectedGranularity?.level === "district" ? "district" : "neighborhood"}]</h2>
               <div className="flex flex-col md:flex-row gap-4 items-end">
                 <div className="flex-1">
-                  <Select value={selectedAreaId?.toString() || ""} onValueChange={v => setSelectedAreaId(Number(v))}>
+                  <Select
+                    value={selectedAreaId?.toString() || ""}
+                    onValueChange={v => setSelectedAreaId(Number(v))}
+                    disabled={areas.length === 0 || !selectedGranularity}
+                  >
                     <SelectTrigger className="modern-input border-primary text-black dark:text-white focus:ring-primary focus:border-primary h-10 text-sm">
-                      <SelectValue placeholder="Select an area..." />
+                      <SelectValue placeholder="Select area..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {areaOptions.map(opt => (
-                        <SelectItem key={opt.value} value={opt.value.toString()}>{opt.label}</SelectItem>
-                      ))}
+                      {areas.length === 0 || !selectedGranularity ? (
+                        <SelectItem disabled value="select">Select option...</SelectItem>
+                      ) : (
+                        areaOptions.map(opt => (
+                          <SelectItem key={opt.value} value={opt.value.toString()}>{opt.label}</SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -260,30 +255,41 @@ export function VisualizeView() {
             <div className="flex flex-row md:justify-between md:items-end md:items-end gap-4 mb-2">
               <h2 className="text-xl font-bold text-primary mb-2"><u>Viz Option 2:</u> Explore Top areas for the selected indicator [across all {selectedGranularity?.level === "district" ? "districts" : "neighborhoods"}]</h2>
               <div className="w-32">
-                <Select value={topN.toString()} onValueChange={v => setTopN(Number(v))}>
+                <Select
+                  value={topN.toString()}
+                  onValueChange={v => setTopN(Number(v))}
+                  disabled={areas.length === 0 || !selectedGranularity}
+                >
                   <SelectTrigger className="modern-input border-primary text-black dark:text-white focus:ring-primary focus:border-primary h-10 text-sm">
                     <SelectValue placeholder="Top N" />
                   </SelectTrigger>
                   <SelectContent>
-                    {topOptions.map(n => (
-                      <SelectItem key={n} value={n.toString()}>Top {n}</SelectItem>
-                    ))}
+                    {areas.length === 0 || !selectedGranularity ? (
+                      <SelectItem disabled value="select">Select option...</SelectItem>
+                    ) : (
+                      topOptions.map(n => (
+                        <SelectItem key={n} value={n.toString()}>Top {n}</SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="mt-8 p-2">
-              <VisualizeChart
-                areas={areas}
-                indicator={indicatorDef}
-                indicatorValues={indicatorValues}
-                topN={topN}
-              />
+              {areas.length === 0 || !selectedGranularity ? (
+                <div className="text-muted-foreground text-center py-8 text-base">Select an area to visualize...</div>
+              ) : (
+                <VisualizeChart
+                  areas={areas}
+                  indicator={indicatorDef}
+                  indicatorValues={indicatorValues}
+                  topN={topN}
+                />
+              )}
             </div>
           </CardContent>
         </Card>
-      )
-      }
+      )}
 
       {/* Loader or empty state if no indicator selected */}
       {

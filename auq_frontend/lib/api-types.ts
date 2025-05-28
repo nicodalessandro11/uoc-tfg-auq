@@ -56,6 +56,7 @@ export interface Indicator {
   year: number
   value: number
   created_at?: string
+  indicator_name: string
 }
 
 export interface FeatureDefinition {

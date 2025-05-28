@@ -367,3 +367,5 @@ export async function getIndicatorTimeSeries(areaId: number, indicatorId: number
     return data;
   });
 }
+
+export { getDistrictPolygons, getNeighborhoodPolygons }

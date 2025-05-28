@@ -477,7 +477,10 @@ export async function getCityIndicators(cityId: number, level: string, year?: nu
         geo_id: Number(item.geo_id),
         year: Number(item.year),
         value: Number(item.value),
-        created_at: item.created_at
+        created_at: item.created_at,
+        indicator_name: typeof item.indicator_name === 'string' ? item.indicator_name : '',
+        unit: typeof item.unit === 'string' ? item.unit : '',
+        category: typeof item.category === 'string' ? item.category : ''
       }))
     } catch (error) {
       throw error
@@ -627,9 +630,12 @@ export async function getEnrichedGeoJSON(cityId: number, level: string): Promise
           .order("id")
 
         const { data, error } = await query
+        console.log(`[getEnrichedGeoJSON] Supabase response for city ${cityId}, level ${level}:`, { data, error })
+        
         if (error) throw error
 
         if (!data || data.length === 0) {
+          console.log(`[getEnrichedGeoJSON] No data found for city ${cityId}, level ${level}`)
           return {
             type: "FeatureCollection",
             features: [],
@@ -654,11 +660,14 @@ export async function getEnrichedGeoJSON(cityId: number, level: string): Promise
           geometry: item.geometry
         }))
 
-        return {
+        const result = {
           type: "FeatureCollection",
           features,
           properties: {}
         }
+        
+        console.log(`[getEnrichedGeoJSON] Transformed data for city ${cityId}, level ${level}:`, result)
+        return result
       } finally {
         // Clean up the in-flight request
         inFlightRequests.delete(cacheKey)

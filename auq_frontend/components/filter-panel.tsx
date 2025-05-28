@@ -7,7 +7,6 @@ import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { useMapContext } from "@/contexts/map-context"
 import { RefreshCw } from "lucide-react"
-import type { DynamicFilter } from "@/lib/api-types"
 
 export function FilterPanel() {
   const {

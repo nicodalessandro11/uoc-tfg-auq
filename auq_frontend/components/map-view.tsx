@@ -93,9 +93,19 @@ export function MapView() {
     const areaParam = searchParams.get("area")
     const levelParam = searchParams.get("level")
 
-    // Always clear selectedArea if areaParam is null
-    if (!areaParam && selectedArea) {
-      setSelectedArea(null)
+    // Clear selectedArea if:
+    // 1. areaParam is null
+    // 2. levelParam doesn't match current granularity
+    if (!areaParam || levelParam !== selectedGranularity?.level) {
+      if (selectedArea) {
+        setSelectedArea(null)
+      }
+      // Remove area param from URL if it exists
+      if (areaParam) {
+        const params = new URLSearchParams(window.location.search)
+        params.delete("area")
+        router.push(`?${params.toString()}`, { scroll: false })
+      }
       return
     }
 
@@ -103,12 +113,7 @@ export function MapView() {
     // - areaParam exists
     // - levelParam matches current granularity
     // - area is valid for the current availableAreas
-    // - selectedArea is not already set to this area
-    // - areaParam was not just cleared due to a granularity change
-    if (
-      areaParam &&
-      levelParam === selectedGranularity?.level
-    ) {
+    if (areaParam && levelParam === selectedGranularity?.level) {
       if (availableAreas && availableAreas.length > 0) {
         const area = availableAreas.find(a => a.id.toString() === areaParam)
         // Guard: Only set if area is valid for this granularity
@@ -123,6 +128,16 @@ export function MapView() {
       }
     }
   }, [searchParams, availableAreas, setSelectedArea, selectedGranularity, router, pathname, selectedArea])
+
+  // Clear area when granularity changes
+  useEffect(() => {
+    if (selectedArea) {
+      setSelectedArea(null)
+      const params = new URLSearchParams(window.location.search)
+      params.delete("area")
+      router.push(`?${params.toString()}`, { scroll: false })
+    }
+  }, [selectedGranularity?.level, setSelectedArea, router])
 
   // Memoize the setVisiblePointTypes handler to prevent unnecessary re-renders
   const handleVisiblePointTypesChange = useCallback(

@@ -3,95 +3,9 @@
 import { useEffect, useRef, useState } from "react"
 import { useMapContext } from "@/contexts/map-context"
 import { mapTypes } from "@/components/map-type-selector"
-import debounce from "lodash/debounce"
 import { useTheme } from "next-themes"
 import { useRouter, useSearchParams } from "next/navigation"
 import { getFeatureStyle, getIconUrlForFeatureType, markerShadowUrl } from "@/lib/feature-styles"
-
-// Feature type mapping
-const featureTypeMap = {
-  1: "library",
-  2: "cultural_center",
-  3: "auditorium",
-  4: "heritage_space",
-  5: "creation_factory",
-  6: "museum",
-  7: "cinema",
-  8: "exhibition_center",
-  9: "archive",
-  10: "live_music_venue",
-  11: "performing_arts_venue",
-  12: "municipal_market",
-  13: "park_garden",
-  14: "educational_center",
-}
-
-// Feature type mapping with styles
-const featureTypeStyles = {
-  library: {
-    color: "#4CAF50", // Verde
-    icon: "📚"
-  },
-  cultural_center: {
-    color: "#2196F3", // Azul
-    icon: "🎭"
-  },
-  auditorium: {
-    color: "#9C27B0", // Púrpura
-    icon: "🎪"
-  },
-  heritage_space: {
-    color: "#FF9800", // Naranja
-    icon: "🏛️"
-  },
-  creation_factory: {
-    color: "#E91E63", // Rosa
-    icon: "🏭"
-  },
-  museum: {
-    color: "#795548", // Marrón
-    icon: "🏛️"
-  },
-  cinema: {
-    color: "#607D8B", // Gris azulado
-    icon: "🎬"
-  },
-  exhibition_center: {
-    color: "#00BCD4", // Cyan
-    icon: "🖼️"
-  },
-  archive: {
-    color: "#673AB7", // Púrpura oscuro
-    icon: "📜"
-  },
-  live_music_venue: {
-    color: "#FFC107", // Amarillo
-    icon: "🎵"
-  },
-  performing_arts_venue: {
-    color: "#F44336", // Rojo
-    icon: "🎭"
-  },
-  municipal_market: {
-    color: "#8BC34A", // Verde claro
-    icon: "🛒"
-  },
-  park_garden: {
-    color: "#009688", // Verde azulado
-    icon: "🌳"
-  },
-  educational_center: {
-    color: "#3F51B5", // Índigo
-    icon: "🎓"
-  }
-}
-
-// Color palette for dynamic assignment
-const colorPalette = [
-  '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6',
-  '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3',
-  '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'
-]
 
 // Helper to assign a color to each feature type by order of appearance
 const featureTypeColorMap = {}
@@ -103,18 +17,6 @@ const getColorForFeatureType = (featureType) => {
   }
   return featureTypeColorMap[featureType]
 }
-
-// Leaflet-color-markers icon URLs
-const markerIconUrls = [
-  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
-  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
-  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
-  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
-  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png',
-  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
-  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png',
-]
 
 // This component will only be loaded on the client side
 export default function LeafletMap({
@@ -131,7 +33,7 @@ export default function LeafletMap({
   const markersLayerRef = useRef(null)
   const tileLayerRef = useRef(null)
   const clusterGroupRef = useRef(null)
-  const { setMapInitialized, loadGeoJSON, setSelectedArea, filters, dynamicFilters, setMapType, selectedArea } = useMapContext()
+  const { setMapInitialized, loadGeoJSON, setSelectedArea, filters, dynamicFilters, setMapType, selectedArea, availableIndicators, currentIndicators } = useMapContext()
   const mapInstanceRef = useRef(null)
   const [selectedAreaState, setSelectedAreaState] = useState(null)
   const [isMapReady, setIsMapReady] = useState(false)
@@ -211,7 +113,7 @@ export default function LeafletMap({
         geoJsonLayerRef.current = L.layerGroup().addTo(map)
         markersLayerRef.current = L.layerGroup().addTo(map)
 
-        // Create marker cluster group SOLO si MarkerClusterGroup está disponible
+        // Create marker cluster group
         if (L.MarkerClusterGroup) {
           clusterGroupRef.current = L.markerClusterGroup({
             maxClusterRadius: 80,
@@ -260,23 +162,25 @@ export default function LeafletMap({
         return () => {
           window.removeEventListener("resize", handleResize)
           if (map) {
-            // Eliminar el cluster group del mapa antes de limpiar la referencia
-            if (clusterGroupRef.current && clusterGroupRef.current._map) {
-              try {
-                clusterGroupRef.current.clearLayers()
-                map.removeLayer(clusterGroupRef.current)
-              } catch (error) {
-                // console.warn("Error removing cluster group during cleanup:", error)
-              }
+            // Remove all layers before destroying the map
+            if (geoJsonLayerRef.current) {
+              map.removeLayer(geoJsonLayerRef.current)
+              geoJsonLayerRef.current = null
             }
-            // Limpiar la referencia después de eliminarlo
-            clusterGroupRef.current = null
-
+            if (markersLayerRef.current) {
+              map.removeLayer(markersLayerRef.current)
+              markersLayerRef.current = null
+            }
+            if (clusterGroupRef.current) {
+              map.removeLayer(clusterGroupRef.current)
+              clusterGroupRef.current = null
+            }
+            if (tileLayerRef.current) {
+              map.removeLayer(tileLayerRef.current)
+              tileLayerRef.current = null
+            }
             map.remove()
             mapInstanceRef.current = null
-            geoJsonLayerRef.current = null
-            markersLayerRef.current = null
-            tileLayerRef.current = null
             setIsMapReady(false)
             setIsClusterReady(false)
           }
@@ -408,35 +312,78 @@ export default function LeafletMap({
   useEffect(() => {
     const map = mapInstanceRef.current
     const geoJsonLayer = geoJsonLayerRef.current
-    if (!map || !geoJsonLayer || !isMapReady) return
-
-    // Clear previous GeoJSON
-    try {
-      geoJsonLayer.clearLayers()
-    } catch (error) {
-      // console.warn("Error clearing GeoJSON layers:", error)
-    }
-
-    // Get Leaflet from window
     const L = window.L
-    if (!L) return
 
-    // Check if we have valid GeoJSON data
-    if (!currentGeoJSON || !currentGeoJSON.features || currentGeoJSON.features.length === 0) {
+    console.log('[LeafletMap] Effect triggered with:', {
+      map: !!map,
+      geoJsonLayer: !!geoJsonLayer,
+      isMapReady,
+      currentGeoJSON: !!currentGeoJSON,
+      leafletAvailable: !!L
+    })
+
+    if (!map || !geoJsonLayer || !isMapReady || !L) {
+      console.log('[LeafletMap] Not ready to render:', {
+        map: !!map,
+        geoJsonLayer: !!geoJsonLayer,
+        isMapReady,
+        leafletAvailable: !!L
+      })
       return
     }
 
+    // Clear previous GeoJSON safely
+    try {
+      if (geoJsonLayer) {
+        // Remove the entire layer group and create a new one
+        map.removeLayer(geoJsonLayer)
+        geoJsonLayerRef.current = L.layerGroup().addTo(map)
+      }
+    } catch (error) {
+      console.warn("[LeafletMap] Error clearing GeoJSON layers:", error)
+      // If there's an error, try to create a new layer group anyway
+      try {
+        geoJsonLayerRef.current = L.layerGroup().addTo(map)
+      } catch (fallbackError) {
+        console.error("[LeafletMap] Failed to create new layer group:", fallbackError)
+      }
+    }
+
+    // Check if we have valid GeoJSON data
+    if (!currentGeoJSON || !currentGeoJSON.features || currentGeoJSON.features.length === 0) {
+      console.log('[LeafletMap] No valid GeoJSON data:', currentGeoJSON)
+      return
+    }
+
+    // Log para depuración: inspecciona el primer feature y su geometry
+    const firstFeature = currentGeoJSON.features[0]
+    console.log('[LeafletMap] First feature:', firstFeature)
+    if (firstFeature && firstFeature.geometry) {
+      console.log('[LeafletMap] First feature geometry:', firstFeature.geometry)
+    } else {
+      console.warn('[LeafletMap] First feature has NO geometry!')
+    }
+
+    console.log('[LeafletMap] Rendering GeoJSON with features:', currentGeoJSON.features.length)
+
     // === FILTRADO DE FEATURES SEGÚN LOS SLIDERS DINÁMICOS ===
+    console.log('[LeafletMap] dynamicFilters:', dynamicFilters)
+    console.log('[LeafletMap] Features before filtering:', currentGeoJSON.features.length)
+
     const filteredFeatures = currentGeoJSON.features.filter((feature) => {
-      const props = feature.properties
-      // Para cada filtro dinámico, verifica que el valor esté dentro del rango
+      if (!feature.properties || typeof feature.properties.id === 'undefined') return false;
+      const areaId = feature.properties.id
+      // Para cada filtro dinámico, busca el valor del indicador en la lista de indicadores
       for (const filter of dynamicFilters) {
-        const value = props[filter.key]
-        if (typeof value !== 'number') return false
+        const indicator = currentIndicators.find(ind => ind.geo_id === areaId && ind.indicator_def_id.toString() === filter.key)
+        if (!indicator) continue // Si no hay valor, no filtrar
+        const value = indicator.value
+        if (typeof value !== 'number') continue // Si no es número, no filtrar
         if (value < filter.value[0] || value > filter.value[1]) return false
       }
       return true
     })
+    console.log('[LeafletMap] Features after filtering:', filteredFeatures.length)
 
     // Style function for GeoJSON
     const getAreaStyle = (feature) => {
@@ -523,8 +470,22 @@ export default function LeafletMap({
       const geoJson = L.geoJSON(validGeoJSON, {
         style: getAreaStyle,
         onEachFeature: (feature, layer) => {
+          // Only bind tooltip if we have valid properties
+          if (feature.properties && feature.properties.name) {
+            layer.bindTooltip(feature.properties.name, {
+              permanent: false,
+              sticky: false,
+              interactive: false,
+              className: 'area-tooltip' // Add a custom class for styling
+            });
+          }
+
           layer.on({
             click: (e) => {
+              // Prevent event propagation to underlying layers
+              e.originalEvent.stopPropagation();
+              e.originalEvent.preventDefault();
+
               lastPolygonClickRef.current = true
               const areaId = feature.properties.id
               const areaName = feature.properties.name
@@ -547,17 +508,36 @@ export default function LeafletMap({
               params.set("area", areaId)
               router.push(`?${params.toString()}`, { scroll: false })
             },
+            mouseover: (e) => {
+              // Prevent event propagation on hover
+              e.originalEvent.stopPropagation();
+              e.originalEvent.preventDefault();
+
+              // Only show tooltip if we have valid properties
+              if (feature.properties && feature.properties.name) {
+                layer.openTooltip();
+              }
+            },
+            mouseout: (e) => {
+              // Prevent event propagation on hover out
+              e.originalEvent.stopPropagation();
+              e.originalEvent.preventDefault();
+
+              // Only close tooltip if we have valid properties
+              if (feature.properties && feature.properties.name) {
+                layer.closeTooltip();
+              }
+            }
           })
-          layer.bindTooltip(feature.properties.name)
         },
       })
 
       // Only add to layer if it was created successfully
       if (geoJson) {
-        geoJson.addTo(geoJsonLayer)
+        geoJson.addTo(geoJsonLayerRef.current)
       }
     } catch (geoJsonError) {
-      // console.error("Error rendering GeoJSON:", geoJsonError)
+      console.error("Error rendering GeoJSON:", geoJsonError)
       setDefaultCityView(map, selectedCity)
     }
   }, [currentGeoJSON, dynamicFilters, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady, router])
@@ -566,11 +546,8 @@ export default function LeafletMap({
   useEffect(() => {
     const map = mapInstanceRef.current
     if (!map || !pointFeatures || pointFeatures.length === 0) {
-      // console.log("[Map] No map or no point features to render")
       return
     }
-
-    // console.log(`[Map] Rendering ${pointFeatures.length} point features`)
 
     // Clear previous markers
     if (markersRef.current) {
@@ -585,8 +562,6 @@ export default function LeafletMap({
       chunks.push(pointFeatures.slice(i, i + chunkSize))
     }
 
-    // console.log(`[Map] Split ${pointFeatures.length} markers into ${chunks.length} chunks`)
-
     let totalMarkers = 0
     let invalidMarkers = 0
 
@@ -597,7 +572,6 @@ export default function LeafletMap({
             const lat = Number.parseFloat(feature.latitude)
             const lng = Number.parseFloat(feature.longitude)
             if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-              // console.warn(`[Map] Invalid coordinates for feature ${feature.id}: lat=${lat}, lng=${lng}`)
               invalidMarkers++
               return
             }
@@ -618,9 +592,11 @@ export default function LeafletMap({
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41],
               }),
+              // Ensure markers are always on top
+              zIndexOffset: 1000
             })
 
-            // Add popup with feature information (instead of tooltip)
+            // Add popup with feature information
             let propertiesHtml = ''
             if (feature.properties && typeof feature.properties === 'object') {
               const capitalize = (str) =>
@@ -649,28 +625,42 @@ export default function LeafletMap({
             }
             const popupContent = `
               <div class="marker-tooltip bg-card text-card-foreground border border-border shadow-lg rounded-xl p-4 max-w-xs min-w-[160px] space-y-2">
-                <h3 class="text-base font-bold text-primary mb-1">${feature.name || featureTypeName}</h3>
-                <div class="text-sm font-semibold text-accent mb-2">${featureTypeName}</div>
+                <h3 class="text-base font-bold text-primary mb-1">${feature.name}</h3>
                 ${propertiesHtml}
               </div>
             `
-            marker.bindPopup(popupContent, { autoPan: true, closeButton: true, className: 'custom-popup' })
+            marker.bindPopup(popupContent, {
+              autoPan: true,
+              closeButton: true,
+              className: 'custom-popup',
+              closeOnClick: false // Prevent popup from closing when clicking the marker
+            })
+
+            // Add event handlers to prevent event propagation
+            marker.on({
+              click: (e) => {
+                e.originalEvent.stopPropagation();
+                e.originalEvent.preventDefault();
+              },
+              mouseover: (e) => {
+                e.originalEvent.stopPropagation();
+                e.originalEvent.preventDefault();
+              },
+              mouseout: (e) => {
+                e.originalEvent.stopPropagation();
+                e.originalEvent.preventDefault();
+              }
+            });
 
             marker.addTo(map)
             markersRef.current.push(marker)
             totalMarkers++
           } catch (error) {
-            // console.error(`[Map] Error creating marker for feature ${feature.id}:`, error)
             invalidMarkers++
           }
         })
-
-        // console.log(`[Map] Processed chunk ${chunkIndex + 1}/${chunks.length}`)
-      }, chunkIndex * 100) // Process each chunk with a delay
+      }, chunkIndex * 100)
     })
-
-    // console.log(`[Map] Total markers rendered: ${totalMarkers}`)
-    // console.log(`[Map] Invalid markers: ${invalidMarkers}`)
 
     return () => {
       if (markersRef.current) {

@@ -1,75 +1,32 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import {
-  Book,
-  Building,
-  Music,
-  Landmark,
-  Factory,
-  LibraryIcon as Museum,
-  Film,
-  ImageIcon,
-  Archive,
-  Mic,
-  Theater,
-  ShoppingBag,
-  TreesIcon as Tree,
-  School,
-} from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
 import { useMapContext } from "@/contexts/map-context"
 import { getFeatureDefinitions } from "@/lib/api-service"
-import { Button } from "@/components/ui/button"
 import type { FeatureDefinition } from "@/lib/api-types"
+import { getIconUrlForFeatureType } from "@/lib/feature-styles"
 
 type VisiblePointTypes = Record<string, boolean>
 
-// Color palette for markers - matching Leaflet marker colors
-const markerIconColors = [
-  '#2A81CB', // blue
-  '#D41159', // red
-  '#3CB44B', // green
-  '#FF8800', // orange
-  '#FFD700', // yellow
-  '#911EB4', // violet
-  '#808080', // grey
-  '#000000', // black
-]
-
-// Map feature names to icons
-const featureNameToIcon: Record<string, React.ComponentType> = {
-  'library': Book,
-  'cultural center': Building,
-  'auditorium': Music,
-  'heritage space': Landmark,
-  'creation factory': Factory,
-  'museum': Museum,
-  'cinema': Film,
-  'exhibition center': ImageIcon,
-  'archive': Archive,
-  'live music venue': Mic,
-  'performing arts venue': Theater,
-  'municipal market': ShoppingBag,
-  'park garden': Tree,
-  'educational center': School,
+// Helper to map marker icon filename to color
+const markerColorMap: Record<string, string> = {
+  "marker-icon-blue.png": "#2A81CB",
+  "marker-icon-red.png": "#D41159",
+  "marker-icon-green.png": "#3CB44B",
+  "marker-icon-orange.png": "#FF8800",
+  "marker-icon-yellow.png": "#FFD700",
+  "marker-icon-violet.png": "#911EB4",
+  "marker-icon-grey.png": "#808080",
+  "marker-icon-black.png": "#000000",
 }
 
-// Helper to get a color for a feature type
-const getColorForFeatureType = (() => {
-  const colorMap: Record<string, string> = {}
-  let colorIndex = 0
-
-  return (featureType: string) => {
-    if (!colorMap[featureType]) {
-      colorMap[featureType] = markerIconColors[colorIndex % markerIconColors.length]
-      colorIndex++
-    }
-    return colorMap[featureType]
-  }
-})()
+function getColorForFeatureType(featureType: string) {
+  const iconUrl = getIconUrlForFeatureType(featureType)
+  const filename = iconUrl.split("/").pop() || ""
+  return markerColorMap[filename] || "#2A81CB"
+}
 
 // Helper to format feature labels
 const getFeatureLabel = (type: string) =>
@@ -142,17 +99,6 @@ export function PointFeaturesToggle() {
     }
   }, [selectedCity?.id, dynamicPointTypes, setVisiblePointTypes])
 
-  // Get icon for feature type
-  const getIconForFeatureType = (type: string) => {
-    const definition = featureDefinitions.find(def =>
-      def.name.toLowerCase().replace(/\s+/g, '_') === type
-    )
-    if (definition) {
-      return featureNameToIcon[definition.name.toLowerCase()] || Book
-    }
-    return Book
-  }
-
   if (!dynamicPointTypes.length) {
     return (
       <div className="text-center py-4">
@@ -169,7 +115,6 @@ export function PointFeaturesToggle() {
             {dynamicPointTypes.map((type) => {
               const isVisible = localVisibleTypes[type] ?? false // Default to false
               const color = getColorForFeatureType(type)
-              const Icon = getIconForFeatureType(type)
 
               return (
                 <div key={type} className="flex items-center gap-2">
@@ -181,10 +126,6 @@ export function PointFeaturesToggle() {
                       backgroundColor: isVisible ? color : undefined,
                       borderColor: isVisible ? color : undefined,
                     } as React.CSSProperties}
-                  />
-                  <Icon
-                    className={`h-4 w-4 ${isVisible ? "text-primary" : "text-muted-foreground"}`}
-                    style={{ color: isVisible ? color : undefined }}
                   />
                   <span className="capitalize text-xs">{getFeatureLabel(type)}</span>
                 </div>
