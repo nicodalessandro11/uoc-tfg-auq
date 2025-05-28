@@ -1,5 +1,14 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-28 | Enhanced User Authentication and Signup
+
+- Updated auth callback and signup pages for better user experience (auq_frontend/app/auth/callback/page.tsx, auq_frontend/app/signup/page.tsx)
+- Added new pages for forgot-password and reset-password functionalities (auq_frontend/app/auth/forgot-password/page.tsx, auq_frontend/app/auth/reset-password/page.tsx)
+- Modified map-component, user-login-modal, and auth-context for seamless integration of new auth features (auq_frontend/components/map-component.tsx, auq_frontend/components/user-login-modal.tsx, auq_frontend/contexts/auth-context.tsx)
+- Enhanced analytics logger to track new auth events (auq_frontend/lib/analytics/logger.ts)
+
+This commit marks a significant improvement in our user authentication process, providing users with more options and a better overall experience.
+
 ## 🗃️ DB | 2025-05-27 | Update database schema and frontend components
 
 - Modified and added new migrations in auq_database/migrations and auq_frontend/supabase/migrations

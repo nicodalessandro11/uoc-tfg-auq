@@ -1,36 +1,46 @@
 "use client"
 
-import React, { useState } from "react"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { supabase } from "@/lib/supabase-client"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { AlertCircle, Loader2 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import Link from "next/link"
 
 export default function SignUpPage() {
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
-    const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
+    const router = useRouter()
 
-    const isPasswordValid = password.length >= 6
-    const doPasswordsMatch = password === confirmPassword
-    const isFormValid = username && email && isPasswordValid && doPasswordsMatch
+    const isFormValid = username && email && password && confirmPassword && password === confirmPassword
 
     async function handleSubmit(e: React.FormEvent) {
+        console.log("handleSubmit triggered");
         e.preventDefault()
         setError(null)
-        setSuccess(false)
         setLoading(true)
+
         try {
             // Dynamic import to avoid SSR issues
             const { supabase } = await import("@/lib/supabase-client")
             if (!supabase) throw new Error("Supabase client not available")
 
             // 0. Check if username is unique
+            console.log("Antes de check username único");
             const { data: existing, error: checkError } = await supabase
                 .from("profiles")
                 .select("user_id")
                 .eq("display_name", username)
                 .maybeSingle()
+            console.log("Después de check username único", { existing, checkError });
             if (checkError) throw checkError
             if (existing) {
                 setError("Username is already taken. Please choose another.")
@@ -39,6 +49,7 @@ export default function SignUpPage() {
             }
 
             // 1. Sign up user with metadata
+            console.log("Antes de signUp");
             const { data, error: signUpError } = await supabase.auth.signUp({
                 email,
                 password,
@@ -47,12 +58,28 @@ export default function SignUpPage() {
                         display_name: username
                     }
                 }
-            })
-            if (signUpError) throw signUpError
-            if (!data.user) throw new Error("User not created. Please check your email to confirm your account.")
-
+            });
+            console.log("Después de signUp");
+            console.log('Supabase signUp response:', data, signUpError);
+            if (signUpError) {
+                if (signUpError.message && signUpError.message.toLowerCase().includes("user already registered")) {
+                    setError("This email is already registered. Please log in or confirm your email.");
+                } else if (signUpError.message && signUpError.message.toLowerCase().includes("email")) {
+                    setError("There is already an account with this email. Try logging in or confirming your email.");
+                } else {
+                    setError(signUpError.message)
+                }
+                setLoading(false)
+                return
+            }
+            if (data && data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+                setError("This email is already registered. Please log in or use the password recovery option.");
+                setLoading(false);
+                return;
+            }
             setSuccess(true)
         } catch (err: any) {
+            console.error("Error en handleSubmit:", err);
             setError(err.message || "An error occurred. Please try again.")
         } finally {
             setLoading(false)
@@ -66,16 +93,30 @@ export default function SignUpPage() {
                 <h1 className="text-2xl font-bold mb-6 text-center">Are u query-ous?</h1>
                 <h2 className="text-lg font-bold mb-6 text-center">Your query journey starts here. Join us!</h2>
                 {success ? (
-                    <div className="text-green-600 text-center mb-4">
-                        Account created! Please check your email to confirm your account.
+                    <div className="space-y-4">
+                        <div className="text-green-600 text-center mb-4">
+                            <p className="font-semibold">Account created successfully!</p>
+                            <p className="mt-2">Please check your email to confirm your account.</p>
+                        </div>
+                        <div className="bg-blue-50 p-4 rounded-md">
+                            <h3 className="font-semibold mb-2">What's next?</h3>
+                            <ol className="list-decimal list-inside space-y-2">
+                                <li>Check your email inbox (and spam folder)</li>
+                                <li>Click the confirmation link in the email</li>
+                                <li>Once confirmed, you can log in to your account</li>
+                            </ol>
+                        </div>
+                        <div className="text-center mt-4">
+                            <Link href="/" className="text-blue-600 hover:underline">
+                                Return to home page
+                            </Link>
+                        </div>
                     </div>
                 ) : (
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         <div>
-                            <label htmlFor="username" className="block text-sm font-medium mb-1">
-                                Username
-                            </label>
-                            <input
+                            <Label htmlFor="username">Username</Label>
+                            <Input
                                 type="text"
                                 id="username"
                                 name="username"
@@ -85,11 +126,10 @@ export default function SignUpPage() {
                                 required
                             />
                         </div>
+
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium mb-1">
-                                Email
-                            </label>
-                            <input
+                            <Label htmlFor="email">Email</Label>
+                            <Input
                                 type="email"
                                 id="email"
                                 name="email"
@@ -98,12 +138,14 @@ export default function SignUpPage() {
                                 className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                                 required
                             />
+                            <p className="text-sm text-muted-foreground mt-1">
+                                You'll need to confirm this email to activate your account
+                            </p>
                         </div>
+
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium mb-1">
-                                Password
-                            </label>
-                            <input
+                            <Label htmlFor="password">Password</Label>
+                            <Input
                                 type="password"
                                 id="password"
                                 name="password"
@@ -112,13 +154,11 @@ export default function SignUpPage() {
                                 className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                                 required
                             />
-                            <p className="text-xs text-gray-500 mt-1">At least 6 characters</p>
                         </div>
+
                         <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">
-                                Confirm Password
-                            </label>
-                            <input
+                            <Label htmlFor="confirmPassword">Confirm Password</Label>
+                            <Input
                                 type="password"
                                 id="confirmPassword"
                                 name="confirmPassword"
@@ -129,13 +169,13 @@ export default function SignUpPage() {
                             />
                         </div>
                         {error && <div className="text-red-600 text-center">{error}</div>}
-                        <button
+                        <Button
                             type="submit"
                             className="w-full bg-primary text-white py-2 rounded disabled:opacity-50"
                             disabled={!isFormValid || loading}
                         >
                             {loading ? "Creating account..." : "Create Account"}
-                        </button>
+                        </Button>
                     </form>
                 )}
             </div>

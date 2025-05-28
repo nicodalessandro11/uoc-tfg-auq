@@ -12,6 +12,7 @@ export type User = {
   display_name?: string
   is_admin?: boolean
   role?: string
+  email_confirmed?: boolean
 }
 
 /**
@@ -49,6 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: session.user.email || "",
           display_name: profile?.display_name,
           is_admin: profile?.is_admin,
+          email_confirmed: session.user.email_confirmed_at !== null
         })
       } else {
         setUser(null)
@@ -69,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: data.session.user.email || "",
           display_name: profile?.display_name,
           is_admin: profile?.is_admin,
+          email_confirmed: data.session.user.email_confirmed_at !== null
         })
       } else {
         setUser(null)
@@ -91,25 +94,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) {
         setIsLoading(false)
-        // Log error
-        await analyticsLogger.logEvent({
-          user_id: 'anonymous',
-          event_type: 'auth.login',
-          event_details: {
-            method: 'email',
-            success: false,
-            error: error.message
-          }
-        })
+        // Log error SOLO si hay usuario autenticado
+        // (no loguear eventos de login fallido para usuarios anónimos)
         return { success: false, error: error.message }
       }
       if (data.user) {
+        // Check if email is confirmed
+        if (!data.user.email_confirmed_at) {
+          setIsLoading(false)
+          return {
+            success: false,
+            error: "Please confirm your email before logging in. Check your inbox for the confirmation link."
+          }
+        }
+
         const profile = await getUserProfile(data.user.id)
         setUser({
           id: data.user.id,
           email: data.user.email || "",
           display_name: profile?.display_name,
           is_admin: profile?.is_admin,
+          email_confirmed: true
         })
         // Log successful login
         await analyticsLogger.logEvent({
@@ -127,8 +132,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: "Authentication failed" }
     } catch (error: any) {
       setIsLoading(false)
-      // Log error
-      await analyticsLogger.logError(error, 'anonymous', 'auth-context')
+      // Log error SOLO si hay usuario autenticado
+      // (no loguear eventos de error para usuarios anónimos)
       return { success: false, error: error.message || "An unexpected error occurred" }
     }
   }
@@ -163,6 +168,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: data.session.user.email || "",
         display_name: profile?.display_name,
         is_admin: profile?.is_admin,
+        email_confirmed: data.session.user.email_confirmed_at !== null
       })
     }
   }

@@ -69,21 +69,33 @@ export function UserLoginModal({ isOpen, onClose, error, isLoading, email, passw
                     </DialogDescription>
                 </DialogHeader>
 
-                {(error ?? internalError) && (
+                {(error || internalError) && (
                     <Alert variant="destructive" className="my-2">
                         <AlertCircle className="h-4 w-4" />
-                        <AlertDescription>{error ?? internalError}</AlertDescription>
+                        <AlertDescription>
+                            {error || internalError}
+                            {(error || internalError)?.includes("confirm your email") && (
+                                <div className="mt-2">
+                                    <p>If you haven't received the confirmation email:</p>
+                                    <ol className="list-decimal list-inside mt-1">
+                                        <li>Check your spam folder</li>
+                                        <li>Make sure you used the correct email address</li>
+                                        <li>You can <Link href="/signup" className="underline">sign up again</Link> if needed</li>
+                                    </ol>
+                                </div>
+                            )}
+                        </AlertDescription>
                     </Alert>
                 )}
 
-                <form onSubmit={onSubmit || handleSubmit} className="space-y-4 pt-4">
+                <form onSubmit={handleSubmit} className="space-y-4 pt-4">
                     <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
                         <Input
                             id="email"
                             type="email"
                             placeholder="your@email.com"
-                            value={email !== undefined ? email : internalEmail}
+                            value={email ?? internalEmail}
                             onChange={(e) => (setEmail ? setEmail(e.target.value) : setInternalEmail(e.target.value))}
                             disabled={isLoading ?? internalLoading ?? ctxLoading}
                             className="w-full"
@@ -96,7 +108,7 @@ export function UserLoginModal({ isOpen, onClose, error, isLoading, email, passw
                             id="password"
                             type="password"
                             placeholder="••••••••"
-                            value={password !== undefined ? password : internalPassword}
+                            value={password ?? internalPassword}
                             onChange={(e) => (setPassword ? setPassword(e.target.value) : setInternalPassword(e.target.value))}
                             disabled={isLoading ?? internalLoading ?? ctxLoading}
                             className="w-full"

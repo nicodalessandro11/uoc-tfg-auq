@@ -7,6 +7,7 @@ import { getCityPointFeatures } from "@/lib/api-service"
 import dynamic from "next/dynamic"
 import { MapTypeSelector } from "@/components/map-type-selector"
 import type { PointFeature } from "@/lib/api-types"
+import { DataDisclaimer } from "./data-disclaimer"
 
 // Create a client-side only component for the map
 const MapWithNoSSR = dynamic(() => import("./leaflet-map"), {
@@ -164,6 +165,7 @@ export default function MapComponent() {
           <p className="text-muted-foreground mb-4">
             Select a city from the top menu to start exploring geospatial data.
           </p>
+          <DataDisclaimer />
         </div>
       )}
 

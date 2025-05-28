@@ -2,7 +2,8 @@ import { supabase } from "@/lib/supabase-client"
 import type { BaseEvent, UserEvent, EventType } from "./types"
 
 // Tipo para la tabla user_events en Supabase
-type UserEvent = {
+// Renombrado para evitar conflicto de nombres
+type SupabaseUserEvent = {
   user_id: string
   event_type: string
   event_details: Record<string, unknown>
@@ -11,7 +12,7 @@ type UserEvent = {
 
 class AnalyticsLogger {
   private static instance: AnalyticsLogger;
-  private queue: UserEvent[] = [];
+  private queue: SupabaseUserEvent[] = [];
   private isProcessing = false;
   private readonly BATCH_SIZE = 10;
   private readonly FLUSH_INTERVAL = 5000; // 5 segundos
@@ -56,12 +57,17 @@ class AnalyticsLogger {
         return;
       }
 
+      // Asegurar que event_details siempre exista y tenga al menos un campo
+      const safeEventDetails = event.event_details && Object.keys(event.event_details).length > 0
+        ? event.event_details
+        : { reason: "not provided" };
+
       // Convertir el evento al formato de Supabase
-      const userEvent: UserEvent = {
+      const userEvent: SupabaseUserEvent = {
         user_id: event.user_id,
         event_type: event.event_type,
         event_details: {
-          ...event.event_details,
+          ...safeEventDetails,
           timestamp: new Date().toISOString()
         }
       };
@@ -97,12 +103,16 @@ class AnalyticsLogger {
         .insert(batch);
 
       if (error) {
-        console.error('Error inserting events:', error);
+        if (Object.keys(error).length === 0) {
+          console.error('Error inserting events: (empty error object)', error, '\nBatch:', batch);
+        } else {
+          console.error('Error inserting events:', error, '\nBatch:', batch);
+        }
         // Reintentar los eventos fallidos
         this.queue.unshift(...batch);
       }
     } catch (error) {
-      console.error('Error processing queue:', error);
+      console.error('Error processing queue:', error, '\nBatch:', batch);
       // Reintentar los eventos fallidos
       this.queue.unshift(...batch);
     } finally {
