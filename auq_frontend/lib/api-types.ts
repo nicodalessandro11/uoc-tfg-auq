@@ -45,6 +45,7 @@ export type IndicatorDefinition = {
   description?: string
   category?: string
   created_at?: string
+  year?: number
 }
 
 export type Indicator = {

@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-28 | Implemented new info page and updated frontend components
+
+- Added a new info page (auq_frontend/app/info/page.tsx) and updated various frontend components including layout, profile page, signup page, and more
+- These changes were made to improve the user interface, enhance the user experience, and add new functionality to the application
+- The changes involved modifications to the CSS (globals.css), TypeScript (page.tsx, admin-view.tsx, chat-sidebar.tsx, etc.), and JSX (leaflet-map.jsx) files
+
+This commit represents a significant update to the frontend of the application, providing users with a more intuitive and feature-rich interface.
+
 ## 📦 Feature | 2025-05-28 | Enhanced User Authentication and Signup
 
 - Updated auth callback and signup pages for better user experience (auq_frontend/app/auth/callback/page.tsx, auq_frontend/app/signup/page.tsx)

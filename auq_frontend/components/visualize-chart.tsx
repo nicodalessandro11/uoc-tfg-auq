@@ -4,6 +4,7 @@ import * as React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, TooltipProps } from "recharts"
 import type { Area, IndicatorDefinition } from "@/lib/api-types"
+import { useEffect, useState } from "react"
 
 interface VisualizeChartProps {
     areas: Area[]
@@ -32,6 +33,18 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
 }
 
 export function VisualizeChart({ areas, indicator, indicatorValues, topN }: VisualizeChartProps) {
+    // Detect dark mode
+    const [isDark, setIsDark] = useState(false)
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setIsDark(document.documentElement.classList.contains('dark'))
+            const observer = new MutationObserver(() => {
+                setIsDark(document.documentElement.classList.contains('dark'))
+            })
+            observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+            return () => observer.disconnect()
+        }
+    }, [])
     // Ordenar áreas por valor del indicador y tomar el top N
     const sorted = React.useMemo(() => {
         return areas
@@ -58,7 +71,7 @@ export function VisualizeChart({ areas, indicator, indicatorValues, topN }: Visu
                         <BarChart data={sorted} margin={{ top: 10, right: 20, bottom: 10, left: 20 }} barGap={6} barCategoryGap={20}>
                             <XAxis
                                 dataKey="displayName"
-                                tick={{ fontSize: 13, fontWeight: 'bold' }}
+                                tick={{ fontSize: 13, fontWeight: 'bold', fill: isDark ? '#fff' : '#222' }}
                                 interval={0}
                                 angle={-45}
                                 textAnchor="end"
@@ -73,7 +86,7 @@ export function VisualizeChart({ areas, indicator, indicatorValues, topN }: Visu
                                 label={{
                                     position: 'top',
                                     formatter: formatValue,
-                                    style: { fontSize: '12px', fill: '#222', fontWeight: 'bold' }
+                                    style: { fontSize: '12px', fill: isDark ? '#fff' : '#222', fontWeight: 'bold' }
                                 }}
                             />
                         </BarChart>

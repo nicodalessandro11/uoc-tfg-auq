@@ -14,12 +14,11 @@ import { useAuth } from "@/contexts/auth-context"
 import { getCities, getFeatureDefinitions, getCityPointFeatures } from "@/lib/api-service"
 import { getIndicatorDefinitions, clearCache, supabase, getUserEvents } from "@/lib/supabase-client"
 import { Loader2 } from "lucide-react"
-import apiFileManifest from "../supabase/api-file-manifest.json"
-import type { City, IndicatorDefinition, FeatureDefinition, PointFeature } from "@/lib/api-types"
-import { useRouter, usePathname } from "next/navigation"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { createContext, useContext } from 'react'
 import type { UserEvent } from "@/lib/analytics/types"
+import { useRouter, usePathname } from "next/navigation"
+import type { FeatureDefinition, PointFeature, IndicatorDefinition, City } from "@/lib/api-types"
 
 // Custom hook to sync state with localStorage and listen for changes
 function useLocalStorageState<T>(key: string, defaultValue: T): [T, (value: T) => void] {
@@ -145,10 +144,6 @@ function AvailablePointFeatures() {
 
 export function AdminView() {
   const { user } = useAuth()
-  const [activeTab, setActiveTab] = useState("datasets")
-  const [cities, setCities] = useState<City[]>([])
-  const [indicatorDefinitions, setIndicatorDefinitions] = useState<IndicatorDefinition[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const pathname = usePathname()
   const [showLeaveModal, setShowLeaveModal] = useState(false)
@@ -163,6 +158,28 @@ export function AdminView() {
     return { map: true, compare: true, visualize: true }
   })
   const [featureError, setFeatureError] = useState<string | null>(null)
+
+  // Manifest state
+  const [manifest, setManifest] = useState<any | null>(null)
+  const [manifestLoading, setManifestLoading] = useState(true)
+  const manifestUrl = "https://xwzmngtodqmipubwnceh.supabase.co/storage/v1/object/public/data//api-file-manifest.json"
+
+  useEffect(() => {
+    async function fetchManifest() {
+      setManifestLoading(true)
+      try {
+        const res = await fetch(manifestUrl)
+        if (!res.ok) throw new Error("Failed to fetch manifest")
+        const data = await res.json()
+        setManifest(data)
+      } catch (err) {
+        setManifest(null)
+      } finally {
+        setManifestLoading(false)
+      }
+    }
+    fetchManifest()
+  }, [])
 
   // Clean URL on mount (remove query params/hash)
   useEffect(() => {
@@ -257,26 +274,6 @@ export function AdminView() {
     setPendingNavigation(null)
   }
 
-  // Load cities and indicator definitions
-  useEffect(() => {
-    async function loadData() {
-      setIsLoading(true)
-      try {
-        const [citiesData, indicatorsData] = await Promise.all([getCities(), getIndicatorDefinitions()])
-
-        setCities(citiesData)
-        setIndicatorDefinitions(indicatorsData)
-      } catch (error) {
-        console.error("Error loading admin data:", error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadData()
-  }, [])
-
-
   // Handler to prevent disabling all features
   const handleFeatureToggle = (feature: 'map' | 'compare' | 'visualize', value: boolean) => {
     const activeCount = Object.values(enabledFeatures).filter(Boolean).length
@@ -335,7 +332,7 @@ export function AdminView() {
             <CardDescription>Manage datasets, features, and monitor platform performance</CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="datasets" onValueChange={setActiveTab}>
+            <Tabs defaultValue="datasets">
 
               <TabsList className="modern-tabs">
                 <TabsTrigger value="datasets" className="modern-tab">
@@ -357,7 +354,15 @@ export function AdminView() {
                   <Upload className="h-5 w-5" />
                   Data Sources Manifest
                 </h3>
-                <DataSourcesManifestViewer manifest={apiFileManifest} />
+                {manifestLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                ) : manifest ? (
+                  <DataSourcesManifestViewer manifest={manifest} />
+                ) : (
+                  <div className="text-red-500">Failed to load manifest.</div>
+                )}
               </TabsContent>
 
               <TabsContent value="features" className="space-y-6 py-6">
@@ -469,7 +474,7 @@ function DataSourcesManifestViewer({ manifest }: { manifest: any }) {
                           <div className="font-medium">{indicator.replace(/_/g, " ")}</div>
                           <div className="flex items-center gap-2 ml-4 text-sm">
                             <a href={value} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline flex items-center gap-1">
-                              Ver archivo <ExternalLink className="h-3 w-3" />
+                              View file <ExternalLink className="h-3 w-3" />
                             </a>
                           </div>
                         </div>
@@ -480,7 +485,7 @@ function DataSourcesManifestViewer({ manifest }: { manifest: any }) {
                             <div key={year} className="flex items-center gap-2 ml-4 text-sm">
                               <Badge variant="secondary">{year}</Badge>
                               <a href={(fileInfo as any).raw_file} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline flex items-center gap-1">
-                                Ver archivo <ExternalLink className="h-3 w-3" />
+                                View file <ExternalLink className="h-3 w-3" />
                               </a>
                               <span className="text-muted-foreground">ID: {(fileInfo as any).resource_id}</span>
                             </div>
@@ -493,21 +498,21 @@ function DataSourcesManifestViewer({ manifest }: { manifest: any }) {
                       <div key={featureType} className="ml-4 flex items-center gap-2 text-sm mb-2">
                         <Badge variant="secondary">{featureType}</Badge>
                         <a href={url as string} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline flex items-center gap-1">
-                          Ver archivo <ExternalLink className="h-3 w-3" />
+                          View file <ExternalLink className="h-3 w-3" />
                         </a>
                       </div>
                     ))
                   ) : (
                     <div className="ml-4 flex items-center gap-2 text-sm mb-2">
                       <a href={(dataInfo as any).raw_file} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline flex items-center gap-1">
-                        Ver archivo <ExternalLink className="h-3 w-3" />
+                        View file <ExternalLink className="h-3 w-3" />
                       </a>
                       {(dataInfo as any).resource_id && <span className="text-muted-foreground">ID: {(dataInfo as any).resource_id}</span>}
                     </div>
                   )}
                   {(dataInfo as any).processed_file && (
                     <div className="ml-4 text-xs text-muted-foreground mt-1">
-                      Procesado: <span className="font-mono">{(dataInfo as any).processed_file}</span>
+                      Processed: <span className="font-mono">{(dataInfo as any).processed_file}</span>
                     </div>
                   )}
                 </div>

@@ -38,17 +38,19 @@ export function DistrictComparisonChart({
       setIsLoading(true)
       try {
         // Create data array for the chart
-        const data = await Promise.all(selectedIndicators.map(async (indicatorName) => {
-          const indicator = availableIndicators.find(ind => ind.name === indicatorName)
+        const data = await Promise.all(selectedIndicators.map(async (indicatorNameWithYear) => {
+          // Extract the base name without the year
+          const baseName = indicatorNameWithYear.split(' (')[0]
+          const indicator = availableIndicators.find(ind => ind.name === baseName)
           if (!indicator) return null
 
           const value1 = await getIndicatorValue(district1.id, indicator.id, granularity)
           const value2 = await getIndicatorValue(district2.id, indicator.id, granularity)
 
           return {
-            name: indicatorName,
-            [`${district1.name} - ${indicatorName}`]: value1 || 0,
-            [`${district2.name} - ${indicatorName}`]: value2 || 0,
+            name: indicatorNameWithYear,
+            [`${district1.name} - ${indicatorNameWithYear}`]: value1 || 0,
+            [`${district2.name} - ${indicatorNameWithYear}`]: value2 || 0,
             unit: indicator.unit
           }
         }))
@@ -146,6 +148,18 @@ export function DistrictComparisonChart({
         : Number(value).toFixed(1).replace(/\.0$/, '')
   }
 
+  // Calculate max values for each Y axis for padding
+  const maxLeft = chartData.length > 0 ? Math.max(
+    ...[`${district1.name} - ${selectedIndicators[0]}`, `${district2.name} - ${selectedIndicators[0]}`].map(key =>
+      Math.max(...chartData.map(d => d[key] || 0))
+    )
+  ) : 0;
+  const maxRight = selectedIndicators.length > 1 && chartData.length > 1 ? Math.max(
+    ...[`${district1.name} - ${selectedIndicators[1]}`, `${district2.name} - ${selectedIndicators[1]}`].map(key =>
+      Math.max(...chartData.map(d => d[key] || 0))
+    )
+  ) : 0;
+
   return (
     <Card className="border-0 shadow-none
     ">
@@ -186,6 +200,7 @@ export function DistrictComparisonChart({
                 tick={{ fontSize: 12 }}
                 axisLine={{ stroke: '#e5e7eb' }}
                 tickLine={{ stroke: '#e5e7eb' }}
+                domain={[0, maxLeft ? maxLeft * 1.1 : 'auto']}
               />
 
               {/* Right Y-axis for second indicator */}
@@ -198,6 +213,7 @@ export function DistrictComparisonChart({
                   tick={{ fontSize: 12 }}
                   axisLine={{ stroke: '#e5e7eb' }}
                   tickLine={{ stroke: '#e5e7eb' }}
+                  domain={[0, maxRight ? maxRight * 1.1 : 'auto']}
                 />
               )}
 

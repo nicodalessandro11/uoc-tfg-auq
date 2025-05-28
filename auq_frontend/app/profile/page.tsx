@@ -67,11 +67,11 @@ export default function ProfilePage() {
                 <ArrowLeft className="w-4 h-4" />
                 Back to Home
             </Button>
-            <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 flex flex-col items-center">
-                <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-white text-4xl font-bold mb-4">
+            <div className="w-full max-w-md bg-card text-card-foreground border border-border rounded-xl shadow-lg p-8 flex flex-col items-center">
+                <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-4xl font-bold mb-4">
                     {(user?.display_name || "U").charAt(0).toUpperCase()}
                 </div>
-                <div className="text-2xl font-semibold mb-2">{user?.display_name || "User"}</div>
+                <div className="text-2xl font-semibold mb-2 text-primary">{user?.display_name || "User"}</div>
                 <div className="text-muted-foreground mb-6">{user?.email}</div>
 
                 {/* Edit display name */}

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
-import { MapPin, BarChart2, Settings, Diff } from "lucide-react"
+import { MapPin, BarChart2, Settings, Diff, Info as InfoIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuPortal } from "@/components/ui/dropdown-menu"
@@ -127,7 +127,10 @@ export function Header() {
             <div>
               <img src="/mascot-blue.svg" alt="Mascot" className="h-14 w-14" />
             </div>
-            <span className="text-lg font-semibold">Are-u-Query-ous?</span>
+            <span className="text-lg font-semibold">Are-u-Queryous?</span>
+          </Link>
+          <Link href="/info" className="ml-2 flex items-center justify-center group rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground" title="Info">
+            <InfoIcon className="h-5 w-5 text-primary-foreground group-hover:text-accent-foreground transition-colors" aria-label="Info" />
           </Link>
         </div>
 
@@ -136,14 +139,12 @@ export function Header() {
           {/* Navigation Links */}
           <div className="hidden md:flex items-center ml-8 space-x-1">
             <ModeToggle />
-
-
             <VerticalSeparator />
 
             {enabledFeatures.map && (
               <Link href={`/${queryString ? "?" + queryString : ""}`}>
                 <Button variant="ghost" size="header" className={`text-primary-foreground ${pathname === "/" ? "bg-white/10" : ""}`}>
-                  <MapPin className="mr-2 h-5 w-5" />
+                  {/* <MapPin className="mr-2 h-5 w-5" /> */}
                   Map
                 </Button>
               </Link>
@@ -154,7 +155,7 @@ export function Header() {
                   variant="ghost"
                   className={`text-primary-foreground ${pathname === "/compare" ? "bg-white/10" : ""}`}
                 >
-                  <Diff strokeWidth={2} className="h-5 w-5" />
+                  {/* /<Diff strokeWidth={2} className="h-5 w-5" / >*/}
                   Compare
                 </Button>
               </Link>
@@ -165,7 +166,7 @@ export function Header() {
                   variant="ghost"
                   className={`text-primary-foreground ${pathname === "/visualize" ? "bg-white/10" : ""}`}
                 >
-                  <BarChart2 strokeWidth={3} className="h-5 w-5" />
+                  {/*<BarChart2 strokeWidth={3} className="h-5 w-5" />*/}
                   Visualize
                 </Button>
               </Link>

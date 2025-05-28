@@ -30,7 +30,7 @@ const indicatorIcons: Record<string, JSX.Element> = {
 
 export function DistrictInfo({ area }: AreaInfoProps) {
   const { selectedGranularity, selectedCity } = useMapContext()
-  const [indicatorValues, setIndicatorValues] = useState<{ [indicatorName: string]: number | null }>({})
+  const [indicatorValues, setIndicatorValues] = useState<{ [indicatorName: string]: { value: number | null, year: number } }>({})
   const [indicatorDefs, setIndicatorDefs] = useState<any[]>([])
 
   useEffect(() => {
@@ -43,10 +43,13 @@ export function DistrictInfo({ area }: AreaInfoProps) {
         // Get all indicators for this city and level
         const indicators = await getCityIndicators(selectedCity.id, selectedGranularity.level)
         // Find all indicators for this area
-        const values: { [indicatorName: string]: number | null } = {}
+        const values: { [indicatorName: string]: { value: number | null, year: number } } = {}
         defs.forEach(def => {
           const found = indicators.find(ind => ind.indicator_def_id === def.id && ind.geo_id === area.id)
-          values[def.name] = found ? found.value : null
+          values[def.name] = {
+            value: found ? found.value : null,
+            year: found ? found.year : 0
+          }
         })
         setIndicatorValues(values)
       } catch (error) {
@@ -73,22 +76,24 @@ export function DistrictInfo({ area }: AreaInfoProps) {
 
       <div className="grid gap-4">
         {indicatorDefs.map(def => (
-          indicatorValues[def.name] !== null && (
+          indicatorValues[def.name]?.value !== null && (
             <div
               className="rounded-xl border border-border bg-background/80 dark:bg-muted/70 shadow-sm p-5 flex flex-col gap-2 hover:shadow-md transition-all"
               key={def.id}
             >
               <div className="flex items-center gap-3 mb-1">
                 <div>
-                  <h4 className="text-base font-semibold text-foreground dark:text-white">{def.name}</h4>
+                  <h4 className="text-base font-semibold text-foreground dark:text-white">
+                    {def.name} ({indicatorValues[def.name]?.year})
+                  </h4>
                   {def.description && (
                     <p className="text-[11px] text-muted-foreground mt-1">{def.description}</p>
                   )}
                 </div>
               </div>
               <p className="text-[18px] font-bold text-primary dark:text-primary-400">
-                {indicatorValues[def.name]?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                {def.unit && !isNaN(Number(indicatorValues[def.name])) && ` ${def.unit}`}
+                {indicatorValues[def.name]?.value?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                {def.unit && !isNaN(Number(indicatorValues[def.name]?.value)) && ` ${def.unit}`}
               </p>
             </div>
           )

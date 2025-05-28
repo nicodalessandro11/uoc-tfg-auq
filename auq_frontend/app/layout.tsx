@@ -12,7 +12,7 @@ const manrope = Manrope({
 })
 
 export const metadata = {
-  title: "Are-u-Query-ous?",
+  title: "Are-u-Queryous?",
   description: "A Web-Based Platform for Democratizing Open Geospatial Data Access",
   generator: "Nicolas D'Alessandro Calderon",
 }

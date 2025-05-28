@@ -90,11 +90,20 @@ export function CompareView() {
           indicators.some(ind => ind.indicator_def_id === def.id)
         )
 
-        setAvailableIndicators(availableDefinitions)
+        // Add year information to each definition
+        const definitionsWithYear = availableDefinitions.map(def => {
+          const indicator = indicators.find(ind => ind.indicator_def_id === def.id)
+          return {
+            ...def,
+            year: indicator?.year || 0
+          }
+        })
+
+        setAvailableIndicators(definitionsWithYear)
 
         // Set default selected indicators (first 2 if available)
-        if (availableDefinitions.length > 0) {
-          setSelectedIndicators(availableDefinitions.slice(0, 2).map(def => def.name))
+        if (definitionsWithYear.length > 0) {
+          setSelectedIndicators(definitionsWithYear.slice(0, 2).map(def => `${def.name} (${def.year})`))
         }
       } catch (error) {
         console.error("Error loading indicators:", error)
@@ -322,11 +331,11 @@ export function CompareView() {
                   <Label className="text-sm font-medium">Indicators to compare</Label>
                   <MultiSelect
                     options={availableIndicators.map(ind => ({
-                      label: ind.name,
-                      value: ind.name,
+                      label: `${ind.name} (${ind.year})`,
+                      value: `${ind.name} (${ind.year})`,
                       description: ind.description,
                       unit: ind.unit,
-                      disabled: selectedIndicators.length >= 2 && !selectedIndicators.includes(ind.name),
+                      disabled: selectedIndicators.length >= 2 && !selectedIndicators.includes(`${ind.name} (${ind.year})`),
                     }))}
                     selected={selectedIndicators}
                     onChange={(newSelected) => {

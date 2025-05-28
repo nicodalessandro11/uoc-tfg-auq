@@ -657,25 +657,16 @@ export default function LeafletMap({
                   if (k === 'description' && typeof v === 'string' && v.length > 180) {
                     value = v.slice(0, 180) + '...';
                   }
-                  return `<li><strong>${capitalize(k)}:</strong> ${value}</li>`;
+                  return `<li><span class=\"font-semibold text-foreground\">${capitalize(k)}:</span> <span class=\"text-muted-foreground\">${value}</span></li>`;
                 });
               if (entries.length > 0) {
-                propertiesHtml = `<ul style=\"margin: 0; padding-left: 18px; font-size: 12px;\">${entries.join('')}</ul>`
+                propertiesHtml = `<ul class="space-y-1">${entries.join('')}</ul>`
               }
             }
             const popupContent = `
-              <div class=\"marker-tooltip\" style=\"
-                background: white;
-                padding: 10px 12px;
-                border-radius: 6px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-                max-width: 260px;
-                min-width: 160px;
-              \">
-                <h3 style=\"margin: 0 0 6px 0; font-size: 15px; font-weight: bold;\">${feature.name || featureTypeName}</h3>
-                <div style=\"margin-bottom: 6px; font-size: 13px;\">
-                  <span style=\"color: ${getColorForFeatureType(feature.featureType)}; font-weight: bold;\">${featureTypeName}</span>
-                </div>
+              <div class="marker-tooltip bg-card text-card-foreground border border-border shadow-lg rounded-xl p-4 max-w-xs min-w-[160px] space-y-2">
+                <h3 class="text-base font-bold text-primary mb-1">${feature.name || featureTypeName}</h3>
+                <div class="text-sm font-semibold text-accent mb-2">${featureTypeName}</div>
                 ${propertiesHtml}
               </div>
             `

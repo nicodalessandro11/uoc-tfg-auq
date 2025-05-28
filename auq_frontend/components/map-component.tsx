@@ -160,10 +160,21 @@ export default function MapComponent() {
 
       {/* Message to select city */}
       {!selectedCity && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white bg-opacity-90 p-6 rounded-lg shadow-lg z-[900] text-center max-w-md">
-          <h3 className="text-lg font-semibold mb-2">Welcome to Are U Query-ous</h3>
-          <p className="text-muted-foreground mb-4">
-            Select a city from the top menu to start exploring geospatial data.
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-card/80 text-card-foreground border border-border p-4 rounded-xl shadow-lg z-[900] text-center max-w-md backdrop-blur-md">
+          <img src="/mascot-blue.svg" alt="Queryous Mascot" className="w-16 h-16 mx-auto mb-2 bg-primary p-1 rounded-full" />
+          <h3 className="text-lg font-bold mb-2 text-primary">Welcome to Are-u-Queryous?</h3>
+          <p className="text-base text-muted-foreground my-4 border-b border-gray-200 pb-4">
+            <b>Select a city from the top menu</b> to start exploring geospatial data.
+          </p>
+          <p className="text-sm text-muted-foreground mb-4">
+            <span className="block">
+              <a href="/info" className="text-primary underline hover:text-primary/80">Check our info page</a> to learn how everything works!
+            </span>
+            <br />
+            Want a more personalized experience?{' '}
+            <span className="block">
+              <a href="/signup" className="text-primary underline hover:text-primary/80">Sign up</a> or <a href="/signin" className="text-primary underline hover:text-primary/80">sign in</a> to unlock all features!
+            </span>
           </p>
           <DataDisclaimer />
         </div>
@@ -171,9 +182,9 @@ export default function MapComponent() {
 
       {/* Message to select level after city is selected - only shown if no level has ever been selected */}
       {selectedCity && !currentGeoJSON && !hasSelectedGranularity && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white bg-opacity-90 p-6 rounded-lg shadow-lg z-[900] text-center max-w-md">
-          <h3 className="text-lg font-semibold mb-2">Great! You've selected {selectedCity.name}</h3>
-          <p className="text-muted-foreground mb-4">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-card/80 text-card-foreground border border-border p-6 rounded-xl shadow-lg z-[900] text-center max-w-md backdrop-blur-md">
+          <h3 className="text-lg font-bold mb-2 text-primary">Great! You've selected {(selectedCity as { name: string }).name}</h3>
+          <p className="text-base text-muted-foreground mb-4">
             Now select the level of detail you want to see using the "Level" selector in the top menu.
           </p>
           <p className="text-sm text-muted-foreground">

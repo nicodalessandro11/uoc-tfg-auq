@@ -4,14 +4,14 @@
 
 @layer base {
   :root {
-    /* Updated color scheme with new primary color #1468B1 */
+    /* Light mode colors */
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-    --primary: 207 80% 39%; /* Updated primary color #1468B1 */
+    --primary: 207 80% 39%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222 47% 11%;
@@ -27,11 +27,16 @@
     --radius: 0.75rem;
 
     /* Chart colors */
-    --chart-1: 207 80% 39%; /* primary blue */
-    --chart-2: 262 83% 58%; /* purple */
-    --chart-3: 31 95% 56%; /* orange */
-    --chart-4: 174 86% 45%; /* teal */
-    --chart-5: 43 96% 56%; /* yellow */
+    --chart-1: 207 80% 39%;
+    /* primary blue */
+    --chart-2: 262 83% 58%;
+    /* purple */
+    --chart-3: 31 95% 56%;
+    /* orange */
+    --chart-4: 174 86% 45%;
+    /* teal */
+    --chart-5: 43 96% 56%;
+    /* yellow */
 
     /* Typography */
     --font-size-h1: 32px;
@@ -53,30 +58,33 @@
   }
 
   .dark {
-    --background: 222 47% 11%;
+    /* Dark mode colors - enhanced for better contrast */
+    --background: 222 47% 3%;
     --foreground: 210 40% 98%;
-    --card: 222 47% 11%;
+    --card: 222 47% 6%;
     --card-foreground: 210 40% 98%;
-    --popover: 222 47% 11%;
+    --popover: 222 47% 6%;
     --popover-foreground: 210 40% 98%;
-    --primary: 207 80% 39%; /* Updated primary color #1468B1 */
+    --primary: 207 80% 45%;
     --primary-foreground: 210 40% 98%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --muted-foreground: 215 20.2% 75.1%;
+    --accent: 207 80% 20%;
+    --accent-foreground: 207 80% 90%;
+    --destructive: 0 62.8% 40.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 207 80% 39%;
-    --chart-1: 207 80% 39%; /* primary blue */
-    --chart-2: 262 83% 58%; /* purple */
-    --chart-3: 31 95% 56%; /* orange */
-    --chart-4: 174 86% 45%; /* teal */
-    --chart-5: 43 96% 56%; /* yellow */
+    --border: 217.2 32.6% 25.5%;
+    --input: 217.2 32.6% 25.5%;
+    --ring: 207 80% 45%;
+
+    /* Dark mode chart colors - slightly adjusted for better visibility */
+    --chart-1: 207 80% 45%;
+    --chart-2: 262 83% 65%;
+    --chart-3: 31 95% 65%;
+    --chart-4: 174 86% 55%;
+    --chart-5: 43 96% 65%;
   }
 }
 
@@ -84,20 +92,24 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground font-manrope;
     letter-spacing: -0.01em;
   }
+
   h1 {
     font-size: var(--font-size-h1);
     font-weight: 700;
     letter-spacing: -0.02em;
   }
+
   h2 {
     font-size: var(--font-size-h2);
     font-weight: 600;
     letter-spacing: -0.02em;
   }
+
   h3 {
     font-size: var(--font-size-h3);
     font-weight: 600;
@@ -182,4 +194,50 @@
 
 .glass-effect {
   @apply bg-background/80 backdrop-blur-md border border-border/50;
+}
+
+/* Leaflet popup overlay modern glass effect */
+.leaflet-popup-content-wrapper {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(120, 120, 120, 0.12);
+  padding: 0 !important;
+}
+
+.leaflet-popup-tip {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+}
+
+.dark .leaflet-popup-content-wrapper {
+  background: rgba(30, 41, 59, 0.55);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(120, 120, 120, 0.18);
+}
+
+.dark .leaflet-popup-tip {
+  background: rgba(30, 41, 59, 0.55);
+  backdrop-filter: blur(8px);
+}
+
+.leaflet-popup-close-button {
+  color: #333 !important;
+  font-size: 1.5rem !important;
+  opacity: 0.85;
+  right: 12px !important;
+  top: 8px !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.2s;
+}
+
+.dark .leaflet-popup-close-button {
+  color: #fff !important;
+}
+
+.leaflet-popup-close-button:hover {
+  opacity: 1;
 }
