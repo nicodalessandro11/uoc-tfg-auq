@@ -3,11 +3,15 @@
 import { useEffect, useRef, useState, useMemo } from "react"
 import { useMapContext } from "@/contexts/map-context"
 import { Loader2 } from "lucide-react"
-import { getCityPointFeatures } from "@/lib/api-service"
+import { getCityPointFeatures, getFeatureDefinitions } from "@/lib/api-service"
 import dynamic from "next/dynamic"
 import { MapTypeSelector } from "@/components/map-type-selector"
-import type { PointFeature } from "@/lib/api-types"
+import type { PointFeature, FeatureDefinition } from "@/lib/api-types"
 import { DataDisclaimer } from "./data-disclaimer"
+import debounce from "lodash/debounce"
+import { useTheme } from "next-themes"
+import { useRouter, useSearchParams } from "next/navigation"
+import { getFeatureTypeName } from "@/lib/feature-styles"
 
 // Create a client-side only component for the map
 const MapWithNoSSR = dynamic(() => import("./leaflet-map"), {
@@ -32,24 +36,6 @@ function debugMadridPoints(points: PointFeature[], visibleTypes: Record<string, 
   // console.groupEnd()
 }
 
-// Feature type mapping
-const featureTypeMap = {
-  "1": "library",
-  "2": "cultural_center",
-  "3": "auditorium",
-  "4": "heritage_space",
-  "5": "creation_factory",
-  "6": "museum",
-  "7": "cinema",
-  "8": "exhibition_center",
-  "9": "archive",
-  "10": "live_music_venue",
-  "11": "performing_arts_venue",
-  "12": "municipal_market",
-  "13": "park_garden",
-  "14": "educational_center",
-}
-
 export default function MapComponent() {
   const {
     selectedCity,
@@ -59,75 +45,84 @@ export default function MapComponent() {
     isLoadingGeoJSON,
     hasSelectedGranularity,
     mapType,
-    clearPointFeaturesCache,
     setPointFeatures,
     pointFeatures,
   } = useMapContext()
 
   const mapContainerRef = useRef(null)
   const [isLoadingPoints, setIsLoadingPoints] = useState(false)
-  const prevCityIdRef = useRef<number | null>(null)
+  const [isPointsVisible, setIsPointsVisible] = useState(false)
+  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [featureDefinitions, setFeatureDefinitions] = useState<FeatureDefinition[]>([])
 
-  // Load point features when city changes
+  // Load feature definitions
   useEffect(() => {
-    async function loadPointFeatures() {
-      if (!selectedCity) return
-
-      // If the city has changed, clear the cache for the previous city
-      if (prevCityIdRef.current && prevCityIdRef.current !== selectedCity.id) {
-        clearPointFeaturesCache(prevCityIdRef.current)
+    async function loadFeatureDefinitions() {
+      try {
+        const defs = await getFeatureDefinitions()
+        setFeatureDefinitions(defs)
+      } catch (error) {
+        console.error("[MapComponent] Error loading feature definitions:", error)
       }
+    }
+    loadFeatureDefinitions()
+  }, [])
 
-      prevCityIdRef.current = selectedCity.id
+  // Effect to load point features in the background
+  useEffect(() => {
+    if (!selectedCity) return
 
+    // Hide points while loading
+    setIsPointsVisible(false)
+
+    // Clear any existing timeout
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current)
+    }
+
+    const loadPointFeatures = async () => {
       setIsLoadingPoints(true)
       try {
-        const pointFeaturesData = await getCityPointFeatures(selectedCity.id)
-        setPointFeatures(pointFeaturesData)
+        const features = await getCityPointFeatures(selectedCity.id)
+        // Map the features to include the feature type name
+        const mappedFeatures = features.map(feature => ({
+          ...feature,
+          featureType: getFeatureTypeName(featureDefinitions, feature.feature_definition_id)
+        }))
+        setPointFeatures(mappedFeatures)
+        // Keep points hidden by default - they will be shown only when toggled
+        setIsLoadingPoints(false)
       } catch (error) {
-        // console.error("Error loading point features:", error)
-        setPointFeatures([])
-      } finally {
+        console.error("Error loading point features:", error)
         setIsLoadingPoints(false)
       }
     }
 
-    loadPointFeatures()
-  }, [selectedCity, clearPointFeaturesCache, setPointFeatures])
+    // Start loading after a small delay to prioritize map rendering
+    loadingTimeoutRef.current = setTimeout(loadPointFeatures, 100)
 
-  // Filter point features based on visible types
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current)
+      }
+    }
+  }, [selectedCity, setPointFeatures, featureDefinitions])
+
+  // Filter point features based on visible types and visibility state
   const filteredPointFeatures = useMemo(() => {
-    // console.log("[Map] Starting to filter point features")
-    // console.log(`[Map] Total point features before filtering: ${pointFeatures.length}`)
-    // console.log("[Map] Visible point types:", visiblePointTypes)
-
     if (!pointFeatures || pointFeatures.length === 0) {
-      // console.log("[Map] No point features to filter")
       return []
     }
 
-    const filtered = pointFeatures.filter((feature) => {
+    return pointFeatures.filter((feature) => {
       const featureType = feature.featureType
       if (!featureType || typeof featureType !== 'string') {
-        // console.warn(`[Map] Feature ${feature.id} has no valid feature type`)
         return false
       }
 
-      // Default to visible if type is not found in visiblePointTypes
-      return (visiblePointTypes as Record<string, boolean>)[featureType] ?? true
+      // Only show points that are explicitly enabled
+      return (visiblePointTypes as Record<string, boolean>)[featureType] === true
     })
-
-    // console.log(`[Map] Total point features after filtering: ${filtered.length}`)
-    // console.log("[Map] Feature types distribution after filtering:",
-    //   Object.entries(
-    //     filtered.reduce<Record<string, number>>((acc, f) => {
-    //       acc[f.featureType] = (acc[f.featureType] || 0) + 1
-    //       return acc
-    //     }, {})
-    //   )
-    // )
-
-    return filtered
   }, [pointFeatures, visiblePointTypes])
 
   // Debug Madrid points if selected
@@ -180,10 +175,10 @@ export default function MapComponent() {
         </div>
       )}
 
-      {/* Message to select level after city is selected - only shown if no level has ever been selected */}
+      {/* Message to select level after city is selected */}
       {selectedCity && !currentGeoJSON && !hasSelectedGranularity && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-card/80 text-card-foreground border border-border p-6 rounded-xl shadow-lg z-[900] text-center max-w-md backdrop-blur-md">
-          <h3 className="text-lg font-bold mb-2 text-primary">Great! You've selected {(selectedCity as { name: string }).name}</h3>
+          <h3 className="text-lg font-bold mb-2 text-primary">Great! You've selected {selectedCity.name}</h3>
           <p className="text-base text-muted-foreground mb-4">
             Now select the level of detail you want to see using the "Level" selector in the top menu.
           </p>

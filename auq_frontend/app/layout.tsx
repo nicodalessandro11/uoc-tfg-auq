@@ -2,6 +2,7 @@ import type React from "react"
 import { Manrope } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/providers"
+import { URLParamCleanup } from "@/components/url-param-cleanup"
 
 // Load Manrope font with specific weights
 const manrope = Manrope({
@@ -26,6 +27,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={manrope.variable}>
       <head>{/* We'll load Leaflet dynamically in the component */}</head>
       <body className="font-manrope">
+        <URLParamCleanup />
         <Providers>{children}</Providers>
       </body>
     </html>

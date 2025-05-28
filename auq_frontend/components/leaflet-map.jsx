@@ -6,6 +6,7 @@ import { mapTypes } from "@/components/map-type-selector"
 import debounce from "lodash/debounce"
 import { useTheme } from "next-themes"
 import { useRouter, useSearchParams } from "next/navigation"
+import { getFeatureStyle, getIconUrlForFeatureType, markerShadowUrl } from "@/lib/feature-styles"
 
 // Feature type mapping
 const featureTypeMap = {
@@ -114,18 +115,6 @@ const markerIconUrls = [
   'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
   'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png',
 ]
-const markerShadowUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
-
-// Helper to assign a marker icon URL to each feature type by order of appearance
-const featureTypeIconMap = {}
-let iconIndex = 0
-const getIconUrlForFeatureType = (featureType) => {
-  if (!featureTypeIconMap[featureType]) {
-    featureTypeIconMap[featureType] = markerIconUrls[iconIndex % markerIconUrls.length]
-    iconIndex++
-  }
-  return featureTypeIconMap[featureType]
-}
 
 // This component will only be loaded on the client side
 export default function LeafletMap({
@@ -164,10 +153,7 @@ export default function LeafletMap({
 
   // Helper function to get marker style
   const getMarkerStyle = (featureType) => {
-    return featureTypeStyles[featureType] || {
-      color: "#FF4444",
-      icon: "📍"
-    }
+    return getFeatureStyle(featureType)
   }
 
   // Initialize the map
@@ -193,114 +179,112 @@ export default function LeafletMap({
       // Load MarkerCluster after Leaflet
       const clusterScript = document.createElement("script")
       clusterScript.src = "https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"
-      clusterScript.onload = initializeMap
+      clusterScript.onload = () => {
+        if (!mapRef.current || mapInstanceRef.current) return
+
+        const L = window.L
+        if (!L) {
+          // console.error("Leaflet not loaded")
+          return
+        }
+
+        // Create map instance
+        const map = L.map(mapRef.current, {
+          center: [40, -4], // Initial view of Spain
+          zoom: 5,
+          zoomControl: false,
+        })
+
+        // Get the initial map type configuration
+        const initialMapType = mapTypes[mapType] || mapTypes.osm
+
+        // Add tile layer
+        tileLayerRef.current = L.tileLayer(initialMapType.url, {
+          attribution: initialMapType.attribution,
+          maxZoom: 19,
+        }).addTo(map)
+
+        // Add zoom control
+        L.control.zoom({ position: "bottomright" }).addTo(map)
+
+        // Create layers for GeoJSON and markers
+        geoJsonLayerRef.current = L.layerGroup().addTo(map)
+        markersLayerRef.current = L.layerGroup().addTo(map)
+
+        // Create marker cluster group SOLO si MarkerClusterGroup está disponible
+        if (L.MarkerClusterGroup) {
+          clusterGroupRef.current = L.markerClusterGroup({
+            maxClusterRadius: 80,
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false,
+            zoomToBoundsOnClick: true,
+            disableClusteringAtZoom: 15,
+            chunkedLoading: true,
+            chunkInterval: 200,
+            chunkDelay: 50,
+          }).addTo(map)
+          setIsClusterReady(true)
+        } else {
+          clusterGroupRef.current = null
+          setIsClusterReady(false)
+          // console.warn("MarkerClusterGroup is not available yet.")
+        }
+
+        // Store map instance
+        mapInstanceRef.current = map
+
+        // Mark map as ready
+        setIsMapReady(true)
+
+        // Notify that map is initialized
+        setMapInitialized(true)
+
+        // Deselect area when clicking on map background
+        map.on('click', function (e) {
+          if (lastPolygonClickRef.current) {
+            lastPolygonClickRef.current = false
+            return
+          }
+          setSelectedArea(null)
+        })
+
+        // Handle resize events
+        const handleResize = () => {
+          if (map) {
+            map.invalidateSize()
+          }
+        }
+
+        window.addEventListener("resize", handleResize)
+
+        return () => {
+          window.removeEventListener("resize", handleResize)
+          if (map) {
+            // Eliminar el cluster group del mapa antes de limpiar la referencia
+            if (clusterGroupRef.current && clusterGroupRef.current._map) {
+              try {
+                clusterGroupRef.current.clearLayers()
+                map.removeLayer(clusterGroupRef.current)
+              } catch (error) {
+                // console.warn("Error removing cluster group during cleanup:", error)
+              }
+            }
+            // Limpiar la referencia después de eliminarlo
+            clusterGroupRef.current = null
+
+            map.remove()
+            mapInstanceRef.current = null
+            geoJsonLayerRef.current = null
+            markersLayerRef.current = null
+            tileLayerRef.current = null
+            setIsMapReady(false)
+            setIsClusterReady(false)
+          }
+        }
+      }
       document.head.appendChild(clusterScript)
     }
     document.head.appendChild(script)
-
-    function initializeMap() {
-      if (!mapRef.current || mapInstanceRef.current) return
-
-      const L = window.L
-      if (!L) {
-        // console.error("Leaflet not loaded")
-        return
-      }
-
-      // Create map instance
-      const map = L.map(mapRef.current, {
-        center: [40, -4], // Initial view of Spain
-        zoom: 5,
-        zoomControl: false,
-      })
-
-      // Get the initial map type configuration
-      const initialMapType = mapTypes[mapType] || mapTypes.osm
-
-      // Add tile layer
-      tileLayerRef.current = L.tileLayer(initialMapType.url, {
-        attribution: initialMapType.attribution,
-        maxZoom: 19,
-      }).addTo(map)
-
-      // Add zoom control
-      L.control.zoom({ position: "bottomright" }).addTo(map)
-
-      // Create layers for GeoJSON and markers
-      geoJsonLayerRef.current = L.layerGroup().addTo(map)
-      markersLayerRef.current = L.layerGroup().addTo(map)
-
-      // Create marker cluster group SOLO si MarkerClusterGroup está disponible
-      if (L.MarkerClusterGroup) {
-        clusterGroupRef.current = L.markerClusterGroup({
-          maxClusterRadius: 80,
-          spiderfyOnMaxZoom: true,
-          showCoverageOnHover: false,
-          zoomToBoundsOnClick: true,
-          disableClusteringAtZoom: 15,
-          chunkedLoading: true,
-          chunkInterval: 200,
-          chunkDelay: 50,
-        }).addTo(map)
-        setIsClusterReady(true)
-      } else {
-        clusterGroupRef.current = null
-        setIsClusterReady(false)
-        // console.warn("MarkerClusterGroup is not available yet.")
-      }
-
-      // Store map instance
-      mapInstanceRef.current = map
-
-      // Mark map as ready
-      setIsMapReady(true)
-
-      // Notify that map is initialized
-      setMapInitialized(true)
-
-      // Deselect area when clicking on map background
-      map.on('click', function (e) {
-        if (lastPolygonClickRef.current) {
-          lastPolygonClickRef.current = false
-          return
-        }
-        setSelectedArea(null)
-      })
-
-      // Handle resize events
-      const handleResize = () => {
-        if (map) {
-          map.invalidateSize()
-        }
-      }
-
-      window.addEventListener("resize", handleResize)
-
-      return () => {
-        window.removeEventListener("resize", handleResize)
-        if (map) {
-          // Eliminar el cluster group del mapa antes de limpiar la referencia
-          if (clusterGroupRef.current && clusterGroupRef.current._map) {
-            try {
-              clusterGroupRef.current.clearLayers()
-              map.removeLayer(clusterGroupRef.current)
-            } catch (error) {
-              // console.warn("Error removing cluster group during cleanup:", error)
-            }
-          }
-          // Limpiar la referencia después de eliminarlo
-          clusterGroupRef.current = null
-
-          map.remove()
-          mapInstanceRef.current = null
-          geoJsonLayerRef.current = null
-          markersLayerRef.current = null
-          tileLayerRef.current = null
-          setIsMapReady(false)
-          setIsClusterReady(false)
-        }
-      }
-    }
 
     return () => {
       if (linkElement.parentNode) {
@@ -313,7 +297,7 @@ export default function LeafletMap({
         document.head.removeChild(script)
       }
     }
-  }, [setMapInitialized, mapType])
+  }, [setMapInitialized, mapType, setSelectedArea])
 
   // Update map when city or granularity changes
   useEffect(() => {

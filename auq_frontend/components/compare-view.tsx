@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback, useMemo, Suspense } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
@@ -9,16 +9,55 @@ import { Badge } from "@/components/ui/badge"
 import { GitCompare, ArrowLeft, Loader2, ChartBarBig } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { getCities, getDistricts, getNeighborhoodsByCity, getIndicatorDefinitions, getCityIndicators, getGeoJSON } from "@/lib/api-service"
+import { getIndicatorDefinitions, getCityIndicators, getGeoJSON } from "@/lib/api-service"
 import { DistrictComparisonChart } from "@/components/district-comparison-chart"
 import { MultiSelect } from "@/components/ui/multi-select"
-import type { IndicatorDefinition, City, Area, Neighborhood, District } from "@/lib/api-types"
-import { useSearchParams, useRouter } from "next/navigation"
+import type { IndicatorDefinition, Area } from "@/lib/api-types"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
+
+// Separate loading component for better code splitting
+function LoadingSpinner() {
+  return (
+    <div className="flex justify-center py-6">
+      <Loader2 className="h-7 w-7 animate-spin text-primary" />
+    </div>
+  )
+}
+
+// Separate component for the comparison chart to enable code splitting
+function ComparisonChartWrapper({
+  selectedArea,
+  comparisonArea,
+  selectedGranularity,
+  selectedIndicators,
+  availableIndicators
+}: {
+  selectedArea: Area | null
+  comparisonArea: Area | null
+  selectedGranularity: { level: string } | null
+  selectedIndicators: string[]
+  availableIndicators: IndicatorDefinition[]
+}) {
+  if (!selectedArea || !comparisonArea) {
+    return <div className="text-center py-12 text-muted-foreground">Please select two areas to compare</div>
+  }
+
+  return (
+    <div className="space-y-6">
+      <DistrictComparisonChart
+        district1={selectedArea}
+        district2={comparisonArea}
+        granularity={selectedGranularity?.level || "district"}
+        selectedIndicators={selectedIndicators}
+        availableIndicators={availableIndicators}
+      />
+    </div>
+  )
+}
 
 export function CompareView() {
   const {
     selectedCity,
-    setSelectedCity,
     selectedGranularity,
     selectedArea,
     setSelectedArea,
@@ -31,18 +70,41 @@ export function CompareView() {
 
   const [isLoading, setIsLoading] = useState(false)
   const [localAvailableAreas, setLocalAvailableAreas] = useState<Area[]>([])
-  const [cities, setCities] = useState<City[]>([])
-  const [loadingCities, setLoadingCities] = useState(true)
   const [availableIndicators, setAvailableIndicators] = useState<IndicatorDefinition[]>([])
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>([])
   const [showIndicatorLimit, setShowIndicatorLimit] = useState(false)
   const searchParams = useSearchParams()
   const router = useRouter()
+  const pathname = usePathname()
 
   // Track previous granularity to detect changes
   const prevGranularityRef = useRef<string | null>(null)
+  const isMounted = useRef(false)
 
-  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  // Initialize component
+  useEffect(() => {
+    isMounted.current = true
+    return () => {
+      isMounted.current = false
+    }
+  }, [])
+
+  // Memoize the area options to prevent unnecessary re-renders
+  const areaOptions = useMemo(() =>
+    localAvailableAreas.map(area => ({
+      value: area.id.toString(),
+      label: area.name
+    })), [localAvailableAreas])
+
+  // Memoize indicator options
+  const indicatorOptions = useMemo(() =>
+    availableIndicators.map(ind => ({
+      label: `${ind.name} (${ind.year})`,
+      value: `${ind.name} (${ind.year})`,
+      description: ind.description,
+      unit: ind.unit,
+      disabled: selectedIndicators.length >= 2 && !selectedIndicators.includes(`${ind.name} (${ind.year})`),
+    })), [availableIndicators, selectedIndicators])
 
   // Effect to reset area selection when level changes
   useEffect(() => {
@@ -55,171 +117,197 @@ export function CompareView() {
     prevGranularityRef.current = selectedGranularity.level
   }, [selectedGranularity, setSelectedArea, setComparisonArea])
 
-  // Load cities from Supabase
-  useEffect(() => {
-    async function loadCities() {
-      setLoadingCities(true)
-      try {
-        const citiesData = await getCities()
-        setCities(citiesData)
-      } catch (error) {
-        console.error("Error loading cities:", error)
-      } finally {
-        setLoadingCities(false)
-      }
-    }
-
-    loadCities()
-  }, [])
-
   // Load available indicators when city or granularity changes
-  useEffect(() => {
-    async function loadIndicators() {
-      if (!selectedCity || !selectedGranularity) return
+  const loadIndicators = useCallback(async () => {
+    if (!selectedCity || !selectedGranularity || !isMounted.current) return
 
-      setIsLoading(true)
-      try {
-        // Get all indicator definitions
-        const definitions = await getIndicatorDefinitions()
+    setIsLoading(true)
+    try {
+      const [definitions, indicators] = await Promise.all([
+        getIndicatorDefinitions(),
+        getCityIndicators(selectedCity.id, selectedGranularity.level)
+      ])
 
-        // Get indicators for the selected city and level
-        const indicators = await getCityIndicators(selectedCity.id, selectedGranularity.level)
+      if (!isMounted.current) return
 
-        // Filter definitions to only include those that have data
-        const availableDefinitions = definitions.filter(def =>
-          indicators.some(ind => ind.indicator_def_id === def.id)
-        )
+      const availableDefinitions = definitions.filter(def =>
+        indicators.some(ind => ind.indicator_def_id === def.id)
+      )
 
-        // Add year information to each definition
-        const definitionsWithYear = availableDefinitions.map(def => {
-          const indicator = indicators.find(ind => ind.indicator_def_id === def.id)
-          return {
-            ...def,
-            year: indicator?.year || 0
-          }
-        })
-
-        setAvailableIndicators(definitionsWithYear)
-
-        // Set default selected indicators (first 2 if available)
-        if (definitionsWithYear.length > 0) {
-          setSelectedIndicators(definitionsWithYear.slice(0, 2).map(def => `${def.name} (${def.year})`))
+      const definitionsWithYear = availableDefinitions.map(def => {
+        const indicator = indicators.find(ind => ind.indicator_def_id === def.id)
+        return {
+          ...def,
+          year: indicator?.year || 0
         }
-      } catch (error) {
-        console.error("Error loading indicators:", error)
-      } finally {
+      })
+
+      setAvailableIndicators(definitionsWithYear)
+
+      if (definitionsWithYear.length > 0) {
+        setSelectedIndicators(definitionsWithYear.slice(0, 2).map(def => `${def.name} (${def.year})`))
+      }
+    } catch (error) {
+      console.error("Error loading indicators:", error)
+    } finally {
+      if (isMounted.current) {
         setIsLoading(false)
       }
     }
-
-    loadIndicators()
   }, [selectedCity, selectedGranularity])
 
-  // Load available areas when city or granularity changes
   useEffect(() => {
-    async function loadAreas() {
-      if (!selectedCity || !selectedGranularity) return
+    loadIndicators()
+  }, [loadIndicators])
 
-      // 1. Use cached data from context if available
-      if (availableAreas && availableAreas.length > 0) {
-        setLocalAvailableAreas(availableAreas)
-        return
+  // Load available areas when city or granularity changes
+  const loadAreas = useCallback(async () => {
+    if (!selectedCity || !selectedGranularity || !isMounted.current) return
+
+    // 1. Use cached data from context if available
+    if (availableAreas && availableAreas.length > 0) {
+      setLocalAvailableAreas(availableAreas)
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      // Load GeoJSON data to ensure it's available (will use cache if present)
+      await loadGeoJSON(selectedCity.id, selectedGranularity.level)
+
+      // Get areas from GeoJSON data
+      const geoJsonData = await getGeoJSON(selectedCity.id, selectedGranularity.level)
+      if (!geoJsonData || !geoJsonData.features) {
+        throw new Error("No GeoJSON data available")
       }
 
-      setIsLoading(true)
-      try {
-        // Load GeoJSON data to ensure it's available (will use cache if present)
-        await loadGeoJSON(selectedCity.id, selectedGranularity.level)
+      // Transform to expected format
+      const formattedAreas: Area[] = geoJsonData.features.map((feature: any) => {
+        // Ensure all numeric fields have a value, defaulting to 0 if undefined
+        const population = typeof feature.properties.population === 'number' ? feature.properties.population : 0
+        const avgIncome = typeof feature.properties.avg_income === 'number' ? feature.properties.avg_income : 0
+        const surface = typeof feature.properties.surface === 'number' ? feature.properties.surface : 0
+        const disposableIncome = typeof feature.properties.disposable_income === 'number' ? feature.properties.disposable_income : 0
 
-        // Get areas from GeoJSON data
-        const geoJsonData = await getGeoJSON(selectedCity.id, selectedGranularity.level)
-        if (!geoJsonData || !geoJsonData.features) {
-          throw new Error("No GeoJSON data available")
+        return {
+          id: feature.properties.id,
+          name: feature.properties.name,
+          cityId: feature.properties.city_id,
+          city_id: feature.properties.city_id,
+          district_id: feature.properties.district_id,
+          population,
+          avgIncome,
+          surface,
+          disposableIncome,
         }
+      })
 
-        // Transform to expected format
-        const formattedAreas: Area[] = geoJsonData.features.map((feature: any) => {
-          // Ensure all numeric fields have a value, defaulting to 0 if undefined
-          const population = typeof feature.properties.population === 'number' ? feature.properties.population : 0
-          const avgIncome = typeof feature.properties.avg_income === 'number' ? feature.properties.avg_income : 0
-          const surface = typeof feature.properties.surface === 'number' ? feature.properties.surface : 0
-          const disposableIncome = typeof feature.properties.disposable_income === 'number' ? feature.properties.disposable_income : 0
-
-          return {
-            id: feature.properties.id,
-            name: feature.properties.name,
-            cityId: feature.properties.city_id,
-            city_id: feature.properties.city_id,
-            district_id: feature.properties.district_id,
-            population,
-            avgIncome,
-            surface,
-            disposableIncome,
-          }
-        })
-
-        console.log(`[CompareView] Loaded ${formattedAreas.length} ${selectedGranularity.level}s for city ${selectedCity.id}`)
+      console.log(`[CompareView] Loaded ${formattedAreas.length} ${selectedGranularity.level}s for city ${selectedCity.id}`)
+      if (isMounted.current) {
         setLocalAvailableAreas(formattedAreas.map(a => toFullArea(a)))
-      } catch (error) {
-        console.error("Error loading areas:", error)
+      }
+    } catch (error) {
+      console.error("Error loading areas:", error)
+      if (isMounted.current) {
         setLocalAvailableAreas([])
-      } finally {
+      }
+    } finally {
+      if (isMounted.current) {
         setIsLoading(false)
       }
     }
-
-    loadAreas()
   }, [selectedCity, selectedGranularity, loadGeoJSON, availableAreas])
+
+  useEffect(() => {
+    loadAreas()
+  }, [loadAreas])
 
   // Auto-select Area 1 from URL param if present
   useEffect(() => {
-    // Only run this effect on the /compare route
-    if (pathname !== "/compare") return;
+    if (pathname !== "/compare" || !searchParams || !isMounted.current) return;
 
     const areaParam = searchParams.get("area")
-    if (areaParam) {
-      if (localAvailableAreas && localAvailableAreas.length > 0) {
-        const area = localAvailableAreas.find(a => a.id.toString() === areaParam)
-        console.log('[CompareView] Sync from URL areaParam:', areaParam, 'found:', !!area, area)
-        if (area) {
-          setSelectedArea(toFullArea(area))
-        } else {
-          setSelectedArea(null)
-          const params = new URLSearchParams(window.location.search)
-          params.delete("area")
-          console.trace("[CompareView] router.replace: removing area param")
-          router.replace(`?${params.toString()}`)
-        }
-      }
-      // If localAvailableAreas is empty, do nothing (wait for it to load)
+    const levelParam = searchParams.get("level")
+
+    // Always clear selectedArea if areaParam is null
+    if (!areaParam && selectedArea) {
+      setSelectedArea(null)
+      return
     }
-  }, [searchParams, localAvailableAreas, setSelectedArea, pathname])
+
+    // Only set area if:
+    // - areaParam exists
+    // - levelParam matches current granularity
+    // - area is valid for the current availableAreas
+    if (
+      areaParam &&
+      levelParam === selectedGranularity?.level &&
+      localAvailableAreas &&
+      localAvailableAreas.length > 0
+    ) {
+      const area = localAvailableAreas.find(a => a.id.toString() === areaParam)
+      console.log('[CompareView] Sync from URL areaParam:', areaParam, 'found:', !!area, area)
+      if (area) {
+        setSelectedArea(toFullArea(area))
+      } else {
+        setSelectedArea(null)
+        const params = new URLSearchParams(window.location.search)
+        params.delete("area")
+        console.trace("[CompareView] router.replace: removing area param")
+        router.replace(`?${params.toString()}`)
+      }
+    }
+  }, [searchParams, localAvailableAreas, setSelectedArea, pathname, selectedGranularity, selectedArea])
+
+  // Sync Area 1 selection to URL
+  useEffect(() => {
+    if (pathname !== "/compare") return;
+
+    const params = new URLSearchParams(window.location.search)
+    if (selectedArea) {
+      params.set("area", selectedArea.id.toString())
+      if (selectedGranularity) {
+        params.set("level", selectedGranularity.level)
+      }
+    } else {
+      params.delete("area")
+    }
+    router.replace(`?${params.toString()}`)
+  }, [selectedArea, selectedGranularity, pathname, router])
 
   // 1. Clear comparisonArea when leaving CompareView (unmount)
   useEffect(() => {
     return () => {
-      setComparisonArea(null)
+      if (isMounted.current) {
+        setComparisonArea(null)
+      }
     }
   }, [setComparisonArea])
 
-  // Render comparison data
-  const renderComparisonData = () => {
-    if (!selectedArea || !comparisonArea) {
-      return <div className="text-center py-12 text-muted-foreground">Please select two areas to compare</div>
+  // Handle area selection with debounced URL update
+  const handleAreaChange = useCallback((value: string, isArea1: boolean) => {
+    const area = localAvailableAreas.find((a) => a.id === Number.parseInt(value))
+    if (area) {
+      const fullArea = toFullArea(area)
+      if (isArea1) {
+        setSelectedArea(fullArea)
+        const params = new URLSearchParams(window.location.search)
+        params.set("area", area.id.toString())
+        router.replace(`?${params.toString()}`, { scroll: false })
+      } else {
+        setComparisonArea(fullArea)
+      }
+    } else {
+      if (isArea1) {
+        setSelectedArea(null)
+        const params = new URLSearchParams(window.location.search)
+        params.delete("area")
+        router.replace(`?${params.toString()}`, { scroll: false })
+      } else {
+        setComparisonArea(null)
+      }
     }
-
-    return (
-      <div className="space-y-6">
-        <DistrictComparisonChart
-          district1={selectedArea}
-          district2={comparisonArea}
-          granularity={selectedGranularity?.level || "district"}
-          selectedIndicators={selectedIndicators}
-          availableIndicators={availableIndicators}
-        />
-      </div>
-    )
-  }
+  }, [localAvailableAreas, router, setSelectedArea, setComparisonArea])
 
   return (
     <div className="container mx-auto py-4 md:py-6 px-2 space-y-4">
@@ -235,67 +323,24 @@ export function CompareView() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 p-4">
-            <div className="space-y-1">
-              <Label className="text-sm font-medium">City</Label>
-              <Select
-                value={selectedCity?.id.toString() || ""}
-                onValueChange={(value) => {
-                  const city = cities.find((c) => c.id === Number.parseInt(value))
-                  if (city) {
-                    setSelectedCity(city)
-                  }
-                }}
-              >
-                <SelectTrigger className="modern-input h-9 text-sm">
-                  <SelectValue placeholder="Select city" />
-                </SelectTrigger>
-                <SelectContent>
-                  {cities.map((city) => (
-                    <SelectItem key={city.id} value={city.id.toString()}>
-                      {city.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {isLoading || loadingCities ? (
-              <div className="flex justify-center py-6">
-                <Loader2 className="h-7 w-7 animate-spin text-primary" />
-              </div>
+            {isLoading ? (
+              <LoadingSpinner />
             ) : (
               <>
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">Area 1</Label>
                   <Select
                     value={selectedArea?.id.toString() || ""}
-                    onValueChange={(value) => {
-                      const area = localAvailableAreas.find((a) => a.id === Number.parseInt(value))
-                      if (area) {
-                        setSelectedArea(toFullArea(area))
-                        // Sync Area 1 to the URL
-                        const params = new URLSearchParams(window.location.search)
-                        params.set("area", area.id.toString())
-                        console.trace("[CompareView] router.replace: setting area param")
-                        router.replace(`?${params.toString()}`)
-                      } else {
-                        setSelectedArea(null)
-                        // Remove area from URL if not found
-                        const params = new URLSearchParams(window.location.search)
-                        params.delete("area")
-                        console.trace("[CompareView] router.replace: removing area param")
-                        router.replace(`?${params.toString()}`)
-                      }
-                    }}
+                    onValueChange={(value) => handleAreaChange(value, true)}
                     disabled={localAvailableAreas.length === 0}
                   >
                     <SelectTrigger className="modern-input h-9 text-sm bg-[rgba(37,99,235,0.08)]">
                       <SelectValue placeholder="Select first area" />
                     </SelectTrigger>
                     <SelectContent>
-                      {localAvailableAreas.map((area) => (
-                        <SelectItem key={area.id} value={area.id.toString()}>
-                          {area.name}
+                      {areaOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -306,21 +351,16 @@ export function CompareView() {
                   <Label className="text-sm font-medium">Area 2</Label>
                   <Select
                     value={comparisonArea?.id.toString() || ""}
-                    onValueChange={(value) => {
-                      const area = localAvailableAreas.find((a) => a.id === Number.parseInt(value))
-                      if (area) {
-                        setComparisonArea(toFullArea(area))
-                      }
-                    }}
+                    onValueChange={(value) => handleAreaChange(value, false)}
                     disabled={localAvailableAreas.length === 0}
                   >
                     <SelectTrigger className="modern-input h-9 text-sm bg-[rgba(16,185,129,0.08)]">
                       <SelectValue placeholder="Select second area" />
                     </SelectTrigger>
                     <SelectContent>
-                      {localAvailableAreas.map((area) => (
-                        <SelectItem key={area.id} value={area.id.toString()}>
-                          {area.name}
+                      {areaOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -330,19 +370,13 @@ export function CompareView() {
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">Indicators to compare</Label>
                   <MultiSelect
-                    options={availableIndicators.map(ind => ({
-                      label: `${ind.name} (${ind.year})`,
-                      value: `${ind.name} (${ind.year})`,
-                      description: ind.description,
-                      unit: ind.unit,
-                      disabled: selectedIndicators.length >= 2 && !selectedIndicators.includes(`${ind.name} (${ind.year})`),
-                    }))}
+                    options={indicatorOptions}
                     selected={selectedIndicators}
                     onChange={(newSelected) => {
                       if (newSelected.length > 2) {
-                        setShowIndicatorLimit(true);
-                        setTimeout(() => setShowIndicatorLimit(false), 2000);
-                        return;
+                        setShowIndicatorLimit(true)
+                        setTimeout(() => setShowIndicatorLimit(false), 2000)
+                        return
                       }
                       setSelectedIndicators(newSelected)
                     }}
@@ -366,11 +400,17 @@ export function CompareView() {
         <Card className="w-full md:w-2/3 flex flex-col">
           <CardContent className="p-4">
             {isLoading ? (
-              <div className="flex justify-center py-6">
-                <Loader2 className="h-7 w-7 animate-spin text-primary" />
-              </div>
+              <LoadingSpinner />
             ) : (
-              renderComparisonData()
+              <Suspense fallback={<LoadingSpinner />}>
+                <ComparisonChartWrapper
+                  selectedArea={selectedArea}
+                  comparisonArea={comparisonArea}
+                  selectedGranularity={selectedGranularity}
+                  selectedIndicators={selectedIndicators}
+                  availableIndicators={availableIndicators}
+                />
+              </Suspense>
             )}
           </CardContent>
         </Card>

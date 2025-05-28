@@ -1,5 +1,15 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-28 | Improved Map Functionality and Added URL Param Cleanup
+
+- Updated various map-related components and layout for better user experience (layout.tsx, city-selector.tsx, compare-view.tsx, filter-panel.tsx, leaflet-map.jsx, map-component.tsx, map-view.tsx, point-features-toggle.tsx)
+- Introduced URL param cleanup component to enhance application performance and prevent unwanted issues (url-param-cleanup.tsx)
+- Enhanced API service and types for better data handling and communication with backend (api-service.ts, api-types.ts)
+- Added new constants and feature styles for better code readability and maintainability (constants.ts, feature-styles.ts)
+- Updated Supabase client and package.json to accommodate new changes and dependencies (supabase-client.ts, package.json)
+
+This commit brings significant improvements to the map functionality of the application, making it more user-friendly and efficient. The addition of the URL param cleanup component will also help in maintaining the application's performance and stability.
+
 ## 📦 Feature | 2025-05-28 | Implemented new info page and updated frontend components
 
 - Added a new info page (auq_frontend/app/info/page.tsx) and updated various frontend components including layout, profile page, signup page, and more

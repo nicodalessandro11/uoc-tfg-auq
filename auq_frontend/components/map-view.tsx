@@ -8,6 +8,7 @@ import { PointFeaturesToggle } from "@/components/point-features-toggle"
 import { ChatSidebar } from "@/components/chat-sidebar"
 import { Filter, Info, MapPin, ChevronLeft, ChevronRight, Bot } from "lucide-react"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { TABS, TabType, isValidTab } from "@/lib/constants"
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const MapComponent = dynamic(() => import("@/components/map-component"), {
@@ -19,32 +20,75 @@ const MapComponent = dynamic(() => import("@/components/map-component"), {
   ),
 })
 
+const STORAGE_KEY = 'activeTab'
+
 export function MapView() {
   const { selectedCity, selectedArea, setVisiblePointTypes, visiblePointTypes, triggerRefresh, selectedGranularity, availableAreas, setSelectedArea, resetFilters } =
     useMapContext()
-  const [activeTab, setActiveTab] = useState("points")
-  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(true) // Hidden by default
+
+  // Initialize with default tab
+  const [activeTab, setActiveTab] = useState<TabType>(TABS.POINTS)
+  const [isClient, setIsClient] = useState(false)
+
+  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(true)
   const mapContainerRef = useRef(null)
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
-  const prevCityIdRef = useRef<number | null>(null);
+  const prevCityIdRef = useRef<number | null>(null)
 
   // Handle responsive sidebar
   const [isMobile, setIsMobile] = useState(false)
 
-  // Set initial tab from URL on mount
+  // Initialize client-side state
   useEffect(() => {
-    const tabParam = searchParams.get("tab")
-    if (tabParam && ["points", "filters", "info"].includes(tabParam)) {
-      setActiveTab(tabParam)
+    setIsClient(true)
+    const savedTab = localStorage.getItem(STORAGE_KEY)
+    if (savedTab && isValidTab(savedTab)) {
+      setActiveTab(savedTab)
     }
-  }, [searchParams])
+  }, [])
+
+  // Initialize tab from URL or set default
+  useEffect(() => {
+    if (!searchParams || !isClient) return;
+
+    const tabParam = searchParams.get("tab")
+    if (tabParam && isValidTab(tabParam)) {
+      setActiveTab(tabParam)
+      localStorage.setItem(STORAGE_KEY, tabParam)
+    } else if (pathname === "/") {
+      // Use the persisted tab from localStorage
+      const savedTab = localStorage.getItem(STORAGE_KEY)
+      if (savedTab && isValidTab(savedTab)) {
+        setActiveTab(savedTab)
+        const params = new URLSearchParams(window.location.search)
+        params.set("tab", savedTab)
+        router.push(`?${params.toString()}`, { scroll: false })
+      }
+    }
+  }, [searchParams, pathname, router, isClient])
+
+  // Handle tab changes
+  const handleTabChange = useCallback((newTab: TabType) => {
+    if (newTab === activeTab) return;
+
+    setActiveTab(newTab)
+    if (isClient) {
+      localStorage.setItem(STORAGE_KEY, newTab)
+    }
+
+    const params = new URLSearchParams(window.location.search)
+    params.set("tab", newTab)
+    router.push(`?${params.toString()}`, { scroll: false })
+  }, [activeTab, router, isClient])
 
   // Auto-select area from URL param if present and level matches
   useEffect(() => {
     // Only run this effect on the root route
     if (pathname !== "/") return;
+
+    if (!searchParams) return;
 
     const areaParam = searchParams.get("area")
     const levelParam = searchParams.get("level")
@@ -79,13 +123,6 @@ export function MapView() {
       }
     }
   }, [searchParams, availableAreas, setSelectedArea, selectedGranularity, router, pathname, selectedArea])
-
-  // Update URL when tab changes
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    params.set("tab", activeTab)
-    router.push(`?${params.toString()}`, { scroll: false })
-  }, [activeTab, router])
 
   // Memoize the setVisiblePointTypes handler to prevent unnecessary re-renders
   const handleVisiblePointTypesChange = useCallback(
@@ -167,29 +204,29 @@ export function MapView() {
             <div className="p-4">
               <div className="modern-tabs flex mb-6">
                 <button
-                  className={`flex-1 modern-tab ${activeTab === "points" ? "modern-tab-active" : "modern-tab-inactive"}`}
-                  onClick={() => setActiveTab("points")}
+                  className={`flex-1 modern-tab ${activeTab === TABS.POINTS ? "modern-tab-active" : "modern-tab-inactive"}`}
+                  onClick={() => handleTabChange(TABS.POINTS)}
                 >
                   <MapPin className="h-4 w-4 mr-2 inline-block" />
                   Points
                 </button>
                 <button
-                  className={`flex-1 modern-tab ${activeTab === "filters" ? "modern-tab-active" : "modern-tab-inactive"}`}
-                  onClick={() => setActiveTab("filters")}
+                  className={`flex-1 modern-tab ${activeTab === TABS.FILTERS ? "modern-tab-active" : "modern-tab-inactive"}`}
+                  onClick={() => handleTabChange(TABS.FILTERS)}
                 >
                   <Filter className="h-4 w-4 mr-2 inline-block" />
                   Filters
                 </button>
                 <button
-                  className={`flex-1 modern-tab ${activeTab === "info" ? "modern-tab-active" : "modern-tab-inactive"}`}
-                  onClick={() => setActiveTab("info")}
+                  className={`flex-1 modern-tab ${activeTab === TABS.INFO ? "modern-tab-active" : "modern-tab-inactive"}`}
+                  onClick={() => handleTabChange(TABS.INFO)}
                 >
                   <Info className="h-4 w-4 mr-2 inline-block" />
                   Info
                 </button>
               </div>
 
-              {activeTab === "points" && (
+              {activeTab === TABS.POINTS && (
                 <div>
                   <h3 className="section-title flex items-center">
                     <MapPin className="h-4 w-4 mr-2" />
@@ -200,7 +237,7 @@ export function MapView() {
                 </div>
               )}
 
-              {activeTab === "filters" && (
+              {activeTab === TABS.FILTERS && (
                 <div>
                   <h3 className="section-title flex items-center">
                     <Filter className="h-4 w-4 mr-2" />
@@ -213,7 +250,7 @@ export function MapView() {
                 </div>
               )}
 
-              {activeTab === "info" && (
+              {activeTab === TABS.INFO && (
                 <div>
                   {selectedArea && (typeof selectedArea.id !== 'undefined') && (typeof (selectedArea as any)['cityId'] !== 'undefined' || typeof (selectedArea as any)['city_id'] !== 'undefined') ? (
                     <DistrictInfo area={{

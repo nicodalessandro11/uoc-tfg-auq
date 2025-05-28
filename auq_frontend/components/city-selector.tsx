@@ -1,80 +1,158 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useMapContext } from "@/contexts/map-context"
-// Import the API service function
 import { getCities } from "@/lib/api-service"
 import type { City } from "@/lib/api-types"
 import { GranularitySelector } from "@/components/granularity-selector"
-import { useRouter } from "next/navigation"
-import { analyticsLogger } from "@/lib/analytics/logger"
 import { useAuth } from "@/contexts/auth-context"
+import { analyticsLogger } from "@/lib/analytics/logger"
+import { STORAGE_KEYS } from "@/lib/constants"
+import { useToast } from "@/components/ui/use-toast"
 
-export function CitySelector() {
-  const { selectedCity, setSelectedCity } = useMapContext()
-  const { user } = useAuth()
-  const [cities, setCities] = useState<Array<{ id: number; name: string }>>([])
+// Custom hook for city data management
+function useCityData() {
+  const [cities, setCities] = useState<City[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
+  const isMounted = useRef(false)
 
-  // Fetch cities from API
   useEffect(() => {
+    isMounted.current = true
+    return () => {
+      isMounted.current = false
+    }
+  }, [])
+
+  useEffect(() => {
+    let mounted = true
+
     async function loadCities() {
+      if (!mounted) return
+
       setIsLoading(true)
-      // console.log("CitySelector: Starting to load cities...")
+      setError(null)
       try {
         const citiesData = await getCities()
-        // console.log("CitySelector: Cities data received:", citiesData)
-        setCities(citiesData)
+        if (mounted) {
+          setCities(citiesData)
+        }
       } catch (error) {
-        // console.error("CitySelector: Error loading cities:", error)
+        if (mounted) {
+          const errorMessage = "Failed to load cities. Please try again later."
+          setError(errorMessage)
+          toast({
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
+          })
+        }
       } finally {
-        setIsLoading(false)
-        // console.log("CitySelector: Finished loading cities")
+        if (mounted) {
+          setIsLoading(false)
+        }
       }
     }
 
     loadCities()
+    return () => {
+      mounted = false
+    }
+  }, [toast])
+
+  return { cities, isLoading, error }
+}
+
+// Custom hook for city selection
+function useCitySelection() {
+  const { selectedCity, setSelectedCity } = useMapContext()
+  const { user } = useAuth()
+  const { toast } = useToast()
+  const analyticsTimeoutRef = useRef<NodeJS.Timeout>()
+  const storageTimeoutRef = useRef<NodeJS.Timeout>()
+
+  const handleCityChange = useCallback((city: City) => {
+    // Use requestAnimationFrame for UI updates
+    requestAnimationFrame(() => {
+      setSelectedCity(city)
+    })
+
+    // Debounce storage updates
+    if (storageTimeoutRef.current) {
+      clearTimeout(storageTimeoutRef.current)
+    }
+    storageTimeoutRef.current = setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEYS.SELECTED_CITY, JSON.stringify(city))
+      } catch (error) {
+        console.error('Failed to save city to localStorage:', error)
+      }
+    }, 0)
+
+    // Debounce analytics logging
+    if (analyticsTimeoutRef.current) {
+      clearTimeout(analyticsTimeoutRef.current)
+    }
+    analyticsTimeoutRef.current = setTimeout(async () => {
+      try {
+        if (user) {
+          await analyticsLogger.logEvent({
+            user_id: user.id,
+            event_type: 'map.view',
+            event_details: {
+              city: city.name,
+              city_id: city.id
+            }
+          })
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to log city selection. Please try again.",
+          variant: "destructive",
+        })
+      }
+    }, 100)
+  }, [user, setSelectedCity, toast])
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (analyticsTimeoutRef.current) {
+        clearTimeout(analyticsTimeoutRef.current)
+      }
+      if (storageTimeoutRef.current) {
+        clearTimeout(storageTimeoutRef.current)
+      }
+    }
   }, [])
 
-  // Update URL when city changes
-  useEffect(() => {
-    if (selectedCity) {
-      const params = new URLSearchParams(window.location.search)
-      params.set("city", selectedCity.id.toString())
-      router.replace(`?${params.toString()}`)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCity])
+  return { selectedCity, handleCityChange }
+}
 
-  const handleCityChange = async (city: City) => {
-    // Log city selection
-    if (user) {
-      await analyticsLogger.logEvent({
-        user_id: user.id,
-        event_type: 'map.view',
-        event_details: {
-          city: city.name,
-          city_id: city.id
-        }
-      })
-    }
-    // Always set, even if same city, to force area clearing and state sync
-    setSelectedCity(city)
-  }
+export function CitySelector() {
+  const { cities, isLoading, error } = useCityData()
+  const { selectedCity, handleCityChange } = useCitySelection()
 
   return (
     <div className="flex items-center justify-between w-full">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="font-medium" disabled={isLoading}>
-            {isLoading ? "Loading cities..." : selectedCity ? "Change City" : "Select City"}
+          <Button
+            variant="outline"
+            className="font-medium"
+            disabled={isLoading || !!error}
+          >
+            {isLoading ? "Loading cities..." :
+              error ? "Error loading cities" :
+                selectedCity ? selectedCity.name : "Select City"}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-[180px]">
-          {Array.isArray(cities) ? (
+          {cities.length > 0 ? (
             cities.map((city) => (
               <DropdownMenuItem
                 key={city.id}
@@ -85,7 +163,9 @@ export function CitySelector() {
               </DropdownMenuItem>
             ))
           ) : (
-            <DropdownMenuItem disabled>No cities available</DropdownMenuItem>
+            <DropdownMenuItem disabled>
+              {error ? "Error loading cities" : "No cities available"}
+            </DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>

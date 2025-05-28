@@ -10,6 +10,7 @@ import type {
   GeoJSONResponse,
   GeoJSONFeature,
 } from "./api-types"
+import { getFeatureTypeName } from "./feature-styles"
 
 // Environment variables
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -27,70 +28,64 @@ export const supabase = (() => {
   return supabaseInstance
 })()
 
-// Simple cache implementation
-const cache = new Map<string, { data: any; timestamp: number }>()
+// Cache for API responses
+const apiCache = new Map<string, { data: any; timestamp: number }>()
 
 // Cache TTL in milliseconds (5 minutes)
 const CACHE_TTL = 5 * 60 * 1000
 
-/**
- * Get data from cache or fetch it
- */
-async function getCachedData<T>(cacheKey: string, fetchFn: () => Promise<T>, ttl: number = CACHE_TTL): Promise<T> {
-  const cachedItem = cache.get(cacheKey)
+// Helper function to get cached data
+function getCachedData<T>(key: string, fetchFn: () => Promise<T>): Promise<T> {
+  const cachedItem = apiCache.get(key)
   const now = Date.now()
 
-  // Return cached data if it exists and is not expired
-  if (cachedItem && now - cachedItem.timestamp < ttl) {
-    // console.log(`Using cached data for ${cacheKey}`)
-    return cachedItem.data as T
+  if (cachedItem && now - cachedItem.timestamp < CACHE_TTL) {
+    console.log(`[Cache Hit] ${key}`)
+    return Promise.resolve(cachedItem.data)
   }
 
-  // Fetch fresh data
-  const data = await fetchFn()
+  console.log(`[Cache Miss] ${key}`)
+  return fetchFn().then(data => {
+    apiCache.set(key, { data, timestamp: now })
+    return data
+  })
+}
 
-  // Cache the result
-  cache.set(cacheKey, { data, timestamp: now })
-
-  return data
+// Helper function to set cached data
+function setCachedData<T>(key: string, data: T): void {
+  apiCache.set(key, { data, timestamp: Date.now() })
 }
 
 /**
  * Clear all cache
  */
 export function clearCache(): void {
-  cache.clear()
-  // console.log("Cache cleared")
+  console.log('[clearCache] Clearing all cache')
+  apiCache.clear()
 }
 
 /**
  * Clear specific cache entry
  */
 export function clearCacheEntry(key: string): void {
-  cache.delete(key)
-  // console.log(`Cache cleared for ${key}`)
+  console.log(`[clearCacheEntry] Clearing cache for key: ${key}`)
+  apiCache.delete(key)
 }
 
 /**
  * Get all cities
  */
 export async function getCities(): Promise<City[]> {
+  console.log('[getCities] Function called')
   if (!USE_SUPABASE || !supabase) {
     throw new Error("Supabase client not available or disabled")
   }
 
-  return getCachedData("cities", async () => {
+  return getCachedData('cities', async () => {
+    console.log('[getCities] Fetching from Supabase')
     const { data, error } = await supabase.from("cities").select("*").order("id")
-
-    if (error) {
-      throw new Error(`Error fetching cities: ${error.message}`)
-    }
-
-    if (!data || data.length === 0) {
-      throw new Error("No cities found")
-    }
-
-    return data
+    if (error) throw new Error(error.message)
+    return data || []
   })
 }
 
@@ -210,26 +205,51 @@ export async function getGeographicalUnits(cityId: number, level: string): Promi
   })
 }
 
+// Track in-flight requests to prevent duplicates
+const inFlightRequests = new Map<string, Promise<any>>()
+
 /**
  * Get districts for a city
  */
 export async function getDistricts(cityId: number): Promise<District[]> {
+  console.log(`[getDistricts] Function called for city ${cityId}`)
   if (!USE_SUPABASE || !supabase) {
     throw new Error("Supabase client not available or disabled")
   }
 
-  return getCachedData(`districts_${cityId}`, async () => {
-    const { data, error } = await supabase.from("districts").select("*").eq("city_id", cityId).order("id")
+  const cacheKey = `districts_${cityId}`
+  
+  // Check if there's already an in-flight request for this city
+  const inFlightRequest = inFlightRequests.get(cacheKey)
+  if (inFlightRequest) {
+    console.log(`[getDistricts] Using in-flight request for city ${cityId}`)
+    return inFlightRequest
+  }
 
-    if (error) {
-      throw new Error(`Error fetching districts: ${error.message}`)
-    }
+  return getCachedData(cacheKey, async () => {
+    console.log(`[getDistricts] Fetching from Supabase for city ${cityId}`)
+    
+    // Create a new request promise
+    const requestPromise = (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("districts")
+          .select("*")
+          .eq("city_id", cityId)
+          .order("id")
 
-    if (!data || data.length === 0) {
-      throw new Error(`No districts found for city ${cityId}`)
-    }
+        if (error) throw error
+        return data || []
+      } finally {
+        // Clean up the in-flight request
+        inFlightRequests.delete(cacheKey)
+      }
+    })()
 
-    return data
+    // Store the request promise
+    inFlightRequests.set(cacheKey, requestPromise)
+
+    return requestPromise
   })
 }
 
@@ -237,22 +257,16 @@ export async function getDistricts(cityId: number): Promise<District[]> {
  * Get neighborhoods for a district
  */
 export async function getNeighborhoods(districtId: number): Promise<Neighborhood[]> {
+  console.log(`[getNeighborhoods] Function called for district ${districtId}`)
   if (!USE_SUPABASE || !supabase) {
     throw new Error("Supabase client not available or disabled")
   }
 
   return getCachedData(`neighborhoods_${districtId}`, async () => {
+    console.log(`[getNeighborhoods] Fetching from Supabase for district ${districtId}`)
     const { data, error } = await supabase.from("neighbourhoods").select("*").eq("district_id", districtId).order("id")
-
-    if (error) {
-      throw new Error(`Error fetching neighborhoods: ${error.message}`)
-    }
-
-    if (!data || data.length === 0) {
-      throw new Error(`No neighborhoods found for district ${districtId}`)
-    }
-
-    return data
+    if (error) throw new Error(error.message)
+    return data || []
   })
 }
 
@@ -283,80 +297,71 @@ export async function getFeatureDefinitions(): Promise<FeatureDefinition[]> {
  * Get point features for a city
  */
 export async function getCityPointFeatures(cityId: number): Promise<PointFeature[]> {
+  console.log(`[getCityPointFeatures] Function called for city ${cityId}`)
   if (!USE_SUPABASE || !supabase) {
+    console.log('[getCityPointFeatures] Supabase not available or disabled')
     throw new Error("Supabase client not available or disabled")
   }
 
-  return getCachedData(`point_features_${cityId}`, async () => {
-    // console.log(`[Supabase] Fetching point features for city ID: ${cityId}`)
+  const cacheKey = `point_features_${cityId}`
+  
+  // Check if there's already an in-flight request
+  const inFlightRequest = inFlightRequests.get(cacheKey)
+  if (inFlightRequest) {
+    console.log('[getCityPointFeatures] Using in-flight request')
+    return inFlightRequest
+  }
 
-    // Primero obtenemos los feature definitions
-    const { data: featureDefinitions, error: featureError } = await supabase
-      .from("feature_definitions")
-      .select("id, name")
+  return getCachedData(cacheKey, async () => {
+    console.log(`[getCityPointFeatures] Fetching from Supabase for city ${cityId}`)
+    
+    // Create a new request promise
+    const requestPromise = (async () => {
+      try {
+        // First get the feature definitions
+        const featureDefinitions = await getFeatureDefinitions()
+        console.log(`[getCityPointFeatures] Found ${featureDefinitions?.length || 0} feature definitions`)
 
-    if (featureError) {
-      // console.error(`[Supabase] Error fetching feature definitions: ${featureError.message}`)
-      throw new Error(`Error fetching feature definitions: ${featureError.message}`)
-    }
+        // Now get the point features
+        console.log(`[getCityPointFeatures] Fetching point features for city ${cityId}`)
+        const { data, error } = await supabase
+          .from("point_features")
+          .select("*")
+          .eq("city_id", cityId)
+          .order("id")
 
-    // Creamos un mapa de IDs a nombres
-    const featureTypeMap = Object.fromEntries(
-      (featureDefinitions as { id: number; name: string }[]).map(def => [
-        def.id,
-        def.name.toLowerCase().replace(/\s+/g, "_")
-      ])
-    )
-
-    // console.log(`[Supabase] Feature type map created with ${Object.keys(featureTypeMap).length} types`)
-
-    // Ahora obtenemos los point features
-    const { data, error } = await supabase
-      .from("point_features")
-      .select("*")
-      .eq("city_id", cityId)
-      .limit(10000)
-
-    if (error) {
-      // console.error(`[Supabase] Error fetching point features: ${error.message}`)
-      throw new Error(`Error fetching point features: ${error.message}`)
-    }
-
-    if (!data || data.length === 0) {
-      // console.error(`[Supabase] No point features found for city ${cityId}`)
-      throw new Error(`No point features found for city ${cityId}`)
-    }
-
-    // console.log(`[Supabase] Total point features fetched from database: ${data.length}`)
-
-    // Mapeamos los tipos usando el mapa de IDs a nombres
-    const mappedData = (data as PointFeature[])
-      .map((feature) => {
-        const typeString = featureTypeMap[feature.feature_definition_id]
-        if (!typeString) {
-          // console.warn(`[Supabase] No feature type found for feature ID ${feature.id} with definition_id ${feature.feature_definition_id}`)
-          return null
+        if (error) {
+          console.error(`[getCityPointFeatures] Error fetching point features: ${error.message}`)
+          throw error
         }
-        return {
-          ...feature,
-          featureType: typeString,
-          geoId: feature.geo_id,
-          city_id: cityId,
-        }
-      })
-      .filter((feature): feature is PointFeature => feature !== null)
 
-    // console.log(`[Supabase] Total point features after mapping: ${mappedData.length}`)
-    // console.log(`[Supabase] Feature types distribution:`, 
-    //   Object.entries(
-    //     mappedData.reduce<Record<string, number>>((acc, f) => {
-    //       acc[f.featureType] = (acc[f.featureType] || 0) + 1
-    //       return acc
-    //     }, {})
-    //   )
-    // )
+        console.log(`[getCityPointFeatures] Found ${data?.length || 0} point features`)
 
-    return mappedData
+        // Map the features and add the type
+        const mappedFeatures = (data || [])
+          .map(feature => ({
+            ...feature,
+            featureType: getFeatureTypeName(featureDefinitions, feature.feature_definition_id),
+            geoId: feature.geo_id,
+            city_id: cityId
+          }))
+          .filter((feature): feature is PointFeature => 
+            feature !== null && 
+            feature.featureType !== undefined
+          )
+
+        console.log(`[getCityPointFeatures] Successfully mapped ${mappedFeatures.length} features`)
+        return mappedFeatures
+      } finally {
+        // Clean up the in-flight request
+        inFlightRequests.delete(cacheKey)
+      }
+    })()
+
+    // Store the request promise
+    inFlightRequests.set(cacheKey, requestPromise)
+
+    return requestPromise
   })
 }
 
@@ -364,22 +369,49 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
  * Get indicator definitions
  */
 export async function getIndicatorDefinitions(): Promise<IndicatorDefinition[]> {
+  console.log('[getIndicatorDefinitions] Function called')
   if (!USE_SUPABASE || !supabase) {
+    console.log('[getIndicatorDefinitions] Supabase not available or disabled')
     throw new Error("Supabase client not available or disabled")
   }
 
-  return getCachedData("indicator_definitions", async () => {
-    const { data, error } = await supabase.from("indicator_definitions").select("*").order("id")
+  const cacheKey = 'indicator_definitions'
+  
+  // Check if there's already an in-flight request
+  const inFlightRequest = inFlightRequests.get(cacheKey)
+  if (inFlightRequest) {
+    console.log('[getIndicatorDefinitions] Using in-flight request')
+    return inFlightRequest
+  }
 
-    if (error) {
-      throw new Error(`Error fetching indicator definitions: ${error.message}`)
-    }
+  return getCachedData(cacheKey, async () => {
+    console.log('[getIndicatorDefinitions] Fetching from Supabase')
+    
+    // Create a new request promise
+    const requestPromise = (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("indicator_definitions")
+          .select("*")
+          .order("id")
 
-    if (!data || data.length === 0) {
-      throw new Error("No indicator definitions found")
-    }
+        if (error) {
+          console.error(`[getIndicatorDefinitions] Error fetching definitions: ${error.message}`)
+          throw error
+        }
 
-    return data
+        console.log(`[getIndicatorDefinitions] Found ${data?.length || 0} definitions`)
+        return data || []
+      } finally {
+        // Clean up the in-flight request
+        inFlightRequests.delete(cacheKey)
+      }
+    })()
+
+    // Store the request promise
+    inFlightRequests.set(cacheKey, requestPromise)
+
+    return requestPromise
   })
 }
 
@@ -387,12 +419,12 @@ export async function getIndicatorDefinitions(): Promise<IndicatorDefinition[]> 
  * Get city indicators at a specific level
  */
 export async function getCityIndicators(cityId: number, level: string, year?: number): Promise<Indicator[]> {
+  console.log(`[getCityIndicators] Function called for city ${cityId}, level ${level}, year ${year || 'latest'}`)
   if (!USE_SUPABASE || !supabase) {
     throw new Error("Supabase client not available or disabled")
   }
 
   const geoLevelId = level === "district" ? 2 : level === "neighborhood" || level === "neighbourhood" ? 3 : level === "city" ? 1 : null
-
   if (geoLevelId === null) {
     throw new Error(`Invalid geographical level: ${level}`)
   }
@@ -403,6 +435,7 @@ export async function getCityIndicators(cityId: number, level: string, year?: nu
     : []
 
   return getCachedData(`indicators_${cityId}_${level}_${year || "latest"}`, async () => {
+    console.log(`[getCityIndicators] Fetching from Supabase for city ${cityId}, level ${level}`)
     try {
       // First get the indicator definitions to map names to IDs
       const { data: indicatorDefs, error: defError } = await supabase
@@ -564,101 +597,78 @@ export function clearIndicatorCache(): void {
 }
 
 /**
- * Get enriched GeoJSON (polygons + indicators) for a city and level
+ * Get enriched GeoJSON data for a city at a specific level
  */
-export async function getEnrichedGeoJSON(cityId: number, level: string): Promise<any> {
+export async function getEnrichedGeoJSON(cityId: number, level: string): Promise<GeoJSONResponse> {
+  console.log(`[getEnrichedGeoJSON] Function called for city ${cityId}, level ${level}`)
   if (!USE_SUPABASE || !supabase) {
     throw new Error("Supabase client not available or disabled")
   }
 
-  // Get disabled indicators from localStorage
-  const disabledIndicators = typeof window !== 'undefined' 
-    ? JSON.parse(localStorage.getItem('disabledIndicators') || '[]') 
-    : []
-
   const cacheKey = `enriched_geojson_${cityId}_${level}`
+  
+  // Check if there's already an in-flight request for this city and level
+  const inFlightRequest = inFlightRequests.get(cacheKey)
+  if (inFlightRequest) {
+    console.log(`[getEnrichedGeoJSON] Using in-flight request for city ${cityId}, level ${level}`)
+    return inFlightRequest
+  }
+
   return getCachedData(cacheKey, async () => {
-    // Build the SQL query string
-    let sql = ''
-    const disabledIndicatorsFilter = disabledIndicators.length > 0 
-      ? `AND civ.indicator_name NOT IN (${disabledIndicators.map(name => `'${name}'`).join(',')})`
-      : ''
+    console.log(`[getEnrichedGeoJSON] Fetching from Supabase for city ${cityId}, level ${level}`)
+    
+    // Create a new request promise
+    const requestPromise = (async () => {
+      try {
+        let query = supabase
+          .from(level === "district" ? "districts" : "neighbourhoods")
+          .select("*")
+          .eq("city_id", cityId)
+          .order("id")
 
-    if (level === 'district') {
-      sql = `
-        SELECT jsonb_build_object(
-          'type', 'FeatureCollection',
-          'features', jsonb_agg(
-            jsonb_build_object(
-              'type', 'Feature',
-              'geometry', ST_AsGeoJSON(d.geom)::jsonb,
-              'properties', jsonb_build_object(
-                'id', d.id,
-                'name', d.name,
-                'district_code', d.district_code,
-                'city_id', d.city_id
-              ) || (
-                SELECT jsonb_object_agg(ind.indicator_name, ind.value)
-                FROM (
-                  SELECT civ.indicator_name, civ.value
-                  FROM current_indicators_view civ
-                  WHERE civ.geo_level_id = 2
-                    AND civ.city_id = d.city_id
-                    AND civ.geo_id = d.id
-                    ${disabledIndicatorsFilter}
-                ) ind
-              )
-            )
-          )
-        ) AS geojson
-        FROM districts d
-        WHERE d.city_id = ${cityId}
-      `
-    } else if (level === 'neighborhood' || level === 'neighbourhood') {
-      sql = `
-        SELECT jsonb_build_object(
-          'type', 'FeatureCollection',
-          'features', jsonb_agg(
-            jsonb_build_object(
-              'type', 'Feature',
-              'geometry', ST_AsGeoJSON(n.geom)::jsonb,
-              'properties', jsonb_build_object(
-                'id', n.id,
-                'name', n.name,
-                'neighbourhood_code', n.neighbourhood_code,
-                'district_id', n.district_id,
-                'city_id', n.city_id
-              ) || (
-                SELECT jsonb_object_agg(ind.indicator_name, ind.value)
-                FROM (
-                  SELECT civ.indicator_name, civ.value
-                  FROM current_indicators_view civ
-                  WHERE civ.geo_level_id = 3
-                    AND civ.city_id = n.city_id
-                    AND civ.geo_id = n.id
-                    ${disabledIndicatorsFilter}
-                ) ind
-              )
-            )
-          )
-        ) AS geojson
-        FROM neighbourhoods n
-        WHERE n.city_id = ${cityId}
-      `
-    } else {
-      throw new Error(`Unsupported level: ${level}`)
-    }
+        const { data, error } = await query
+        if (error) throw error
 
-    // Call the execute_sql function via Supabase RPC
-    const { data, error } = await supabase.rpc('execute_sql', { sql_query: sql })
-    if (error) {
-      throw new Error(`Error fetching enriched GeoJSON: ${error.message}`)
-    }
-    const geojson = data && data[0] && data[0].geojson ? data[0].geojson : null
-    if (!geojson) {
-      throw new Error('No enriched GeoJSON returned from database')
-    }
-    return geojson
+        if (!data || data.length === 0) {
+          return {
+            type: "FeatureCollection",
+            features: [],
+            properties: {}
+          }
+        }
+
+        // Transform the data into GeoJSON format
+        const features = data.map((item: any, index: number) => ({
+          type: "Feature",
+          properties: {
+            id: item.id,
+            name: item.name,
+            ...(level === "district" 
+              ? { district_code: item.district_code }
+              : { neighbourhood_code: item.neighbourhood_code, district_id: item.district_id }
+            ),
+            city_id: item.city_id,
+            level,
+            index
+          },
+          geometry: item.geometry
+        }))
+
+        return {
+          type: "FeatureCollection",
+          features,
+          properties: {}
+        }
+      } finally {
+        // Clean up the in-flight request
+        inFlightRequests.delete(cacheKey)
+      }
+    })()
+
+    // Store the request promise
+    inFlightRequests.set(cacheKey, requestPromise)
+
+    return requestPromise
   })
 }
 

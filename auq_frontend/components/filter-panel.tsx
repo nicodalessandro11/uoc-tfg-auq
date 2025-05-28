@@ -1,39 +1,51 @@
 "use client"
 
-import { useCallback } from "react"
+import { useCallback, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { useMapContext } from "@/contexts/map-context"
 import { RefreshCw } from "lucide-react"
-
-interface DynamicFilter {
-  key: string
-  name: string
-  unit?: string
-  min: number
-  max: number
-  value: [number, number]
-}
+import type { DynamicFilter } from "@/lib/api-types"
 
 export function FilterPanel() {
-  const { dynamicFilters, setDynamicFilters, resetFilters, triggerRefresh } = useMapContext()
+  const {
+    selectedCity,
+    dynamicFilters,
+    setDynamicFilters,
+    resetFilters,
+    triggerRefresh
+  } = useMapContext()
+
+  // Reset filters when city changes
+  useEffect(() => {
+    if (selectedCity) {
+      resetFilters()
+    }
+  }, [selectedCity, resetFilters])
 
   // Handle filter change for a specific dynamic filter
-  const handleDynamicFilterChange = (key: string, value: [number, number]) => {
-    setDynamicFilters((prev: DynamicFilter[]) =>
-      prev.map((f: DynamicFilter) => (f.key === key ? { ...f, value } : f))
+  const handleDynamicFilterChange = useCallback((key: string, value: [number, number]) => {
+    const newFilters = dynamicFilters.map((f) =>
+      f.key === key ? { ...f, value } : f
     )
+    setDynamicFilters(newFilters)
     triggerRefresh()
-  }
+  }, [dynamicFilters, setDynamicFilters, triggerRefresh])
 
   return (
     <Card className="p-4 space-y-6">
       {dynamicFilters.length > 0 ? (
         <>
           <div className="flex justify-end items-center">
-            <Button variant="outline" size="sm" onClick={resetFilters} className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={resetFilters}
+              className="flex items-center gap-1"
+            >
+              <RefreshCw className="h-4 w-4" />
               Reset
             </Button>
           </div>
@@ -42,7 +54,10 @@ export function FilterPanel() {
           {dynamicFilters.map((filter) => (
             <div className="space-y-2" key={filter.key}>
               <div className="flex justify-between">
-                <Label className="text-sm font-medium">{filter.name}{filter.unit ? ` (${filter.unit})` : ""}</Label>
+                <Label className="text-sm font-medium">
+                  {filter.name}
+                  {filter.unit ? ` (${filter.unit})` : ""}
+                </Label>
                 <span className="text-xs text-muted-foreground">
                   {Math.round(filter.value[0]).toLocaleString()} - {Math.round(filter.value[1]).toLocaleString()}
                 </span>
@@ -59,7 +74,11 @@ export function FilterPanel() {
           ))}
         </>
       ) : (
-        <div className="text-muted-foreground text-center py-8">No filters available for this city/level.</div>
+        <div className="text-muted-foreground text-center py-8">
+          {selectedCity
+            ? "No filters available for this city/level."
+            : "Select a city to see available filters."}
+        </div>
       )}
     </Card>
   )

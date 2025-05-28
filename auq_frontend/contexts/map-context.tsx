@@ -1,9 +1,10 @@
 "use client"
 
-import { createContext, useContext, useState, useCallback, useRef, type ReactNode, useEffect } from "react"
-import { useSearchParams } from 'next/navigation'
+import { createContext, useContext, useState, useCallback, useRef, type ReactNode, useEffect, type Dispatch, type SetStateAction } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { analyticsLogger } from "@/lib/analytics/logger"
+import { URL_PARAMS, STORAGE_KEYS } from "@/lib/constants"
 
 // Import cache clearing functions
 import { clearCacheEntry as clearSupabaseCacheEntry } from "@/lib/supabase-client"
@@ -13,14 +14,12 @@ import { clearApiCacheEntry } from "@/lib/api-service"
 import { getDistricts, getGeoJSON, getGeographicalLevels, getCityPointFeatures } from "@/lib/api-service"
 
 // Import types
-import type { City, District, Neighborhood, PointFeature } from "@/lib/api-types"
+import type { City, District, Neighborhood, PointFeature, Area, DynamicFilter, GeoJSONResponse } from "@/lib/api-types"
 
-type Area = District | Neighborhood
-
+// Update GranularityLevel type to match what we're using
 type GranularityLevel = {
-  id: number
-  name: string
   level: string
+  name: string
 }
 
 // Update the PointFeatureType to include all feature types from the schema
@@ -54,105 +53,80 @@ type FilterRanges = {
 // Map type (for tile layer)
 type MapType = "osm" | "satellite" | "grayscale" | "terrain" | "dark" | "watercolor"
 
-// Nuevo tipo para filtros dinámicos
-export type DynamicFilter = {
-  key: string
-  name: string
-  unit?: string
-  min: number
-  max: number
-  value: [number, number]
-}
-
-type MapContextType = {
+interface MapContextType {
   selectedCity: City | null
   setSelectedCity: (city: City | null) => void
-  selectedGranularity: GranularityLevel | null
-  setSelectedGranularity: (granularity: GranularityLevel | null) => void
   selectedArea: Area | null
   setSelectedArea: (area: Area | null) => void
+  selectedGranularity: GranularityLevel | null
+  setSelectedGranularity: (granularity: GranularityLevel | null) => void
+  currentGeoJSON: GeoJSONResponse | null
+  setCurrentGeoJSON: (geoJSON: GeoJSONResponse | null) => void
+  visiblePointTypes: Record<string, boolean>
+  setVisiblePointTypes: (types: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>)) => void
+  dynamicPointTypes: string[]
+  setDynamicPointTypes: (types: string[]) => void
+  dynamicFilters: DynamicFilter[]
+  setDynamicFilters: (filters: DynamicFilter[]) => void
+  isLoadingGeoJSON: boolean
+  setIsLoadingGeoJSON: (loading: boolean) => void
+  hasSelectedGranularity: boolean
+  mapType: MapType
+  setMapType: (type: MapType) => void
+  pointFeatures: PointFeature[]
+  setPointFeatures: (features: PointFeature[]) => void
+  resetFilters: () => void
+  triggerRefresh: () => void
+  mapInitialized: boolean
+  setMapInitialized: (initialized: boolean) => void
   comparisonArea: Area | null
   setComparisonArea: (area: Area | null) => void
   availableAreas: Area[]
-  filters: Filters
-  setFilters: (filters: Filters) => void
-  filterRanges: FilterRanges
-  resetFilters: () => void
-  visiblePointTypes: Record<string, boolean>
-  setVisiblePointTypes: (types: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>)) => void
-  currentGeoJSON: any
-  setCurrentGeoJSON: (data: any) => void
-  isLoadingGeoJSON: boolean
   loadGeoJSON: (cityId: number, granularityLevel: string) => Promise<void>
-  mapInitialized: boolean
-  setMapInitialized: (initialized: boolean) => void
-  hasSelectedGranularity: boolean
-  setHasSelectedGranularity: (value: boolean) => void
-  forceRefresh: number
-  triggerRefresh: () => void
-  mapType: MapType
-  setMapType: (type: MapType) => void
-  clearPointFeaturesCache: (cityId?: number) => void
-  dynamicFilters: DynamicFilter[]
-  setDynamicFilters: (filters: DynamicFilter[]) => void
-  dynamicPointTypes: string[]
-  setDynamicPointTypes: (types: string[]) => void
-  pointFeatures: PointFeature[]
-  setPointFeatures: (features: PointFeature[]) => void
 }
 
-export const MapContext = createContext<MapContextType | undefined>(undefined)
-
-// Create global variables to store state across page navigations
-let globalSelectedCity: City | null = null
-let globalSelectedGranularity: GranularityLevel | null = null
-let globalFilters: Filters | null = null
-let globalHasSelectedGranularity = false
-let globalMapType: MapType = "grayscale"
-
-const defaultFilters: Filters = {
-  populationMin: 0,
-  populationMax: 300000,
-  incomeMin: 0,
-  incomeMax: 60000,
-  surfaceMin: 0,
-  surfaceMax: 20,
-  disposableIncomeMin: 0,
-  disposableIncomeMax: 30000,
-}
-
-const defaultFilterRanges: FilterRanges = {
-  population: { min: 0, max: 300000 },
-  income: { min: 0, max: 60000 },
-  surface: { min: 0, max: 20 },
-  disposableIncome: { min: 0, max: 30000 },
-}
+const MapContext = createContext<MapContextType | undefined>(undefined)
 
 export function MapProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
-  // Use the global variables as initial state
-  const [selectedCity, _setSelectedCity] = useState<City | null>(globalSelectedCity)
-  const [selectedGranularity, _setSelectedGranularity] = useState<GranularityLevel | null>(globalSelectedGranularity)
-  const [selectedArea, _setSelectedArea] = useState<Area | null>(null)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [selectedCity, setSelectedCityState] = useState<City | null>(null)
+  const [selectedArea, setSelectedAreaState] = useState<Area | null>(null)
+  const [selectedGranularity, setSelectedGranularityState] = useState<GranularityLevel | null>(null)
   const [comparisonArea, setComparisonArea] = useState<Area | null>(null)
   const [availableAreas, setAvailableAreas] = useState<Area[]>([])
-  const [filters, _setFilters] = useState<Filters>(globalFilters || defaultFilters)
-  const [filterRanges, setFilterRanges] = useState<FilterRanges>(defaultFilterRanges)
-  const [visiblePointTypes, _setVisiblePointTypes] = useState<Record<string, boolean>>({})
-  const [hasSelectedGranularity, _setHasSelectedGranularity] = useState<boolean>(globalHasSelectedGranularity)
-  const [mapType, _setMapType] = useState<MapType>(globalMapType)
 
-  // States for optimized loading
-  const [geoJSONCache, setGeoJSONCache] = useState<GeoJSONCache>({})
-  const [currentGeoJSON, setCurrentGeoJSON] = useState<any>(null)
-  const [isLoadingGeoJSON, setIsLoadingGeoJSON] = useState<boolean>(false)
+  // Default filters
+  const defaultFilters: Filters = {
+    populationMin: 0,
+    populationMax: 300000,
+    incomeMin: 0,
+    incomeMax: 60000,
+    surfaceMin: 0,
+    surfaceMax: 20,
+    disposableIncomeMin: 0,
+    disposableIncomeMax: 30000,
+  }
+
+  const [filters, _setFilters] = useState<Filters>(defaultFilters)
+  const [filterRanges, setFilterRanges] = useState<FilterRanges>({
+    population: { min: 0, max: 300000 },
+    income: { min: 0, max: 60000 },
+    surface: { min: 0, max: 20 },
+    disposableIncome: { min: 0, max: 30000 },
+  })
+  const [visiblePointTypes, setVisiblePointTypesState] = useState<Record<string, boolean>>({})
+  const [hasSelectedGranularity, _setHasSelectedGranularity] = useState<boolean>(false)
+  const [mapType, setMapTypeState] = useState<MapType>("grayscale")
+  const [currentGeoJSON, setCurrentGeoJSONState] = useState<GeoJSONResponse | null>(null)
+  const [isLoadingGeoJSON, setIsLoadingGeoJSONState] = useState<boolean>(false)
   const [mapInitialized, setMapInitialized] = useState<boolean>(false)
-
-  // Add a force refresh counter to trigger re-renders
   const [forceRefresh, setForceRefresh] = useState<number>(0)
-  const triggerRefresh = useCallback(() => {
-    setForceRefresh((prev) => prev + 1)
-  }, [])
+  const [dynamicFilters, setDynamicFiltersState] = useState<DynamicFilter[]>([])
+  const [dynamicPointTypes, setDynamicPointTypesState] = useState<string[]>([])
+  const [pointFeatures, setPointFeaturesState] = useState<PointFeature[]>([])
+  const [pointFeaturesCache, setPointFeaturesCache] = useState<Record<number, GeoJSONResponse>>({})
 
   // Reference to track the last load request
   const lastLoadRequestRef = useRef<string>("")
@@ -160,25 +134,32 @@ export function MapProvider({ children }: { children: ReactNode }) {
   const prevGranularityLevelRef = useRef<string | null>(null)
   const filterRangesLoadedRef = useRef<boolean>(false)
 
-  // Nuevo estado para filtros dinámicos
-  const [dynamicFilters, setDynamicFilters] = useState<DynamicFilter[]>([])
+  // Trigger map refresh - moved to the top
+  const triggerRefresh = useCallback(() => {
+    // Force a re-render of the map
+    setCurrentGeoJSONState(prev => prev ? { ...prev } : null)
+  }, [])
 
-  // Nuevo estado para dynamicPointTypes
-  const [dynamicPointTypes, setDynamicPointTypes] = useState<string[]>([])
-
-  // Nuevo estado para pointFeatures
-  const [pointFeatures, setPointFeatures] = useState<PointFeature[]>([])
-
-  const searchParams = useSearchParams();
-
-  // Sync selectedCity with the ?city= param in the URL
+  // Initialize city from URL or localStorage
   useEffect(() => {
     if (!searchParams) return;
 
-    // Solo actualizamos el estado si hay un cambio en la URL después del montaje inicial
-    const cityIdParam = searchParams.get("city");
-    if (cityIdParam && selectedCity?.id !== Number(cityIdParam)) {
-      _setSelectedCity({ id: Number(cityIdParam), name: "" });
+    const cityId = searchParams.get(URL_PARAMS.CITY);
+    if (cityId) {
+      // Only set the city if it's different from the current one
+      if (!selectedCity || selectedCity.id.toString() !== cityId) {
+        const savedCity = localStorage.getItem(STORAGE_KEYS.SELECTED_CITY);
+        if (savedCity) {
+          try {
+            const parsedCity = JSON.parse(savedCity);
+            if (parsedCity.id.toString() === cityId) {
+              setSelectedCityState(parsedCity);
+            }
+          } catch (error) {
+            console.error("Error parsing saved city:", error);
+          }
+        }
+      }
     }
   }, [searchParams, selectedCity]);
 
@@ -195,7 +176,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
       ];
       const found = granularityLevels.find(g => g.level === levelParam);
       if (found) {
-        _setSelectedGranularity(found);
+        setSelectedGranularityState(found);
         _setHasSelectedGranularity(true);
       }
     }
@@ -205,15 +186,15 @@ export function MapProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function loadAvailablePointTypes() {
       if (!selectedCity) {
-        setDynamicPointTypes([])
-        setVisiblePointTypes({})
+        setDynamicPointTypesState([])
+        setVisiblePointTypesState({})
         return
       }
 
       try {
-        // console.log(`[MapContext] Loading point features for city ${selectedCity.id}`)
+        console.log(`[MapContext] Loading point features for city ${selectedCity.id}`)
         const features = await getCityPointFeatures(selectedCity.id)
-        // console.log(`[MapContext] Loaded ${features.length} point features`)
+        console.log(`[MapContext] Loaded ${features.length} point features`)
 
         // Get unique feature types
         const uniqueTypes = Array.from(
@@ -223,65 +204,89 @@ export function MapProvider({ children }: { children: ReactNode }) {
               .filter((type): type is string => type !== undefined)
           )
         )
-        // console.log(`[MapContext] Found ${uniqueTypes.length} unique feature types:`, uniqueTypes)
+        console.log(`[MapContext] Found ${uniqueTypes.length} unique feature types:`, uniqueTypes)
 
-        // Initialize visibility state for each type
-        const initialVisibility = uniqueTypes.reduce<Record<string, boolean>>((acc, type) => {
-          acc[type] = true // All types visible by default
-          return acc
-        }, {})
+        // Try to load saved visibility state from localStorage
+        const savedVisibility = localStorage.getItem(`visiblePointTypes_${selectedCity.id}`)
+        let initialVisibility: Record<string, boolean>
 
-        // console.log("[MapContext] Initial visibility state:", initialVisibility)
+        if (savedVisibility) {
+          try {
+            initialVisibility = JSON.parse(savedVisibility)
+            // Ensure all current types are in the saved state
+            uniqueTypes.forEach(type => {
+              if (!(type in initialVisibility)) {
+                initialVisibility[type] = false
+              }
+            })
+            // Remove any types that no longer exist
+            Object.keys(initialVisibility).forEach(type => {
+              if (!uniqueTypes.includes(type)) {
+                delete initialVisibility[type]
+              }
+            })
+          } catch (error) {
+            console.error("[MapContext] Error parsing saved visibility state:", error)
+            initialVisibility = uniqueTypes.reduce<Record<string, boolean>>((acc, type) => {
+              acc[type] = false
+              return acc
+            }, {})
+          }
+        } else {
+          // Initialize all types as hidden if no saved state exists
+          initialVisibility = uniqueTypes.reduce<Record<string, boolean>>((acc, type) => {
+            acc[type] = false
+            return acc
+          }, {})
+        }
 
-        setDynamicPointTypes(uniqueTypes)
-        setVisiblePointTypes(initialVisibility)
+        console.log("[MapContext] Initial visibility state:", initialVisibility)
+
+        setDynamicPointTypesState(uniqueTypes)
+        setVisiblePointTypesState(initialVisibility)
       } catch (error) {
-        // console.error("[MapContext] Error loading point types:", error)
-        setDynamicPointTypes([])
-        setVisiblePointTypes({})
+        console.error("[MapContext] Error loading point types:", error)
+        setDynamicPointTypesState([])
+        setVisiblePointTypesState({})
       }
     }
 
     loadAvailablePointTypes()
   }, [selectedCity])
 
+  // Add effect to restore visibility state when navigating to root
+  useEffect(() => {
+    if (selectedCity) {
+      const savedVisibility = localStorage.getItem(`visiblePointTypes_${selectedCity.id}`)
+      if (savedVisibility) {
+        try {
+          const parsedVisibility = JSON.parse(savedVisibility)
+          setVisiblePointTypesState(parsedVisibility)
+        } catch (error) {
+          console.error("[MapContext] Error restoring visibility state:", error)
+        }
+      }
+    }
+  }, [selectedCity])
+
   // Update the loadAvailableAreas function to use direct Supabase data
   const loadAvailableAreas = useCallback(async (cityId: number, granularityLevel: string) => {
     if (!cityId || !granularityLevel) return
 
+    // Only load areas if we have a selected area or if we're changing granularity
+    if (!selectedArea && !prevGranularityLevelRef.current) return
+
     try {
-      let areas: Area[] = []
+      let areas: any[] = []
 
       if (granularityLevel === "district") {
-        // For districts, use the API service function
         const districtsData = await getDistricts(cityId)
-        let districtsArray: any[] = []
-        if (Array.isArray(districtsData)) {
-          districtsArray = districtsData
-        } else if (districtsData && typeof districtsData === "object") {
-          if (Array.isArray((districtsData as any).data)) {
-            districtsArray = (districtsData as any).data
-          }
-        }
-        areas = districtsArray.map((district: any) => ({
-          id: district.id,
-          name: district.name,
-          cityId: district.city_id,
-          city_id: district.city_id,
-          district_id: undefined,
-          population: district.population || 0,
-          avgIncome: district.avg_income || 0,
-          surface: district.surface || 0,
-          disposableIncome: district.disposable_income || 0,
-        }))
-        // console.log(`Loaded ${areas.length} districts for city ${cityId}`)
+        areas = districtsData
       } else if (granularityLevel === "neighborhood" || granularityLevel === "neighbourhood") {
-        // For neighborhoods, use the GeoJSON data
         try {
           const geoJsonData = await getGeoJSON(cityId, "neighborhood")
           if (geoJsonData && geoJsonData.features) {
             areas = geoJsonData.features.map((feature: any) => {
-              // Ensure all required properties exist
               const properties = feature.properties || {}
               return {
                 id: properties.id,
@@ -295,59 +300,50 @@ export function MapProvider({ children }: { children: ReactNode }) {
                 surface: properties.surface || 0,
                 disposableIncome: properties.disposable_income || 0,
               }
-            }).filter(area => area.id && area.name) // Filter out any invalid areas
-            // console.log(`Loaded ${areas.length} neighborhoods for city ${cityId}`)
-          } else {
-            // console.error("No features found in GeoJSON data")
+            }).filter(area => area.id && area.name)
           }
         } catch (error) {
-          // console.error("Error fetching neighborhoods from GeoJSON:", error)
           throw error
         }
       }
 
-      if (areas.length === 0) {
-        // console.warn(`No areas loaded for city ${cityId} and granularity ${granularityLevel}`)
-      }
-
       setAvailableAreas(areas)
     } catch (error) {
-      // console.error("Error loading available areas:", error)
       setAvailableAreas([])
     }
-  }, [])
+  }, [selectedArea])
 
   // Function to load GeoJSON data with caching
   const loadGeoJSON = useCallback(
     async (cityId: number, granularityLevel: string) => {
       if (!cityId || !granularityLevel) {
-        // console.log("loadGeoJSON: Missing cityId or granularityLevel")
         return
       }
 
-      // console.log(`loadGeoJSON: Loading data for city ${cityId}, granularity ${granularityLevel}`)
-
       const cacheKey = `${cityId}_${granularityLevel}`
+
+      // If we're already loading this exact data, don't start another load
+      if (lastLoadRequestRef.current === cacheKey && isLoadingGeoJSON) {
+        return
+      }
 
       // Save this request as the last one
       lastLoadRequestRef.current = cacheKey
 
       // If we already have the data in cache, use it
-      if (geoJSONCache[cacheKey]) {
-        // console.log("Using GeoJSON data from cache:", cacheKey)
-        setCurrentGeoJSON(geoJSONCache[cacheKey])
+      if (pointFeaturesCache[cityId]) {
+        setCurrentGeoJSONState(pointFeaturesCache[cityId])
 
         // Even when using cached data, we should still load available areas
         // but we don't need to wait for it to complete
         loadAvailableAreas(cityId, granularityLevel)
 
-        triggerRefresh() // Force refresh when using cached data
+        setForceRefresh((prev) => prev + 1)
         return
       }
 
       // If not in cache, load it
-      // console.log("Loading GeoJSON data:", cacheKey)
-      setIsLoadingGeoJSON(true)
+      setIsLoadingGeoJSONState(true)
 
       try {
         // Load GeoJSON data
@@ -355,72 +351,52 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
         // Check if this request is still the latest
         if (lastLoadRequestRef.current !== cacheKey) {
-          // console.log("Request cancelled, there's a more recent one:", cacheKey)
-          setIsLoadingGeoJSON(false)
+          setIsLoadingGeoJSONState(false)
           return
         }
 
         if (!data) {
-          // console.error("Failed to get GeoJSON data for:", cacheKey)
-          setIsLoadingGeoJSON(false)
+          setIsLoadingGeoJSONState(false)
           return
         }
 
-        // Log the data structure to help with debugging
-        // console.log(
-        //   `GeoJSON data structure for ${cacheKey}:`,
-        //   data.type ? `Type: ${data.type}, Features: ${data.features?.length || 0}` : "Unexpected data format",
-        // )
-
         // Save to cache
-        setGeoJSONCache((prevCache) => ({
+        setPointFeaturesCache((prevCache) => ({
           ...prevCache,
-          [cacheKey]: data,
+          [cityId]: data,
         }))
 
         // Update current state
-        setCurrentGeoJSON(data)
-        setIsLoadingGeoJSON(false)
+        setCurrentGeoJSONState(data)
+        setIsLoadingGeoJSONState(false)
 
         // Load available areas in parallel
         loadAvailableAreas(cityId, granularityLevel)
 
-        triggerRefresh() // Force refresh when loading new data
-
-        // console.log("GeoJSON data loaded and saved to cache:", cacheKey)
+        setForceRefresh((prev) => prev + 1)
       } catch (error) {
-        // console.error("Error loading GeoJSON data:", error)
-        setIsLoadingGeoJSON(false)
+        setIsLoadingGeoJSONState(false)
       }
     },
-    [geoJSONCache, triggerRefresh, loadAvailableAreas],
+    [pointFeaturesCache, loadAvailableAreas, isLoadingGeoJSON],
   )
 
   // Function to load filter ranges based on available data
   const loadFilterRanges = useCallback(async (cityId: number, granularityLevel: string) => {
     if (!cityId || !granularityLevel) return
 
-    const cityChanged = cityId !== prevCityIdRef.current
-    const granularityChanged = granularityLevel !== prevGranularityLevelRef.current
-
-    if (!cityChanged && !granularityChanged && filterRangesLoadedRef.current) {
-      return
-    }
-
-    // console.log(`Loading filter ranges for: ${cityId}_${granularityLevel}`)
+    // Only load filter ranges if we have a selected area or if we're changing granularity
+    if (!selectedArea && !prevGranularityLevelRef.current) return
 
     try {
       let areas: any[] = []
 
       if (granularityLevel === "district") {
-        // Fetch districts for the selected city using the service function
         const districtsData = await getDistricts(cityId)
         areas = districtsData
       } else if (granularityLevel === "neighbourhood" || granularityLevel === "neighborhood") {
-        // For neighborhoods, use the GeoJSON data which contains all neighborhoods
         try {
           const geoJsonData = await getGeoJSON(cityId, "neighborhood")
-
           if (geoJsonData && geoJsonData.features) {
             areas = geoJsonData.features.map((feature: any) => ({
               population: feature.properties.population,
@@ -430,66 +406,25 @@ export function MapProvider({ children }: { children: ReactNode }) {
             }))
           }
         } catch (error) {
-          // console.error("Error fetching neighborhoods from GeoJSON:", error)
-          throw error // Re-throw to be caught by the outer try-catch
+          throw error
         }
       }
 
-      if (areas.length > 0) {
-        // Extract values, handling both snake_case and camelCase property names
-        const populationValues = areas.map((area) => area.population).filter(Boolean)
-        const incomeValues = areas.map((area) => area.avg_income || area.avgIncome).filter(Boolean)
-        const surfaceValues = areas.map((area) => area.surface || 0).filter(Boolean)
-        const disposableIncomeValues = areas
-          .map((area) => area.disposable_income || area.disposableIncome || 0)
-          .filter(Boolean)
-
-        // Calculate min and max values with fallbacks
-        const populationMin = populationValues.length > 0 ? Math.min(...populationValues) : 0
-        const populationMax = populationValues.length > 0 ? Math.max(...populationValues) : 300000
-        const incomeMin = incomeValues.length > 0 ? Math.min(...incomeValues) : 0
-        const incomeMax = incomeValues.length > 0 ? Math.max(...incomeValues) : 60000
-        const surfaceMin = surfaceValues.length > 0 ? Math.min(...surfaceValues) : 0
-        const surfaceMax = surfaceValues.length > 0 ? Math.max(...surfaceValues) : 20
-        const disposableIncomeMin = disposableIncomeValues.length > 0 ? Math.min(...disposableIncomeValues) : 0
-        const disposableIncomeMax = disposableIncomeValues.length > 0 ? Math.max(...disposableIncomeValues) : 30000
-
-        // Update filter ranges
-        const newRanges = {
-          population: { min: populationMin, max: populationMax },
-          income: { min: incomeMin, max: incomeMax },
-          surface: { min: surfaceMin, max: surfaceMax },
-          disposableIncome: { min: disposableIncomeMin, max: disposableIncomeMax },
-        }
-
-        // console.log("Setting new filter ranges:", newRanges)
-        setFilterRanges(newRanges)
-
-        // Reset filters to full range when city or granularity changes
-        if (cityChanged || granularityChanged || !filterRangesLoadedRef.current) {
-          const newFilters = {
-            populationMin,
-            populationMax,
-            incomeMin,
-            incomeMax,
-            surfaceMin,
-            surfaceMax,
-            disposableIncomeMin,
-            disposableIncomeMax,
-          }
-          // console.log("Resetting filters to full range:", newFilters)
-          _setFilters(newFilters)
-        }
-
-        // Update refs
-        prevCityIdRef.current = cityId
-        prevGranularityLevelRef.current = granularityLevel
-        filterRangesLoadedRef.current = true
+      // Calculate filter ranges from areas data
+      const ranges = {
+        population: calculateRange(areas, "population"),
+        avgIncome: calculateRange(areas, "avg_income"),
+        surface: calculateRange(areas, "surface"),
+        disposableIncome: calculateRange(areas, "disposable_income"),
       }
+
+      setFilterRanges(ranges)
+      filterRangesLoadedRef.current = true
     } catch (error) {
-      // console.error("Error loading filter ranges:", error)
+      setFilterRanges(null)
+      filterRangesLoadedRef.current = false
     }
-  }, [])
+  }, [selectedArea])
 
   // Reset filters to their full range
   const resetFilters = useCallback(() => {
@@ -509,30 +444,19 @@ export function MapProvider({ children }: { children: ReactNode }) {
     _setFilters(newFilters);
 
     // Reset dynamic filters (sliders)
-    setDynamicFilters((prev) =>
+    setDynamicFiltersState((prev) =>
       prev.map((f) => ({
         ...f,
         value: [f.min, f.max],
       }))
     );
 
-    triggerRefresh();
-  }, [filterRanges, triggerRefresh]);
-
-  // Function to clear point features cache
-  const clearPointFeaturesCache = useCallback((cityId?: number) => {
-    // console.log(`Clearing point features cache${cityId ? ` for city ${cityId}` : ""}`)
-    if (cityId) {
-      clearApiCacheEntry("pointFeatures", cityId.toString())
-      clearSupabaseCacheEntry("pointFeatures")
-    } else {
-      clearApiCacheEntry("pointFeatures")
-      clearSupabaseCacheEntry("pointFeatures")
-    }
-  }, [])
+    setForceRefresh((prev) => prev + 1);
+  }, [filterRanges, _setFilters]);
 
   // Custom setter for selectedCity that also updates the global variable
   const setSelectedCity = useCallback((city: City | null) => {
+    // Prevent unnecessary updates
     if (selectedCity?.id === city?.id) {
       return;
     }
@@ -546,10 +470,10 @@ export function MapProvider({ children }: { children: ReactNode }) {
           city: city.name,
           city_id: city.id
         }
-      })
+      });
     }
 
-    // Update the URL first
+    // Update the URL using router
     const params = new URLSearchParams(window.location.search);
     if (city?.id) {
       params.set("city", city.id.toString());
@@ -557,19 +481,19 @@ export function MapProvider({ children }: { children: ReactNode }) {
       params.delete("city");
     }
     params.delete("area"); // Always clear area on city change
-    window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
 
-    // Clear all state that depends on the city
-    setCurrentGeoJSON(null);
+    // Use replace instead of push to prevent adding to history
+    router.replace(`?${params.toString()}`, { scroll: false });
+
+    // Clear only the necessary state
+    setCurrentGeoJSONState(null);
     setAvailableAreas([]);
-    setSelectedArea(null);
-    setPointFeatures([]);
-    setDynamicFilters([]);
-    setFilters(defaultFilters);
+    setSelectedAreaState(null);
+    setDynamicFiltersState([]);
+    _setFilters(defaultFilters);
 
     // Update the city state
-    globalSelectedCity = city;
-    _setSelectedCity(city);
+    setSelectedCityState(city);
 
     // Force a refresh to ensure all components update
     triggerRefresh();
@@ -581,33 +505,32 @@ export function MapProvider({ children }: { children: ReactNode }) {
         loadAvailableAreas(city.id, selectedGranularity.level),
         loadFilterRanges(city.id, selectedGranularity.level)
       ]).catch(error => {
-        // console.error("Error loading data for new city:", error);
+        console.error("Error loading data for new city:", error);
       });
     }
-  }, [selectedCity, selectedGranularity, loadGeoJSON, loadAvailableAreas, loadFilterRanges, triggerRefresh, user]);
+  }, [selectedCity, selectedGranularity, loadGeoJSON, loadAvailableAreas, loadFilterRanges, triggerRefresh, user, router]);
 
-  // Custom setter for selectedGranularity that also updates the global variable
+  // Custom setter for selectedGranularity
   const setSelectedGranularity = useCallback(
     (granularity: GranularityLevel | null) => {
       // Only update if the value actually changed
       if (granularity?.level !== selectedGranularity?.level) {
         // Clear area selection and remove from URL BEFORE changing granularity
-        setSelectedArea(null);
+        setSelectedAreaState(null);
         const params = new URLSearchParams(window.location.search);
         if (params.has("area")) {
           params.delete("area");
           window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
         }
 
-        globalSelectedGranularity = granularity;
-        _setSelectedGranularity(granularity);
+        setSelectedGranularityState(granularity);
 
         // Reset filter ranges loaded flag
         filterRangesLoadedRef.current = false;
 
         // If this is the first time selecting a granularity, mark it
         if (granularity && !hasSelectedGranularity) {
-          setHasSelectedGranularity(true);
+          _setHasSelectedGranularity(true);
         }
 
         // If we have both city and granularity, load the data immediately
@@ -629,52 +552,26 @@ export function MapProvider({ children }: { children: ReactNode }) {
     ],
   )
 
-  // Custom setter for hasSelectedGranularity that also updates the global variable
-  const setHasSelectedGranularity = useCallback(
-    (value: boolean) => {
-      if (value !== hasSelectedGranularity) {
-        globalHasSelectedGranularity = value
-        _setHasSelectedGranularity(value)
-      }
-    },
-    [hasSelectedGranularity],
-  )
-
-  // Custom setter for filters that also updates the global variable
-  const setFilters = useCallback((filters: Filters) => {
-    if (user) {
-      analyticsLogger.logEvent({
-        user_id: user.id,
-        event_type: 'map.filter',
-        event_details: {
-          city: selectedCity?.name,
-          city_id: selectedCity?.id,
-          granularity: selectedGranularity?.level,
-          filters
-        }
-      })
-    }
-    _setFilters(filters);
-  }, [selectedCity, selectedGranularity, user]);
-
-  // Custom setter for visiblePointTypes (no global variable)
+  // Custom setter for visiblePointTypes
   const setVisiblePointTypes = useCallback(
     (typesOrUpdater: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>)) => {
-      _setVisiblePointTypes(prev => {
+      setVisiblePointTypesState(prev => {
         const types = typeof typesOrUpdater === 'function' ? typesOrUpdater(prev) : typesOrUpdater
+        // Save to localStorage when the state changes
+        if (selectedCity) {
+          localStorage.setItem(`visiblePointTypes_${selectedCity.id}`, JSON.stringify(types))
+        }
         return types
       })
     },
-    [],
+    [selectedCity],
   )
 
-  // Custom setter for mapType that also updates the global variable
+  // Custom setter for mapType
   const setMapType = useCallback(
     (type: MapType) => {
       if (type !== mapType) {
-        // console.log(`Setting map type from ${mapType} to ${type}`)
-        globalMapType = type
-        _setMapType(type)
+        setMapTypeState(type)
         // Force a refresh after changing the map type
         setTimeout(() => {
           triggerRefresh()
@@ -698,7 +595,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
   // Detectar indicadores y rangos dinámicamente al cargar el GeoJSON
   useEffect(() => {
     if (!currentGeoJSON || !currentGeoJSON.features || currentGeoJSON.features.length === 0) {
-      setDynamicFilters([])
+      setDynamicFiltersState([])
       return
     }
     // Tomar todas las keys numéricas de las propiedades del primer feature
@@ -719,47 +616,18 @@ export function MapProvider({ children }: { children: ReactNode }) {
         value: [min, max],
       }
     })
-    setDynamicFilters(filters)
+    setDynamicFiltersState(filters)
   }, [currentGeoJSON])
 
   // Actualizar dynamicPointTypes cuando cambian los pointFeatures
   useEffect(() => {
     if (!pointFeatures || pointFeatures.length === 0) {
-      setDynamicPointTypes([])
+      setDynamicPointTypesState([])
       return
     }
     const types = Array.from(new Set(pointFeatures.map(f => f.featureType).filter(Boolean))) as string[]
-    setDynamicPointTypes(types)
+    setDynamicPointTypesState(types)
   }, [pointFeatures])
-
-  // Sincroniza visiblePointTypes con dynamicPointTypes
-  useEffect(() => {
-    if (!dynamicPointTypes.length) return
-    _setVisiblePointTypes(prev => {
-      // Si el estado está vacío, activa todos los tipos por defecto
-      if (Object.keys(prev).length === 0) {
-        const allActive = Object.fromEntries(dynamicPointTypes.map(type => [type, true]))
-        return allActive
-      }
-      // Activa por defecto todos los tipos nuevos que no estén en el estado actual
-      const updated = { ...prev }
-      let changed = false
-      dynamicPointTypes.forEach(type => {
-        if (!(type in updated)) {
-          updated[type] = true
-          changed = true
-        }
-      })
-      // Elimina tipos que ya no existen en dynamicPointTypes
-      Object.keys(updated).forEach(type => {
-        if (!dynamicPointTypes.includes(type)) {
-          delete updated[type]
-          changed = true
-        }
-      })
-      return changed ? updated : prev
-    })
-  }, [dynamicPointTypes])
 
   // Ensure hasSelectedGranularity always reflects selectedGranularity
   useEffect(() => {
@@ -781,51 +649,42 @@ export function MapProvider({ children }: { children: ReactNode }) {
         }
       })
     }
-    _setSelectedArea(area);
+    setSelectedAreaState(area);
   }, [selectedCity, selectedGranularity, user]);
 
-  return (
-    <MapContext.Provider
-      value={{
-        selectedCity,
-        setSelectedCity,
-        selectedGranularity,
-        setSelectedGranularity,
-        selectedArea,
-        setSelectedArea,
-        comparisonArea,
-        setComparisonArea,
-        availableAreas,
-        filters,
-        setFilters,
-        filterRanges,
-        resetFilters,
-        visiblePointTypes,
-        setVisiblePointTypes,
-        currentGeoJSON,
-        setCurrentGeoJSON,
-        isLoadingGeoJSON,
-        loadGeoJSON,
-        mapInitialized,
-        setMapInitialized,
-        hasSelectedGranularity,
-        setHasSelectedGranularity,
-        forceRefresh,
-        triggerRefresh,
-        mapType,
-        setMapType,
-        clearPointFeaturesCache,
-        dynamicFilters,
-        setDynamicFilters,
-        dynamicPointTypes,
-        setDynamicPointTypes,
-        pointFeatures,
-        setPointFeatures,
-      }}
-    >
-      {children}
-    </MapContext.Provider>
-  )
+  const value: MapContextType = {
+    selectedCity,
+    setSelectedCity,
+    selectedArea,
+    setSelectedArea,
+    selectedGranularity,
+    setSelectedGranularity,
+    currentGeoJSON,
+    setCurrentGeoJSON: setCurrentGeoJSONState,
+    visiblePointTypes,
+    setVisiblePointTypes,
+    dynamicPointTypes,
+    setDynamicPointTypes: setDynamicPointTypesState,
+    dynamicFilters,
+    setDynamicFilters: setDynamicFiltersState,
+    isLoadingGeoJSON,
+    setIsLoadingGeoJSON: setIsLoadingGeoJSONState,
+    hasSelectedGranularity,
+    mapType,
+    setMapType,
+    pointFeatures,
+    setPointFeatures: setPointFeaturesState,
+    resetFilters,
+    triggerRefresh,
+    mapInitialized,
+    setMapInitialized,
+    comparisonArea,
+    setComparisonArea,
+    availableAreas,
+    loadGeoJSON,
+  }
+
+  return <MapContext.Provider value={value}>{children}</MapContext.Provider>
 }
 
 export function useMapContext() {

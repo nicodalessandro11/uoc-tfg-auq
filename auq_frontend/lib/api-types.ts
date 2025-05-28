@@ -1,44 +1,44 @@
 // Types for API responses based on the database schema
 
-export type City = {
+export interface City {
   id: number
   name: string
   country?: string
   created_at?: string
 }
 
-export type GranularityLevel = {
+export interface GranularityLevel {
   id: number
   name: string
   level: string
 }
 
-export type District = {
+export interface District extends City {
   id: number
   name: string
   district_code?: number
-  city_id: number
   population?: number
   avg_income?: number
   surface?: number
   disposable_income?: number
   created_at?: string
+  districtId: number
 }
 
-export type Neighborhood = {
+export interface Neighborhood extends City {
   id: number
   name: string
   neighbourhood_code?: number
   district_id: number
-  city_id: number
   population?: number
   avg_income?: number
   surface?: number
   disposable_income?: number
   created_at?: string
+  districtId: number
 }
 
-export type IndicatorDefinition = {
+export interface IndicatorDefinition {
   id: number
   name: string
   unit?: string
@@ -48,7 +48,7 @@ export type IndicatorDefinition = {
   year?: number
 }
 
-export type Indicator = {
+export interface Indicator {
   id: number
   indicator_def_id: number
   geo_level_id: number
@@ -58,14 +58,14 @@ export type Indicator = {
   created_at?: string
 }
 
-export type FeatureDefinition = {
+export interface FeatureDefinition {
   id: number
   name: string
   description?: string
   created_at?: string
 }
 
-export type PointFeature = {
+export interface PointFeature {
   id: number
   feature_definition_id: number
   name: string
@@ -79,9 +79,10 @@ export type PointFeature = {
   // For client-side use
   featureType?: string
   geoId?: number
+  cityId: number
 }
 
-export type GeoJSONFeature = {
+export interface GeoJSONFeature {
   type: "Feature"
   properties: {
     id: number
@@ -94,12 +95,13 @@ export type GeoJSONFeature = {
   }
 }
 
-export type GeoJSONResponse = {
-  type: "FeatureCollection"
-  features: GeoJSONFeature[]
+export interface GeoJSONResponse {
+  type: string
+  features: any[]
+  properties: Record<string, any>
 }
 
-export type ComparisonResponse = {
+export interface ComparisonResponse {
   area1: {
     id: number
     name: string
@@ -122,6 +124,27 @@ export type ComparisonResponse = {
   } | null
 }
 
-export type FilterResponse = Array<District | Neighborhood>
+export interface FilterResponse {
+  type: string
+  features: any[]
+}
 
-export type Area = District & Neighborhood
+export interface Area {
+  id: number
+  name: string
+  cityId: number
+  population: number
+  avgIncome: number
+  surface: number
+  disposableIncome: number
+  districtId?: number
+}
+
+export interface DynamicFilter {
+  key: string
+  name: string
+  unit?: string
+  min: number
+  max: number
+  value: [number, number]
+}

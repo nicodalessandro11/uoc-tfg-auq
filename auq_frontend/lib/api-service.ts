@@ -44,6 +44,9 @@ const apiCache = new Map<string, { data: any; timestamp: number }>()
 // Cache TTL in milliseconds (5 minutes)
 const CACHE_TTL = 5 * 60 * 1000
 
+// Cache for GeoJSON data
+const geoJSONCache = new Map<string, { data: GeoJSONResponse; timestamp: number }>()
+
 /**
  * Get data from cache or fetch it
  */
@@ -135,7 +138,24 @@ export async function getGeographicalUnits(cityId: number, level: string): Promi
  * Get GeoJSON data for a city at a specific level
  */
 export async function getGeoJSON(cityId: number, level: string): Promise<GeoJSONResponse> {
-  return getEnrichedGeoJSON(cityId, level)
+  const cacheKey = `geojson_${cityId}_${level}`
+  
+  // Check cache first
+  const cached = geoJSONCache.get(cacheKey)
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data
+  }
+
+  // If not in cache or expired, fetch from Supabase
+  const data = await getEnrichedGeoJSON(cityId, level)
+  
+  // Update cache
+  geoJSONCache.set(cacheKey, {
+    data,
+    timestamp: Date.now()
+  })
+
+  return data
 }
 
 /**
