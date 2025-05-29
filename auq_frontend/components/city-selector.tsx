@@ -6,11 +6,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useMapContext } from "@/contexts/map-context"
 import { getCities } from "@/lib/api-service"
 import type { City } from "@/lib/api-types"
-import { GranularitySelector } from "@/components/granularity-selector"
 import { useAuth } from "@/contexts/auth-context"
 import { analyticsLogger } from "@/lib/analytics/logger"
 import { STORAGE_KEYS } from "@/lib/constants"
 import { useToast } from "@/components/ui/use-toast"
+import { useRouter } from "next/navigation"
+import { Building, Layers } from "lucide-react"
 
 // Custom hook for city data management
 function useCityData() {
@@ -71,8 +72,8 @@ function useCitySelection() {
   const { selectedCity, setSelectedCity } = useMapContext()
   const { user } = useAuth()
   const { toast } = useToast()
-  const analyticsTimeoutRef = useRef<NodeJS.Timeout>()
-  const storageTimeoutRef = useRef<NodeJS.Timeout>()
+  const analyticsTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const storageTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleCityChange = useCallback((city: City) => {
     // Use requestAnimationFrame for UI updates
@@ -136,16 +137,35 @@ function useCitySelection() {
 export function CitySelector() {
   const { cities, isLoading, error } = useCityData()
   const { selectedCity, handleCityChange } = useCitySelection()
+  const { selectedGranularity, setSelectedGranularity, setSelectedArea } = useMapContext()
+  const router = useRouter()
+
+  // Granularity levels
+  const granularityLevels = [
+    { id: 2, name: "Districts", level: "district" },
+    { id: 3, name: "Neighborhoods", level: "neighborhood" },
+  ]
+
+  // Handle granularity change
+  const handleGranularityChange = (levelObj: { id: number; name: string; level: string }) => {
+    setSelectedArea(null)
+    setSelectedGranularity(levelObj)
+    const params = new URLSearchParams(window.location.search)
+    params.set("level", levelObj.level)
+    router.replace(`?${params.toString()}`)
+    console.log('[CitySelector] handleGranularityChange:', { levelObj, url: window.location.href })
+  }
 
   return (
-    <div className="flex items-center justify-between w-full">
+    <div className="flex items-center gap-2 w-full">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="font-medium"
+            className="font-medium flex items-center gap-2"
             disabled={isLoading || !!error}
           >
+            <Building className="h-4 w-4 mr-1" />
             {isLoading ? "Loading cities..." :
               error ? "Error loading cities" :
                 selectedCity ? selectedCity.name : "Select City"}
@@ -170,9 +190,29 @@ export function CitySelector() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <div className="ml-auto">
-        <GranularitySelector />
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            className="font-medium flex items-center gap-2"
+            disabled={!selectedCity}
+          >
+            <Layers className="h-4 w-4 mr-1" />
+            {selectedGranularity ? selectedGranularity.name : "Select Level"}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-[180px]">
+          {granularityLevels.map((level) => (
+            <DropdownMenuItem
+              key={level.id}
+              onClick={() => handleGranularityChange(level)}
+              className={selectedGranularity?.level === level.level ? "bg-primary/10 text-primary" : ""}
+            >
+              {level.name}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }

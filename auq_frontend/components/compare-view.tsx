@@ -59,7 +59,8 @@ export function CompareView() {
     comparisonArea,
     setComparisonArea,
     availableAreas,
-    availableIndicators,
+    availableIndicatorDefinitions,
+    availableIndicatorValues,
   } = useMapContext()
 
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>([])
@@ -75,64 +76,41 @@ export function CompareView() {
       label: area.name
     })), [availableAreas])
 
-  // Indicator options for multi-select
+  // Indicator options for multi-select, now using definitions and values
   const indicatorOptions = useMemo(() =>
-    (availableIndicators || []).map(ind => ({
-      label: `${ind.name} (${ind.year})`,
-      value: `${ind.name} (${ind.year})`,
-      description: ind.description,
-      unit: ind.unit,
-      disabled: selectedIndicators.length >= 2 && !selectedIndicators.includes(`${ind.name} (${ind.year})`),
-    })), [availableIndicators, selectedIndicators])
+    (availableIndicatorDefinitions || []).map(def => {
+      // Find the value and year for the selected area (area 1)
+      let year = ''
+      if (selectedArea) {
+        const found = availableIndicatorValues.find(ind => ind.indicator_def_id === def.id && ind.geo_id === selectedArea.id)
+        year = found ? found.year : ''
+      }
+      return {
+        label: `${def.name}${year ? ` (${year})` : ''}`,
+        value: `${def.name}${year ? ` (${year})` : ''}`,
+        description: def.description,
+        unit: def.unit,
+        disabled: selectedIndicators.length >= 2 && !selectedIndicators.includes(`${def.name}${year ? ` (${year})` : ''}`),
+      }
+    }), [availableIndicatorDefinitions, availableIndicatorValues, selectedArea, selectedIndicators])
 
-  // Sync area1 selection from URL
-  useEffect(() => {
-    if (pathname !== "/compare" || !searchParams) return;
-    const areaParam = searchParams.get("area")
-    if (!areaParam) return;
-    const area = (availableAreas || []).find(a => a.id.toString() === areaParam)
-    if (area && (!selectedArea || selectedArea.id.toString() !== areaParam)) {
-      setSelectedArea(area)
-    }
-  }, [searchParams, availableAreas, selectedArea, pathname, setSelectedArea])
-
-  // Update URL when user selects area1
+  // Update area selection only in context
   const handleAreaChange = useCallback((value: string, isArea1: boolean) => {
-    const area = (availableAreas || []).find((a) => a.id === Number.parseInt(value))
+    const area = (availableAreas || []).find((a) => a.id === Number.parseInt(value));
     if (area) {
       if (isArea1) {
-        setSelectedArea(area)
-        const params = new URLSearchParams(window.location.search)
-        params.set("area", area.id.toString())
-        router.replace(`?${params.toString()}`, { scroll: false })
+        setSelectedArea(area);
       } else {
-        setComparisonArea(area)
+        setComparisonArea(area);
       }
     } else {
       if (isArea1) {
-        setSelectedArea(null)
-        const params = new URLSearchParams(window.location.search)
-        params.delete("area")
-        router.replace(`?${params.toString()}`, { scroll: false })
+        setSelectedArea(null);
       } else {
-        setComparisonArea(null)
+        setComparisonArea(null);
       }
     }
-  }, [availableAreas, router, setSelectedArea, setComparisonArea])
-
-  // Reset comparison area when leaving the component
-  useEffect(() => {
-    return () => {
-      setComparisonArea(null)
-    }
-  }, [setComparisonArea])
-
-  // Set default indicators when availableIndicators change
-  useEffect(() => {
-    if (availableIndicators && availableIndicators.length > 0) {
-      setSelectedIndicators(availableIndicators.slice(0, 2).map(def => `${def.name} (${def.year})`))
-    }
-  }, [availableIndicators])
+  }, [availableAreas, setSelectedArea, setComparisonArea]);
 
   // Reset selectedArea if it's not in availableAreas (e.g., after granularity change)
   useEffect(() => {
@@ -141,16 +119,29 @@ export function CompareView() {
     const stillExists = availableAreas.some(a => a.id === selectedArea.id);
     if (!stillExists) {
       setSelectedArea(null);
-      const params = new URLSearchParams(window.location.search);
-      params.delete("area");
-      router.replace(`?${params.toString()}`, { scroll: false });
     }
-  }, [availableAreas, selectedArea, setSelectedArea, router]);
+  }, [availableAreas, selectedArea, setSelectedArea]);
 
   // Reset comparisonArea when city or granularity changes
   useEffect(() => {
     setComparisonArea(null);
   }, [selectedCity, selectedGranularity, setComparisonArea]);
+
+  // Set default indicators when availableIndicatorDefinitions change
+  useEffect(() => {
+    if (availableIndicatorDefinitions && availableIndicatorDefinitions.length > 0) {
+      // Use the first two indicators with year for the selected area
+      const defaultIndicators = availableIndicatorDefinitions.slice(0, 2).map(def => {
+        let year = ''
+        if (selectedArea) {
+          const found = availableIndicatorValues.find(ind => ind.indicator_def_id === def.id && ind.geo_id === selectedArea.id)
+          year = found ? found.year : ''
+        }
+        return `${def.name}${year ? ` (${year})` : ''}`
+      })
+      setSelectedIndicators(defaultIndicators)
+    }
+  }, [availableIndicatorDefinitions, availableIndicatorValues, selectedArea])
 
   return (
     <div className="container mx-auto py-4 md:py-6 px-2 space-y-4">
@@ -242,7 +233,7 @@ export function CompareView() {
                 comparisonArea={comparisonArea}
                 selectedGranularity={selectedGranularity}
                 selectedIndicators={selectedIndicators}
-                availableIndicators={availableIndicators || []}
+                availableIndicators={availableIndicatorDefinitions || []}
               />
             </Suspense>
           </CardContent>
@@ -271,3 +262,4 @@ function toFullArea(area: any): Area {
     districtId: area.districtId ?? area.district_id ?? undefined,
   } as Area
 }
+

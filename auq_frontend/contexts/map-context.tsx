@@ -74,6 +74,8 @@ interface MapContextType {
   availableIndicators: IndicatorDefinition[]
   setAvailableIndicators: (indicators: IndicatorDefinition[]) => void
   currentIndicators: any[]
+  availableIndicatorDefinitions: IndicatorDefinition[]
+  availableIndicatorValues: any[]
 }
 
 const MapContext = createContext<MapContextType | undefined>(undefined)
@@ -108,6 +110,8 @@ export function MapProvider({ children }: { children: ReactNode }) {
   const [availableAreas, setAvailableAreas] = useState<Area[]>([])
   const [availableIndicators, setAvailableIndicators] = useState<IndicatorDefinition[]>([])
   const [currentIndicators, setCurrentIndicators] = useState<any[]>([])
+  const [availableIndicatorDefinitions, setAvailableIndicatorDefinitions] = useState<IndicatorDefinition[]>([])
+  const [availableIndicatorValues, setAvailableIndicatorValues] = useState<any[]>([])
 
   // Default filters
   const defaultFilters: Filters = {
@@ -203,24 +207,6 @@ export function MapProvider({ children }: { children: ReactNode }) {
     }
   }, [searchParams, selectedGranularity]);
 
-  // When selectedGranularity changes, update the URL if needed
-  useEffect(() => {
-    if (!selectedGranularity) return;
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("level") !== selectedGranularity.level) {
-      // Prevent loop: only update URL if not just set by URL
-      if (levelUpdateSource.current !== 'url') {
-        params.set("level", selectedGranularity.level);
-        window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
-        levelUpdateSource.current = 'context';
-      }
-    }
-    // Reset the ref after the update
-    if (levelUpdateSource.current) {
-      setTimeout(() => { levelUpdateSource.current = null }, 0)
-    }
-  }, [selectedGranularity]);
-
   // Load available point types when city changes
   useEffect(() => {
     async function loadAvailablePointTypes() {
@@ -231,9 +217,9 @@ export function MapProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        console.log(`[MapContext] Loading point features for city ${selectedCity.id}`)
+        // console.log(`[MapContext] Loading point features for city ${selectedCity.id}`)
         const features = await getCityPointFeatures(selectedCity.id)
-        console.log(`[MapContext] Loaded ${features.length} point features`)
+        // console.log(`[MapContext] Loaded ${features.length} point features`)
 
         // Get unique feature types
         const uniqueTypes = Array.from(
@@ -243,7 +229,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
               .filter((type): type is string => type !== undefined)
           )
         )
-        console.log(`[MapContext] Found ${uniqueTypes.length} unique feature types:`, uniqueTypes)
+        // console.log(`[MapContext] Found ${uniqueTypes.length} unique feature types:`, uniqueTypes)
 
         // Try to load saved visibility state from localStorage
         const savedVisibility = localStorage.getItem(`visiblePointTypes_${selectedCity.id}`)
@@ -279,7 +265,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
           }, {})
         }
 
-        console.log("[MapContext] Initial visibility state:", initialVisibility)
+        // console.log("[MapContext] Initial visibility state:", initialVisibility)
 
         setDynamicPointTypesState(uniqueTypes)
         setVisiblePointTypesState(initialVisibility)
@@ -407,20 +393,23 @@ export function MapProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function loadIndicatorsAndDefs() {
       if (!selectedCity || !selectedGranularity) {
-        setAvailableIndicators([])
-        setDynamicFiltersState([])
-        setCurrentIndicators([])
-        return
+        setAvailableIndicatorDefinitions([]);
+        setAvailableIndicatorValues([]);
+        setDynamicFiltersState([]);
+        setCurrentIndicators([]);
+        return;
       }
       try {
         const [definitions, indicators] = await Promise.all([
           getIndicatorDefinitions(),
           getCityIndicators(selectedCity.id, selectedGranularity.level)
-        ])
-        setAvailableIndicators(definitions)
-        setCurrentIndicators(indicators)
+        ]);
+        setAvailableIndicatorDefinitions(definitions);
+        setAvailableIndicatorValues(indicators);
+        setAvailableIndicators(definitions);
+        setCurrentIndicators(indicators);
         // Generar filtros dinámicos usando el rango real de la base de datos
-        const filters = definitions.map(def => {
+        const dynamicFilters = definitions.map(def => {
           // Buscar todos los valores de este indicador para las áreas
           const values = indicators.filter(ind => ind.indicator_def_id === def.id).map(ind => ind.value)
           if (!values.length) return null
@@ -435,11 +424,13 @@ export function MapProvider({ children }: { children: ReactNode }) {
             value: [min, max] as [number, number] // SIEMPRE el rango completo
           }
         }).filter(Boolean)
-        setDynamicFiltersState(filters as DynamicFilter[])
+        setDynamicFiltersState(dynamicFilters as DynamicFilter[])
       } catch (error) {
-        setAvailableIndicators([])
-        setDynamicFiltersState([])
-        setCurrentIndicators([])
+        setAvailableIndicatorDefinitions([]);
+        setAvailableIndicatorValues([]);
+        setAvailableIndicators([]);
+        setDynamicFiltersState([]);
+        setCurrentIndicators([]);
       }
     }
     loadIndicatorsAndDefs()
@@ -549,8 +540,6 @@ export function MapProvider({ children }: { children: ReactNode }) {
     } else {
       params.delete("city");
     }
-    params.delete("area"); // Always clear area on city change
-
     // Use replace instead of push to prevent adding to history
     router.replace(`?${params.toString()}`, { scroll: false });
 
@@ -582,44 +571,17 @@ export function MapProvider({ children }: { children: ReactNode }) {
   // Custom setter for selectedGranularity
   const setSelectedGranularity = useCallback(
     (granularity: GranularityLevel | null) => {
-      // Only update if the value actually changed
-      if (granularity?.level !== selectedGranularity?.level) {
-        // Clear area selection and remove from URL BEFORE changing granularity
-        setSelectedAreaState(null);
-        const params = new URLSearchParams(window.location.search);
-        if (params.has("area")) {
-          params.delete("area");
-          window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
-        }
-
-        setSelectedGranularityState(granularity);
-
-        // Reset filter ranges loaded flag
-        filterRangesLoadedRef.current = false;
-
-        // If this is the first time selecting a granularity, mark it
-        if (granularity && !hasSelectedGranularity) {
-          _setHasSelectedGranularity(true);
-        }
-
-        // If we have both city and granularity, load the data immediately
-        if (selectedCity && granularity && mapInitialized) {
-          loadGeoJSON(selectedCity.id, granularity.level);
-          loadAvailableAreas(selectedCity.id, granularity.level);
-          loadFilterRanges(selectedCity.id, granularity.level);
-        }
-      }
+      console.log('[MapContext] setSelectedGranularity called with:', granularity);
+      setSelectedGranularityState(granularity);
     },
-    [
-      selectedCity,
-      selectedGranularity,
-      hasSelectedGranularity,
-      mapInitialized,
-      loadGeoJSON,
-      loadAvailableAreas,
-      loadFilterRanges,
-    ],
+    []
   )
+
+  // Custom setter for selectedArea
+  const setSelectedArea = useCallback((area: Area | null) => {
+    console.log('[MapContext] setSelectedArea called with:', area);
+    setSelectedAreaState(area);
+  }, [])
 
   // Custom setter for visiblePointTypes
   const setVisiblePointTypes = useCallback(
@@ -675,24 +637,6 @@ export function MapProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     _setHasSelectedGranularity(!!selectedGranularity)
   }, [selectedGranularity])
-
-  // Custom setter for selectedArea
-  const setSelectedArea = useCallback((area: Area | null) => {
-    if (area && user) {
-      analyticsLogger.logEvent({
-        user_id: user.id,
-        event_type: 'area.select',
-        event_details: {
-          area_id: area.id,
-          area_name: area.name,
-          city: selectedCity?.name,
-          city_id: selectedCity?.id,
-          granularity: selectedGranularity?.level
-        }
-      })
-    }
-    setSelectedAreaState(area);
-  }, [selectedCity, selectedGranularity, user]);
 
   // Load available indicators when city changes (not granularity)
   useEffect(() => {
@@ -750,6 +694,8 @@ export function MapProvider({ children }: { children: ReactNode }) {
     availableIndicators,
     setAvailableIndicators,
     currentIndicators,
+    availableIndicatorDefinitions,
+    availableIndicatorValues,
   }
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>

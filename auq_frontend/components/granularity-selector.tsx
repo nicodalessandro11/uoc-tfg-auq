@@ -36,18 +36,25 @@ export function GranularitySelector() {
   const handleGranularityChange = (value: string) => {
     if (!value || !selectedCity) return;
 
-    // 1. Clear area from state
+    // 1. Clear area from state only
     setSelectedArea(null);
 
-    // 2. Update granularity in state
+    // 2. Set new granularity in state
     const newGranularity = granularityLevels.find(g => g.level === value) || null;
     setSelectedGranularity(newGranularity);
 
-    // 3. Update the URL (after state is set)
+    // 3. Set new granularity in URL (in the same step)
     const params = new URLSearchParams(window.location.search);
-    params.delete("area");
     params.set("level", value);
     router.replace(`?${params.toString()}`);
+
+    // 4. Log for debugging
+    console.log('[GranularitySelector] handleGranularityChange:', {
+      value,
+      newGranularity,
+      selectedCity,
+      url: window.location.href
+    });
   }
 
   return (

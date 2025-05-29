@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-29 | Enhanced map view and city selector components
+
+- Updated city-selector.tsx, compare-view.tsx, district-info.tsx, granularity-selector.tsx, leaflet-map.jsx, map-view.tsx, and map-context.tsx files in the auq_frontend/components and auq_frontend/contexts directories
+- Changes were made to improve the user experience by enhancing the map view and city selector components
+- The Leaflet library was used to implement the map view changes and TypeScript was used to enhance the city selector component
+
+This update should provide a smoother and more intuitive navigation experience for users.
+
 ## 📦 Feature | 2025-05-29 | Updated compare-view and leaflet-map components
 
 - Modified the compare-view.tsx and leaflet-map.jsx files in the auq_frontend/components directory

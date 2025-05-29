@@ -83,62 +83,6 @@ export function MapView() {
     router.push(`?${params.toString()}`, { scroll: false })
   }, [activeTab, router, isClient])
 
-  // Auto-select area from URL param if present and level matches
-  useEffect(() => {
-    // Only run this effect on the root route
-    if (pathname !== "/") return;
-
-    if (!searchParams) return;
-
-    const areaParam = searchParams.get("area")
-    const levelParam = searchParams.get("level")
-
-    // Clear selectedArea if:
-    // 1. areaParam is null
-    // 2. levelParam doesn't match current granularity
-    if (!areaParam || levelParam !== selectedGranularity?.level) {
-      if (selectedArea) {
-        setSelectedArea(null)
-      }
-      // Remove area param from URL if it exists
-      if (areaParam) {
-        const params = new URLSearchParams(window.location.search)
-        params.delete("area")
-        router.push(`?${params.toString()}`, { scroll: false })
-      }
-      return
-    }
-
-    // Only set area if:
-    // - areaParam exists
-    // - levelParam matches current granularity
-    // - area is valid for the current availableAreas
-    if (areaParam && levelParam === selectedGranularity?.level) {
-      if (availableAreas && availableAreas.length > 0) {
-        const area = availableAreas.find(a => a.id.toString() === areaParam)
-        // Guard: Only set if area is valid for this granularity
-        if (area) {
-          setSelectedArea(area)
-        } else {
-          setSelectedArea(null)
-          const params = new URLSearchParams(window.location.search)
-          params.delete("area")
-          router.push(`?${params.toString()}`, { scroll: false })
-        }
-      }
-    }
-  }, [searchParams, availableAreas, setSelectedArea, selectedGranularity, router, pathname, selectedArea])
-
-  // Clear area when granularity changes
-  useEffect(() => {
-    if (selectedArea) {
-      setSelectedArea(null)
-      const params = new URLSearchParams(window.location.search)
-      params.delete("area")
-      router.push(`?${params.toString()}`, { scroll: false })
-    }
-  }, [selectedGranularity?.level, setSelectedArea, router])
-
   // Memoize the setVisiblePointTypes handler to prevent unnecessary re-renders
   const handleVisiblePointTypesChange = useCallback(
     (types: Record<string, boolean>) => {
@@ -184,26 +128,6 @@ export function MapView() {
       triggerRefresh()
     }, 300)
   }
-
-  // Clear area when city actually changes
-  useEffect(() => {
-    if (
-      selectedCity &&
-      prevCityIdRef.current !== null &&
-      selectedCity.id !== prevCityIdRef.current
-    ) {
-      // City actually changed
-      if (selectedArea) {
-        setSelectedArea(null);
-      }
-      const params = new URLSearchParams(window.location.search);
-      if (params.has("area")) {
-        params.delete("area");
-        router.push(`?${params.toString()}`, { scroll: false });
-      }
-    }
-    prevCityIdRef.current = selectedCity ? selectedCity.id : null;
-  }, [selectedCity]);
 
   return (
     <div className="h-[calc(100vh-8rem)] flex w-full" ref={mapContainerRef}>

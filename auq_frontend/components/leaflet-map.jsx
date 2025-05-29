@@ -47,6 +47,14 @@ export default function LeafletMap({
   // Track if the last click was on a polygon
   const lastPolygonClickRef = useRef(false)
 
+  // Debug: log context state on every render
+  console.log('[LeafletMap] Render:', {
+    selectedCity,
+    selectedGranularity,
+    selectedArea,
+    currentGeoJSON
+  });
+
   // Function to generate a color from a simple palette based on the index
   const getColorFromPalette = (index, total) => {
     const colors = ["#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f", "#e5c494", "#b3b3b3"]
@@ -510,10 +518,6 @@ export default function LeafletMap({
               }
               setSelectedAreaState(area)
               setSelectedArea(area)
-              // Update area param in URL
-              const params = new URLSearchParams(window.location.search)
-              params.set("area", areaId)
-              router.push(`?${params.toString()}`, { scroll: false })
             },
             mouseover: (e) => {
               // Prevent event propagation on hover
@@ -547,7 +551,7 @@ export default function LeafletMap({
       console.error("Error rendering GeoJSON:", geoJsonError)
       setDefaultCityView(map, selectedCity)
     }
-  }, [currentGeoJSON, dynamicFilters, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady, router])
+  }, [currentGeoJSON, dynamicFilters, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady])
 
   // Update markers when point features change
   useEffect(() => {
@@ -708,14 +712,14 @@ export default function LeafletMap({
     }
   }, [theme, isMapReady]);
 
-  // Sync polygon highlight with selectedArea from context
+  // Ensure area selection is re-applied when map/data becomes ready
   useEffect(() => {
-    if (selectedArea) {
-      setSelectedAreaState(selectedArea)
-    } else {
-      setSelectedAreaState(null)
+    console.log('[LeafletMap] Area highlight effect:', { selectedArea, isMapReady, currentGeoJSON });
+    if (selectedArea && isMapReady && currentGeoJSON && geoJsonLayerRef.current) {
+      console.log('[LeafletMap] Applying selectedArea highlight:', selectedArea);
+      setSelectedAreaState(selectedArea);
     }
-  }, [selectedArea])
+  }, [isMapReady, currentGeoJSON, geoJsonLayerRef, selectedArea]);
 
   return <div ref={mapRef} className="h-full w-full" />
 }

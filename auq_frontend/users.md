@@ -75,4 +75,35 @@
 - RLS policies for security?
 - UI for user customization?
 
-Let me know which part you want to start with!
+
+
+
+
+
+
+
+**All improvements are now implemented:**
+
+---
+
+### 1. **Global Data Source for Indicators**
+- `MapContext` now exposes both `availableIndicatorDefinitions` and `availableIndicatorValues` (the definitions and the actual values with year, geo_id, etc).
+- These are always loaded and updated together when city or granularity changes.
+
+### 2. **/compare Uses the Same Data as Map and Info**
+- `CompareView` now uses `availableIndicatorDefinitions` and `availableIndicatorValues` from context.
+- When rendering indicators, it finds the value and year for the selected area from `availableIndicatorValues`—just like `district-info.tsx`.
+- The indicator year will always be correct and never undefined, as long as the data is present.
+
+### 3. **No API Calls Triggered by Area**
+- All API calls are only triggered by city or granularity changes, never by area.
+- Area is only used for lookup/filtering and URL navigation.
+
+### 4. **Consistent, Cached Data Across All Views**
+- All views (`/`, `/visualize`, `/compare`) use the same context/cached data for indicators and areas.
+
+---
+
+**You now have a robust, scalable, and consistent architecture for your app.**
+
+If you want, you can also refactor `district-info.tsx` to use the same context data for even more consistency.

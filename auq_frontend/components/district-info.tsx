@@ -6,60 +6,26 @@ import { MapPin, Users, DollarSign, Wallet, Map, Ruler, Euro } from "lucide-reac
 import { useMapContext } from "@/contexts/map-context"
 import { useEffect, useState } from "react"
 
-type AreaInfoProps = {
-  area: {
-    id: number
-    name: string
-    cityId: number
-    population: number
-    avgIncome: number
-    districtId?: number
-  }
-}
-
-// Icon mapping for indicator names
-const indicatorIcons: Record<string, JSX.Element> = {
-  population: <Users className="h-5 w-5 text-primary dark:text-primary-400" />,
-  surface: <Map className="h-5 w-5 text-green-600 dark:text-green-400" />,
-  "average gross taxable income per person": <DollarSign className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />,
-  "disposable income per capita": <Wallet className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />,
-  "population density": <Ruler className="h-5 w-5 text-purple-600 dark:text-purple-400" />,
-  "education level": <Badge className="h-5 w-5 text-pink-600 dark:text-pink-400" />,
-  "unemployment rate": <Euro className="h-5 w-5 text-red-600 dark:text-red-400" />,
-}
-
-export function DistrictInfo({ area }: AreaInfoProps) {
-  const { selectedGranularity, selectedCity } = useMapContext()
+export function DistrictInfo() {
+  const { selectedArea, selectedGranularity, selectedCity, availableIndicatorDefinitions, availableIndicatorValues } = useMapContext();
+  const area = selectedArea;
   const [indicatorValues, setIndicatorValues] = useState<{ [indicatorName: string]: { value: number | null, year: number } }>({})
-  const [indicatorDefs, setIndicatorDefs] = useState<any[]>([])
 
   useEffect(() => {
-    async function fetchAllIndicators() {
-      if (!selectedGranularity || !selectedCity) return
-      try {
-        // Get all indicator definitions
-        const defs = await getIndicatorDefinitions()
-        setIndicatorDefs(defs)
-        // Get all indicators for this city and level
-        const indicators = await getCityIndicators(selectedCity.id, selectedGranularity.level)
-        // Find all indicators for this area
-        const values: { [indicatorName: string]: { value: number | null, year: number } } = {}
-        defs.forEach(def => {
-          const found = indicators.find(ind => ind.indicator_def_id === def.id && ind.geo_id === area.id)
-          values[def.name] = {
-            value: found ? found.value : null,
-            year: found ? found.year : 0
-          }
-        })
-        setIndicatorValues(values)
-      } catch (error) {
-        console.error("Error fetching indicators:", error)
+    if (!selectedGranularity || !selectedCity || !area) return
+    // Use context data instead of fetching
+    const values: { [indicatorName: string]: { value: number | null, year: number } } = {}
+    availableIndicatorDefinitions.forEach(def => {
+      const found = availableIndicatorValues.find(ind => ind.indicator_def_id === def.id && ind.geo_id === area.id)
+      values[def.name] = {
+        value: found ? found.value : null,
+        year: found ? found.year : 0
       }
-    }
-    fetchAllIndicators()
-  }, [area.id, selectedGranularity, selectedCity])
+    })
+    setIndicatorValues(values)
+  }, [area, selectedGranularity, selectedCity, availableIndicatorDefinitions, availableIndicatorValues])
 
-  if (!selectedGranularity) {
+  if (!selectedGranularity || !area) {
     return null
   }
 
@@ -75,7 +41,7 @@ export function DistrictInfo({ area }: AreaInfoProps) {
       </div>
 
       <div className="grid gap-4">
-        {indicatorDefs.map(def => (
+        {availableIndicatorDefinitions.map(def => (
           indicatorValues[def.name]?.value !== null && (
             <div
               className="rounded-xl border border-border bg-background/80 dark:bg-muted/70 shadow-sm p-5 flex flex-col gap-2 hover:shadow-md transition-all"
