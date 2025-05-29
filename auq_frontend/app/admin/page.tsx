@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { MapProvider } from "@/contexts/map-context"
 import { Header } from "@/components/header"
 import { AdminView } from "@/components/admin-view"

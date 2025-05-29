@@ -8,9 +8,6 @@ import dynamic from "next/dynamic"
 import { MapTypeSelector } from "@/components/map-type-selector"
 import type { PointFeature, FeatureDefinition } from "@/lib/api-types"
 import { DataDisclaimer } from "./data-disclaimer"
-import debounce from "lodash/debounce"
-import { useTheme } from "next-themes"
-import { useRouter, useSearchParams } from "next/navigation"
 import { getFeatureTypeName } from "@/lib/feature-styles"
 
 // Create a client-side only component for the map

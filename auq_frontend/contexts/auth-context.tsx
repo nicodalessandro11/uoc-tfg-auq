@@ -147,7 +147,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Log logout
       await analyticsLogger.logEvent({
         user_id: user.id,
-        event_type: 'auth.logout'
+        event_type: 'auth.logout',
+        event_details: {}
       })
       await supabase.auth.signOut()
       setUser(null)

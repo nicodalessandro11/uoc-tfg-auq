@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from "react"
 import { useMapContext } from "@/contexts/map-context"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Layers } from "lucide-react"
-import { getGeographicalLevels } from "@/lib/supabase-client"
 import { useRouter } from "next/navigation"
 
 // Define the GranularityLevel type

@@ -9,7 +9,6 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send, Bot, User } from "lucide-react"
 import { useMapContext } from "@/contexts/map-context"
 import { getIndicatorValue, getIndicatorDefinitions } from "@/lib/supabase-client"
-import type { Area, District, Neighborhood } from "@/lib/api-types"
 
 type Message = {
   id: string

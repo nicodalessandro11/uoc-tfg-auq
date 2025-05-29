@@ -55,7 +55,7 @@ export function MapTypeSelector() {
   const { mapType, setMapType } = useMapContext()
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleMapTypeChange = (value) => {
+  const handleMapTypeChange = (value: "osm" | "satellite" | "grayscale" | "terrain" | "dark" | "watercolor") => {
     console.log("Changing map type to:", value)
     setMapType(value)
     setIsOpen(false)
@@ -80,10 +80,9 @@ export function MapTypeSelector() {
             {Object.entries(mapTypes).map(([key, { name, icon }]) => (
               <div
                 key={key}
-                className={`flex items-center space-x-2 rounded-md p-2 hover:bg-muted cursor-pointer ${
-                  mapType === key ? "bg-primary/10" : ""
-                }`}
-                onClick={() => handleMapTypeChange(key)}
+                className={`flex items-center space-x-2 rounded-md p-2 hover:bg-muted cursor-pointer ${mapType === key ? "bg-primary/10" : ""
+                  }`}
+                onClick={() => handleMapTypeChange(key as "osm" | "satellite" | "grayscale" | "terrain" | "dark" | "watercolor")}
               >
                 <div className="flex items-center gap-2 w-full">
                   <span className={`p-1.5 rounded-md ${mapType === key ? "bg-primary/20" : "bg-muted"}`}>{icon}</span>

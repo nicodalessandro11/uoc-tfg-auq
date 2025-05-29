@@ -13,7 +13,7 @@ export async function logUserEvent({
     body: JSON.stringify({ user_id, event_type, event_details }),
   })
   if (!res.ok) {
-    // Puedes loguear el error o mostrarlo en consola
+    // We can log the error or show it in the console
     console.error('Failed to log user event', await res.text())
   }
 } 

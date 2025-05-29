@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-29 | Refactor frontend components and cleanup deprecated files
+
+- Modified and refactored frontend components including admin, auth callback, chat-sidebar, compare-view, district-info, granularity-selector, map-component, map-type-selector, theme-provider, auth-context, log-user-event, supabase-client (auq_frontend/*)
+- Removed deprecated components and files including education-chart, population-chart, population-density-chart, unemployment-chart, topojson-utils, placeholder-user.jpg, placeholder.jpg, globals.css, api-equivalences.sql, api-file-manifest.json, execute_sql.sql, log_user_event/index.ts, various migration files, schema.sql, seed.sql, users.md, SMTP.md, api-equivalences.sql, indicators/page.tsx, map/page.tsx (auq_frontend/*)
+- The cleanup was done to remove unused files and improve the project structure, while the modifications were made to improve the functionality and user experience of the frontend components.
+
+This commit signifies a major cleanup and refactor in the frontend codebase, making it more maintainable and efficient. It also paves the way for future feature additions and improvements.
+
 ## 🐛 Fix | 2025-05-29 | Improved user experience in password reset and comparison view
 
 - Updated the forgot-password and reset-password pages in the auth directory to enhance user experience

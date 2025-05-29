@@ -1,14 +1,23 @@
 "use client"
 
-import { getIndicatorValue, getCityIndicators, getIndicatorDefinitions } from "../lib/supabase-client"
-import { Badge } from "@/components/ui/badge"
-import { MapPin, Users, DollarSign, Wallet, Map, Ruler, Euro } from "lucide-react"
 import { useMapContext } from "@/contexts/map-context"
 import { useEffect, useState } from "react"
 
-export function DistrictInfo() {
-  const { selectedArea, selectedGranularity, selectedCity, availableIndicatorDefinitions, availableIndicatorValues } = useMapContext();
-  const area = selectedArea;
+type Area = {
+  id: number
+  name: string
+  cityId: number
+  population: number
+  avgIncome: number
+  districtId?: number
+}
+
+type DistrictInfoProps = {
+  area: Area
+}
+
+export function DistrictInfo({ area }: DistrictInfoProps) {
+  const { selectedGranularity, selectedCity, availableIndicatorDefinitions, availableIndicatorValues } = useMapContext();
   const [indicatorValues, setIndicatorValues] = useState<{ [indicatorName: string]: { value: number | null, year: number } }>({})
 
   useEffect(() => {

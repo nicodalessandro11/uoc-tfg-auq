@@ -85,7 +85,14 @@ export async function getCities(): Promise<City[]> {
     console.log('[getCities] Fetching from Supabase')
     const { data, error } = await supabase.from("cities").select("*").order("id")
     if (error) throw new Error(error.message)
-    return data || []
+    // Ensure data is typed as City[]
+    return (data ?? []).map((city: any) => ({
+      id: city.id,
+      name: city.name,
+      country: city.country,
+      created_at: city.created_at
+      // ...add other fields as needed
+    }))
   })
 }
 
@@ -109,13 +116,13 @@ export async function getDistrictPolygons(cityId: number): Promise<GeoJSONRespon
     }
 
     // Transform to GeoJSON
-    const features: GeoJSONFeature[] = data.map((district, index) => ({
+    const features: GeoJSONFeature[] = data.map((district: any, index: number) => ({
       type: "Feature",
       properties: {
-        id: district.id,
-        name: district.name,
+        id: Number(district.id),
+        name: String(district.name),
         district_code: district.district_code,
-        city_id: district.city_id,
+        city_id: Number(district.city_id),
         level: "district",
         index,
       },
@@ -125,7 +132,8 @@ export async function getDistrictPolygons(cityId: number): Promise<GeoJSONRespon
     return {
       type: "FeatureCollection",
       features,
-    }
+      properties: {},
+    } as GeoJSONResponse
   })
 }
 
@@ -149,14 +157,14 @@ export async function getNeighbourhoodPolygons(cityId: number): Promise<GeoJSONR
     }
 
     // Transform to GeoJSON
-    const features: GeoJSONFeature[] = data.map((neighborhood, index) => ({
+    const features: GeoJSONFeature[] = data.map((neighborhood: any, index: number) => ({
       type: "Feature",
       properties: {
-        id: neighborhood.id,
-        name: neighborhood.name,
+        id: Number(neighborhood.id),
+        name: String(neighborhood.name),
         neighbourhood_code: neighborhood.neighbourhood_code,
-        district_id: neighborhood.district_id,
-        city_id: neighborhood.city_id,
+        district_id: Number(neighborhood.district_id),
+        city_id: Number(neighborhood.city_id),
         level: "neighborhood",
         index,
       },
@@ -166,7 +174,8 @@ export async function getNeighbourhoodPolygons(cityId: number): Promise<GeoJSONR
     return {
       type: "FeatureCollection",
       features,
-    }
+      properties: {},
+    } as GeoJSONResponse
   })
 }
 
@@ -239,7 +248,16 @@ export async function getDistricts(cityId: number): Promise<District[]> {
           .order("id")
 
         if (error) throw error
-        return data || []
+        return (data ?? []).map((district: any) => ({
+          id: Number(district.id),
+          name: String(district.name),
+          districtId: district.districtId ?? district.district_id,
+          cityId: district.cityId ?? district.city_id,
+          population: district.population ?? 0,
+          avgIncome: district.avgIncome ?? district.avg_income ?? 0,
+          surface: district.surface ?? 0,
+          disposableIncome: district.disposable_income ?? 0,
+        })) as District[]
       } finally {
         // Clean up the in-flight request
         inFlightRequests.delete(cacheKey)
@@ -266,7 +284,17 @@ export async function getNeighborhoods(districtId: number): Promise<Neighborhood
     console.log(`[getNeighborhoods] Fetching from Supabase for district ${districtId}`)
     const { data, error } = await supabase.from("neighbourhoods").select("*").eq("district_id", districtId).order("id")
     if (error) throw new Error(error.message)
-    return data || []
+    return (data ?? []).map((neighborhood: any) => ({
+      id: Number(neighborhood.id),
+      name: String(neighborhood.name),
+      district_id: neighborhood.district_id,
+      districtId: neighborhood.districtId ?? neighborhood.district_id,
+      cityId: neighborhood.cityId ?? neighborhood.city_id,
+      population: neighborhood.population ?? 0,
+      avgIncome: neighborhood.avgIncome ?? neighborhood.avg_income ?? 0,
+      surface: neighborhood.surface ?? 0,
+      disposableIncome: neighborhood.disposable_income ?? 0,
+    })) as Neighborhood[]
   })
 }
 
@@ -289,7 +317,13 @@ export async function getFeatureDefinitions(): Promise<FeatureDefinition[]> {
       throw new Error("No feature definitions found")
     }
 
-    return data
+    return (data ?? []).map((def: any) => ({
+      id: Number(def.id),
+      name: String(def.name),
+      description: def.description ?? "",
+      category: def.category ?? "",
+      icon: def.icon ?? "",
+    })) as FeatureDefinition[]
   })
 }
 
@@ -338,19 +372,13 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
         console.log(`[getCityPointFeatures] Found ${data?.length || 0} point features`)
 
         // Map the features and add the type
-        const mappedFeatures = (data || [])
-          .map(feature => ({
-            ...feature,
-            featureType: getFeatureTypeName(featureDefinitions, feature.feature_definition_id),
-            geoId: feature.geo_id,
-            city_id: cityId
-          }))
-          .filter((feature): feature is PointFeature => 
-            feature !== null && 
-            feature.featureType !== undefined
-          )
-
-        console.log(`[getCityPointFeatures] Successfully mapped ${mappedFeatures.length} features`)
+        const mappedFeatures = (data ?? []).map((feature: any) => ({
+          ...feature,
+          featureType: getFeatureTypeName(featureDefinitions, feature.feature_definition_id) ?? "",
+          geoId: Number(feature.geo_id),
+          city_id: Number(feature.city_id),
+        }))
+        .filter((feature: any) => feature && feature.featureType !== undefined)
         return mappedFeatures
       } finally {
         // Clean up the in-flight request
@@ -401,7 +429,13 @@ export async function getIndicatorDefinitions(): Promise<IndicatorDefinition[]> 
         }
 
         console.log(`[getIndicatorDefinitions] Found ${data?.length || 0} definitions`)
-        return data || []
+        return (data ?? []).map((def: any) => ({
+          id: Number(def.id),
+          name: String(def.name),
+          description: def.description ?? "",
+          category: def.category ?? "",
+          unit: def.unit ?? "",
+        })) as IndicatorDefinition[]
       } finally {
         // Clean up the in-flight request
         inFlightRequests.delete(cacheKey)
@@ -470,18 +504,18 @@ export async function getCityIndicators(cityId: number, level: string, year?: nu
         return []
       }
 
-      return data.map(item => ({
+      return (data ?? []).map((item: any) => ({
         id: Number(item.id) || 0,
         indicator_def_id: Number(item.indicator_def_id),
         geo_level_id: Number(item.geo_level_id),
         geo_id: Number(item.geo_id),
         year: Number(item.year),
         value: Number(item.value),
-        created_at: item.created_at,
+        created_at: typeof item.created_at === 'string' ? item.created_at : undefined,
         indicator_name: typeof item.indicator_name === 'string' ? item.indicator_name : '',
         unit: typeof item.unit === 'string' ? item.unit : '',
         category: typeof item.category === 'string' ? item.category : ''
-      }))
+      })) as Indicator[]
     } catch (error) {
       throw error
     }
@@ -524,10 +558,10 @@ export async function getGeographicalLevels(): Promise<any[]> {
     }
 
     // Transform to expected format
-    return data.map((level) => ({
-      id: level.id,
-      name: level.name,
-      level: level.name.toLowerCase(),
+    return (data ?? []).map((level: any) => ({
+      id: Number(level.id),
+      name: String(level.name),
+      level: typeof level.name === 'string' ? level.name.toLowerCase() : '',
     }))
   })
 }
@@ -581,7 +615,7 @@ export async function getIndicatorValue(areaId: number, indicatorId: number, lev
     }
 
     // Get the first (and should be only) result
-    const value = data[0].value
+    const value = Number(data[0].value)
 
     // Cache the result
     indicatorCache.set(cacheKey, { data: value, timestamp: now })
@@ -682,49 +716,32 @@ export async function getEnrichedGeoJSON(cityId: number, level: string): Promise
 }
 
 export async function fetchIndicators(cityId: number, level: string): Promise<Indicator[]> {
-  // console.log(`Fetching indicators for city ${cityId}, level ${level} (geo_level_id: ${getGeoLevelId(level)})`)
+  if (!USE_SUPABASE || !supabase) throw new Error("Supabase client not available or disabled");
 
-  // Try to get indicators from cache first
-  const cacheKey = `indicators_${cityId}_${level}`
-  const cachedData = getCachedData(cacheKey)
-  if (cachedData) {
-    // console.log("Using cached indicators data")
-    return cachedData
-  }
+  // Convert level to geo_level_id
+  const geoLevelId = level === "district" ? 2 : level === "neighborhood" || level === "neighbourhood" ? 3 : level === "city" ? 1 : null;
+  if (geoLevelId === null) throw new Error(`Invalid geographical level: ${level}`);
 
-  // If not in cache, fetch from Supabase
   const { data, error } = await supabase
     .from("current_indicators_view")
     .select("*")
     .eq("city_id", cityId)
-    .eq("geo_level_id", getGeoLevelId(level))
+    .eq("geo_level_id", geoLevelId);
 
-  if (error) {
-    // console.error("Error fetching indicators:", error)
-    throw error
-  }
+  if (error) throw error;
 
-  // console.log("Fetched indicators:", data)
-
-  // Transform the data to match the Indicator type
-  const transformedData = data.map((item: any) => ({
-    id: item.id,
-    geoId: item.geo_id,
-    geoLevelId: item.geo_level_id,
-    cityId: item.city_id,
-    indicatorName: item.indicator_name,
-    value: item.value,
-    year: item.year,
-    source: item.source,
-    description: item.description,
-  }))
-
-  // console.log("Transformed indicators:", transformedData)
-
-  // Cache the transformed data
-  setCachedData(cacheKey, transformedData)
-
-  return transformedData
+  return (data ?? []).map((item: any) => ({
+    id: Number(item.id) || 0,
+    indicator_def_id: Number(item.indicator_def_id),
+    geo_level_id: Number(item.geo_level_id),
+    geo_id: Number(item.geo_id),
+    year: Number(item.year),
+    value: Number(item.value),
+    created_at: typeof item.created_at === 'string' ? item.created_at : undefined,
+    indicator_name: typeof item.indicator_name === 'string' ? item.indicator_name : '',
+    unit: typeof item.unit === 'string' ? item.unit : '',
+    category: typeof item.category === 'string' ? item.category : ''
+  })) as Indicator[];
 }
 
 /**

@@ -6,11 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label"
 import { useMapContext } from "@/contexts/map-context"
 import { Loader2, ChartBarBig } from "lucide-react"
-import { getIndicatorDefinitions, getCityIndicators, getGeoJSON } from "@/lib/api-service"
 import { DistrictComparisonChart } from "@/components/district-comparison-chart"
 import { MultiSelect } from "@/components/ui/multi-select"
 import type { IndicatorDefinition, Area } from "@/lib/api-types"
-import { useSearchParams, useRouter, usePathname } from "next/navigation"
 
 function LoadingSpinner() {
   return (
