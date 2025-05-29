@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-29 | Updated compare-view and leaflet-map components
+
+- Modified the compare-view.tsx and leaflet-map.jsx files in the auq_frontend/components directory
+- The updates were made to enhance the user interface and improve the overall user experience 
+- The compare-view.tsx now has an improved comparison feature and the leaflet-map.jsx has a more interactive map display
+
+This update is a significant step towards our goal of making the application more user-friendly and interactive.
+
 ## 📦 Feature | 2025-05-29 | Enhanced Map Visualization 
 
 - Updated various components including filter-panel.tsx, leaflet-map.jsx, map-component.tsx, map-view.tsx, point-features-toggle.tsx, and visualize-view.tsx to improve the map visualization

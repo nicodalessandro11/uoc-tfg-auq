@@ -5,7 +5,7 @@ import { useMapContext } from "@/contexts/map-context"
 import { mapTypes } from "@/components/map-type-selector"
 import { useTheme } from "next-themes"
 import { useRouter, useSearchParams } from "next/navigation"
-import { getFeatureStyle, getIconUrlForFeatureType, markerShadowUrl } from "@/lib/feature-styles"
+import { getIconUrlForFeatureType, markerShadowUrl } from "@/lib/feature-styles"
 
 // Helper to assign a color to each feature type by order of appearance
 const featureTypeColorMap = {}
@@ -55,7 +55,14 @@ export default function LeafletMap({
 
   // Helper function to get marker style
   const getMarkerStyle = (featureType) => {
-    return getFeatureStyle(featureType)
+    return {
+      iconUrl: getIconUrlForFeatureType(featureType),
+      shadowUrl: markerShadowUrl,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    }
   }
 
   // Initialize the map
