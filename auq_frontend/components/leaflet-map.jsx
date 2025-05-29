@@ -48,12 +48,12 @@ export default function LeafletMap({
   const lastPolygonClickRef = useRef(false)
 
   // Debug: log context state on every render
-  console.log('[LeafletMap] Render:', {
-    selectedCity,
-    selectedGranularity,
-    selectedArea,
-    currentGeoJSON
-  });
+  // console.log('[LeafletMap] Render:', {
+  //   selectedCity,
+  //   selectedGranularity,
+  //   selectedArea,
+  //   currentGeoJSON
+  // });
 
   // Function to generate a color from a simple palette based on the index
   const getColorFromPalette = (index, total) => {
@@ -229,23 +229,16 @@ export default function LeafletMap({
     if (selectedCity) {
       // Only set the view when the city changes
       if (!prevCityId || prevCityId !== selectedCity.id) {
-        // console.log("City changed, updating map view and data")
         setDefaultCityView(map, selectedCity)
-        // Store the current city ID for future comparison
         map.prevCityId = selectedCity.id
-
-        // Always load data when city changes, regardless of area selection
-        if (selectedGranularity) {
-          // console.log("Loading data for new city:", selectedCity.id, selectedGranularity.level)
-          loadGeoJSON(selectedCity.id, selectedGranularity.level)
-        }
+        // Do not call loadGeoJSON here; context handles it
       }
     } else {
       // Reset to initial view if no city is selected
       map.setView([40, -4], 5)
       map.prevCityId = null
     }
-  }, [selectedCity, selectedGranularity, loadGeoJSON, isMapReady])
+  }, [selectedCity, selectedGranularity, isMapReady])
 
   // Helper function to set default city view
   const setDefaultCityView = (map, selectedCity) => {
@@ -329,21 +322,21 @@ export default function LeafletMap({
     const geoJsonLayer = geoJsonLayerRef.current
     const L = window.L
 
-    console.log('[LeafletMap] Effect triggered with:', {
-      map: !!map,
-      geoJsonLayer: !!geoJsonLayer,
-      isMapReady,
-      currentGeoJSON: !!currentGeoJSON,
-      leafletAvailable: !!L
-    })
+    // console.log('[LeafletMap] Effect triggered with:', {
+    //   map: !!map,
+    //   geoJsonLayer: !!geoJsonLayer,
+    //   isMapReady,
+    //   currentGeoJSON: !!currentGeoJSON,
+    //   leafletAvailable: !!L
+    // })
 
     if (!map || !geoJsonLayer || !isMapReady || !L) {
-      console.log('[LeafletMap] Not ready to render:', {
-        map: !!map,
-        geoJsonLayer: !!geoJsonLayer,
-        isMapReady,
-        leafletAvailable: !!L
-      })
+      // console.log('[LeafletMap] Not ready to render:', {
+      //   map: !!map,
+      //   geoJsonLayer: !!geoJsonLayer,
+      //   isMapReady,
+      //   leafletAvailable: !!L
+      // })
       return
     }
 
@@ -355,35 +348,35 @@ export default function LeafletMap({
         geoJsonLayerRef.current = L.layerGroup().addTo(map)
       }
     } catch (error) {
-      console.warn("[LeafletMap] Error clearing GeoJSON layers:", error)
+      // console.warn("[LeafletMap] Error clearing GeoJSON layers:", error)
       // If there's an error, try to create a new layer group anyway
       try {
         geoJsonLayerRef.current = L.layerGroup().addTo(map)
       } catch (fallbackError) {
-        console.error("[LeafletMap] Failed to create new layer group:", fallbackError)
+        // console.error("[LeafletMap] Failed to create new layer group:", fallbackError)
       }
     }
 
     // Check if we have valid GeoJSON data
     if (!currentGeoJSON || !currentGeoJSON.features || currentGeoJSON.features.length === 0) {
-      console.log('[LeafletMap] No valid GeoJSON data:', currentGeoJSON)
+      // console.log('[LeafletMap] No valid GeoJSON data:', currentGeoJSON)
       return
     }
 
     // Log para depuración: inspecciona el primer feature y su geometry
     const firstFeature = currentGeoJSON.features[0]
-    console.log('[LeafletMap] First feature:', firstFeature)
+    // console.log('[LeafletMap] First feature:', firstFeature)
     if (firstFeature && firstFeature.geometry) {
-      console.log('[LeafletMap] First feature geometry:', firstFeature.geometry)
+      // console.log('[LeafletMap] First feature geometry:', firstFeature.geometry)
     } else {
-      console.warn('[LeafletMap] First feature has NO geometry!')
+      // console.warn('[LeafletMap] First feature has NO geometry!')
     }
 
-    console.log('[LeafletMap] Rendering GeoJSON with features:', currentGeoJSON.features.length)
+    // console.log('[LeafletMap] Rendering GeoJSON with features:', currentGeoJSON.features.length)
 
     // === FILTRADO DE FEATURES SEGÚN LOS SLIDERS DINÁMICOS ===
-    console.log('[LeafletMap] dynamicFilters:', dynamicFilters)
-    console.log('[LeafletMap] Features before filtering:', currentGeoJSON.features.length)
+    // console.log('[LeafletMap] dynamicFilters:', dynamicFilters)
+    // console.log('[LeafletMap] Features before filtering:', currentGeoJSON.features.length)
 
     const filteredFeatures = currentGeoJSON.features.filter((feature) => {
       if (!feature.properties || typeof feature.properties.id === 'undefined') return false;
@@ -398,7 +391,7 @@ export default function LeafletMap({
       }
       return true
     })
-    console.log('[LeafletMap] Features after filtering:', filteredFeatures.length)
+    // console.log('[LeafletMap] Features after filtering:', filteredFeatures.length)
 
     // Style function for GeoJSON
     const getAreaStyle = (feature) => {
@@ -548,7 +541,7 @@ export default function LeafletMap({
         geoJson.addTo(geoJsonLayerRef.current)
       }
     } catch (geoJsonError) {
-      console.error("Error rendering GeoJSON:", geoJsonError)
+      // console.error("Error rendering GeoJSON:", geoJsonError)
       setDefaultCityView(map, selectedCity)
     }
   }, [currentGeoJSON, dynamicFilters, selectedCity, selectedGranularity, setSelectedArea, selectedAreaState, isMapReady])
@@ -714,9 +707,9 @@ export default function LeafletMap({
 
   // Ensure area selection is re-applied when map/data becomes ready
   useEffect(() => {
-    console.log('[LeafletMap] Area highlight effect:', { selectedArea, isMapReady, currentGeoJSON });
+    // console.log('[LeafletMap] Area highlight effect:', { selectedArea, isMapReady, currentGeoJSON });
     if (selectedArea && isMapReady && currentGeoJSON && geoJsonLayerRef.current) {
-      console.log('[LeafletMap] Applying selectedArea highlight:', selectedArea);
+      // console.log('[LeafletMap] Applying selectedArea highlight:', selectedArea);
       setSelectedAreaState(selectedArea);
     }
   }, [isMapReady, currentGeoJSON, geoJsonLayerRef, selectedArea]);

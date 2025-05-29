@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-29 | Enhanced map visualization and comparison features
+
+- Updated compare/page.tsx and visualize-view.tsx for improved map comparison functionality
+- Enhanced map visualization in map-component.tsx and leaflet-map.jsx to provide a better user experience
+- Modified map-context.tsx to support new visualization and comparison features
+
+This update significantly enhances our map visualization and comparison capabilities, providing users with a more comprehensive and intuitive interface. This is a key step towards our goal of making data exploration and comparison as seamless as possible.
+
 ## 📦 Feature | 2025-05-29 | Enhanced map view and city selector components
 
 - Updated city-selector.tsx, compare-view.tsx, district-info.tsx, granularity-selector.tsx, leaflet-map.jsx, map-view.tsx, and map-context.tsx files in the auq_frontend/components and auq_frontend/contexts directories

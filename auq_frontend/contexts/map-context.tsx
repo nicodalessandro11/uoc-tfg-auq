@@ -70,12 +70,14 @@ interface MapContextType {
   comparisonArea: Area | null
   setComparisonArea: (area: Area | null) => void
   availableAreas: Area[]
+  setAvailableAreas: (areas: Area[]) => void
   loadGeoJSON: (cityId: number, granularityLevel: string) => Promise<void>
   availableIndicators: IndicatorDefinition[]
   setAvailableIndicators: (indicators: IndicatorDefinition[]) => void
   currentIndicators: any[]
   availableIndicatorDefinitions: IndicatorDefinition[]
   availableIndicatorValues: any[]
+  setForceRefresh: (updater: (prev: number) => number) => void
 }
 
 const MapContext = createContext<MapContextType | undefined>(undefined)
@@ -355,10 +357,17 @@ export function MapProvider({ children }: { children: ReactNode }) {
       // Save this request as the last one
       lastLoadRequestRef.current = cacheKey
 
+      // Loading guard: prevent overlapping loads
+      if (isLoadingGeoJSON) {
+        return
+      }
+
       setIsLoadingGeoJSONState(true)
 
       try {
-        // 1. Load polygons with geometry (sin enriquecer)
+        console.log('[MapContext] Loading GeoJSON for:', { cityId, granularityLevel })
+
+        // 1. Load polygons with geometry
         let geojson
         if (granularityLevel === "district") {
           geojson = await getDistrictPolygons(cityId)
@@ -367,26 +376,45 @@ export function MapProvider({ children }: { children: ReactNode }) {
         } else {
           throw new Error("Invalid granularity level")
         }
-        // 2. Guardar el GeoJSON puro
+
+        // 2. Save the GeoJSON
         setCurrentGeoJSONState(geojson)
-        // Log de depuración para ver el contenido del GeoJSON
-        console.log('[DEBUG] GeoJSON loaded:', geojson)
+        console.log('[MapContext] GeoJSON loaded:', {
+          features: geojson.features?.length,
+          firstFeature: geojson.features?.[0]
+        })
+
+        // 3. Extract and set available areas
         if (geojson.features) {
-          geojson.features.forEach((f, i) => {
-            if (!f.geometry) {
-              console.warn(`[DEBUG] Feature sin geometry en index ${i}:`, f)
+          const areas = geojson.features.map((feature: any) => {
+            const properties = feature.properties || {}
+            return {
+              id: properties.id,
+              name: properties.name,
+              districtId: properties.district_id,
+              cityId: properties.city_id,
+              district_id: properties.district_id,
+              city_id: properties.city_id,
+              population: properties.population || 0,
+              avgIncome: properties.avg_income || 0,
+              surface: properties.surface || 0,
+              disposableIncome: properties.disposable_income || 0,
             }
-          })
+          }).filter(area => area.id && area.name)
+
+          console.log('[MapContext] Setting available areas:', { count: areas.length })
+          setAvailableAreas(areas)
         }
+
         setIsLoadingGeoJSONState(false)
-        // 3. Cargar áreas disponibles en paralelo
-        loadAvailableAreas(cityId, granularityLevel)
         setForceRefresh((prev) => prev + 1)
       } catch (error) {
+        console.error('[MapContext] Error loading GeoJSON:', error)
         setIsLoadingGeoJSONState(false)
+        setAvailableAreas([])
       }
     },
-    [loadAvailableAreas, isLoadingGeoJSON],
+    [isLoadingGeoJSON, setForceRefresh],
   )
 
   // Cargar y cachear los indicadores y definiciones al cambiar ciudad o granularidad
@@ -690,12 +718,14 @@ export function MapProvider({ children }: { children: ReactNode }) {
     comparisonArea,
     setComparisonArea,
     availableAreas,
+    setAvailableAreas,
     loadGeoJSON,
     availableIndicators,
     setAvailableIndicators,
     currentIndicators,
     availableIndicatorDefinitions,
     availableIndicatorValues,
+    setForceRefresh,
   }
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>

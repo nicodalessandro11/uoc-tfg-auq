@@ -65,9 +65,6 @@ export function CompareView() {
 
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>([])
   const [showIndicatorLimit, setShowIndicatorLimit] = useState(false)
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const pathname = usePathname()
 
   // Area options for dropdowns
   const areaOptions = useMemo(() =>
@@ -112,20 +109,10 @@ export function CompareView() {
     }
   }, [availableAreas, setSelectedArea, setComparisonArea]);
 
-  // Reset selectedArea if it's not in availableAreas (e.g., after granularity change)
+  // Reset selectedIndicators when city or granularity changes
   useEffect(() => {
-    if (!selectedArea) return;
-    if (!availableAreas || availableAreas.length === 0) return;
-    const stillExists = availableAreas.some(a => a.id === selectedArea.id);
-    if (!stillExists) {
-      setSelectedArea(null);
-    }
-  }, [availableAreas, selectedArea, setSelectedArea]);
-
-  // Reset comparisonArea when city or granularity changes
-  useEffect(() => {
-    setComparisonArea(null);
-  }, [selectedCity, selectedGranularity, setComparisonArea]);
+    setSelectedIndicators([])
+  }, [selectedCity, selectedGranularity])
 
   // Set default indicators when availableIndicatorDefinitions change
   useEffect(() => {

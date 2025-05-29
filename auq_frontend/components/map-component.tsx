@@ -54,12 +54,6 @@ export default function MapComponent() {
   const [isPointsVisible, setIsPointsVisible] = useState(false)
   const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const [featureDefinitions, setFeatureDefinitions] = useState<FeatureDefinition[]>([])
-  const [mapKey, setMapKey] = useState(0) // Add a key to force remount
-
-  // Reset map when city or granularity changes
-  useEffect(() => {
-    setMapKey(prev => prev + 1)
-  }, [selectedCity?.id, selectedGranularity?.level])
 
   // Load feature definitions
   useEffect(() => {
@@ -139,7 +133,6 @@ export default function MapComponent() {
   return (
     <div className="h-full w-full relative" ref={mapContainerRef}>
       <MapWithNoSSR
-        key={mapKey} // Force remount when key changes
         selectedCity={selectedCity}
         selectedGranularity={selectedGranularity}
         currentGeoJSON={currentGeoJSON}

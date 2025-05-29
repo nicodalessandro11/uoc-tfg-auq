@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
@@ -13,7 +13,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList 
 import { DataDisclaimer } from "@/components/data-disclaimer"
 
 export function VisualizeView() {
-  const { selectedCity, selectedGranularity, loadGeoJSON, availableIndicators } = useMapContext()
+  const { selectedCity, selectedGranularity, availableIndicators, currentGeoJSON } = useMapContext()
   const [selectedIndicator, setSelectedIndicator] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [areas, setAreas] = useState<Area[]>([])
@@ -22,27 +22,9 @@ export function VisualizeView() {
   const [selectedAreaId, setSelectedAreaId] = useState<number | null>(null)
   const [timeSeries, setTimeSeries] = useState<{ year: number, value: number }[]>([])
   const [isLoadingTimeSeries, setIsLoadingTimeSeries] = useState(false)
-
-  // Load areas when city or granularity changes
-  useEffect(() => {
-    async function loadAreas() {
-      if (!selectedCity || !selectedGranularity) return
-      setIsLoading(true)
-      try {
-        const geoJsonData = await loadGeoJSON(selectedCity.id, selectedGranularity.level)
-        // If loadGeoJSON returns nothing, try to get from context
-        // (Assume context updates currentGeoJSON)
-      } catch (error) {
-        console.error('Error loading areas:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    loadAreas()
-  }, [selectedCity, selectedGranularity, loadGeoJSON])
+  const isLoadingRef = useRef(false)
 
   // Update areas from context's currentGeoJSON
-  const { currentGeoJSON } = useMapContext()
   useEffect(() => {
     if (currentGeoJSON?.features) {
       const formattedAreas: Area[] = currentGeoJSON.features.map((feature: any) => ({
