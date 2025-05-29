@@ -1,5 +1,14 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 🐛 Fix | 2025-05-29 | Improved user experience in password reset and comparison view
+
+- Updated the forgot-password and reset-password pages in the auth directory to enhance user experience
+- Enhanced the compare page and compare-view component to provide a more intuitive comparison interface
+- Refactored the chat-sidebar, city-selector, debug-panel, and leaflet-map components for better performance and readability
+- Moved the indicators page to the deprecated directory as it is no longer in use
+
+This commit aims to improve the overall user experience of our application, particularly in the areas of password reset and data comparison. It also involves some necessary cleanup and refactoring for better code maintainability.
+
 ## 📦 Feature | 2025-05-29 | Enhanced map visualization and comparison features
 
 - Updated compare/page.tsx and visualize-view.tsx for improved map comparison functionality

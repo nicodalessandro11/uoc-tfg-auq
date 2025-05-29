@@ -25,7 +25,7 @@ export function ChatSidebar() {
   const [indicatorDefinitions, setIndicatorDefinitions] = useState<any[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const initialMessageSent = useRef(false)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>()
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Load indicator definitions
   useEffect(() => {

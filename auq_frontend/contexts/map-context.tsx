@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useCallback, useRef, type ReactNode, useEffect, type Dispatch, type SetStateAction } from "react"
+import { createContext, useContext, useState, useCallback, useRef, type ReactNode, useEffect, type Dispatch, type SetStateAction, useMemo } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { analyticsLogger } from "@/lib/analytics/logger"
@@ -78,6 +78,8 @@ interface MapContextType {
   availableIndicatorDefinitions: IndicatorDefinition[]
   availableIndicatorValues: any[]
   setForceRefresh: (updater: (prev: number) => number) => void
+  switchCity: (city: City | null) => Promise<void>
+  switchGranularity: (granularity: GranularityLevel | null) => Promise<void>
 }
 
 const MapContext = createContext<MapContextType | undefined>(undefined)
@@ -183,31 +185,6 @@ export function MapProvider({ children }: { children: ReactNode }) {
       }
     }
   }, [searchParams, selectedCity]);
-
-  // Use a ref to track if the update was triggered by the context or the URL
-  const levelUpdateSource = useRef<'context' | 'url' | null>(null)
-
-  // Sync selectedGranularity with the ?level= param in the URL
-  useEffect(() => {
-    if (!searchParams) return;
-
-    const levelParam = searchParams.get("level");
-    if (levelParam && (!selectedGranularity || selectedGranularity.level !== levelParam)) {
-      // Prevent loop: only update from URL if not just set by context
-      if (levelUpdateSource.current !== 'context') {
-        const granularityLevels = [
-          { id: 2, name: "Districts", level: "district" },
-          { id: 3, name: "Neighborhoods", level: "neighborhood" },
-        ];
-        const found = granularityLevels.find(g => g.level === levelParam);
-        if (found) {
-          setSelectedGranularityState(found);
-          _setHasSelectedGranularity(true);
-          levelUpdateSource.current = 'url';
-        }
-      }
-    }
-  }, [searchParams, selectedGranularity]);
 
   // Load available point types when city changes
   useEffect(() => {
@@ -377,15 +354,15 @@ export function MapProvider({ children }: { children: ReactNode }) {
           throw new Error("Invalid granularity level")
         }
 
-        // 2. Save the GeoJSON
-        setCurrentGeoJSONState(geojson)
-        console.log('[MapContext] GeoJSON loaded:', {
-          features: geojson.features?.length,
-          firstFeature: geojson.features?.[0]
-        })
+        // 2. Only update the GeoJSON if valid and has features
+        if (geojson && geojson.features && geojson.features.length > 0) {
+          setCurrentGeoJSONState(geojson)
+          console.log('[MapContext] GeoJSON loaded:', {
+            features: geojson.features?.length,
+            firstFeature: geojson.features?.[0]
+          })
 
-        // 3. Extract and set available areas
-        if (geojson.features) {
+          // 3. Extract and set available areas
           const areas = geojson.features.map((feature: any) => {
             const properties = feature.properties || {}
             return {
@@ -404,6 +381,9 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
           console.log('[MapContext] Setting available areas:', { count: areas.length })
           setAvailableAreas(areas)
+        } else {
+          // If no features, do not clear the old polygons, just show an error
+          console.error('[MapContext] No valid GeoJSON features loaded for city', cityId, 'level', granularityLevel)
         }
 
         setIsLoadingGeoJSONState(false)
@@ -411,7 +391,8 @@ export function MapProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         console.error('[MapContext] Error loading GeoJSON:', error)
         setIsLoadingGeoJSONState(false)
-        setAvailableAreas([])
+        // Do NOT clear the old polygons here
+        // setAvailableAreas([])
       }
     },
     [isLoadingGeoJSON, setForceRefresh],
@@ -542,6 +523,135 @@ export function MapProvider({ children }: { children: ReactNode }) {
     setForceRefresh((prev) => prev + 1);
   }, [filterRanges, _setFilters]);
 
+  // Atomic city switch: loads new GeoJSON, then updates selectedCity and currentGeoJSON together
+  const switchCity = useCallback(async (city: City | null) => {
+    if (!city || (selectedCity?.id === city.id)) return;
+
+    // Log city selection
+    if (user && city) {
+      analyticsLogger.logEvent({
+        user_id: user.id,
+        event_type: 'map.view',
+        event_details: {
+          city: city.name,
+          city_id: city.id
+        }
+      });
+    }
+
+    // Update the URL using router
+    const params = new URLSearchParams(window.location.search);
+    if (city?.id) {
+      params.set("city", city.id.toString());
+    } else {
+      params.delete("city");
+    }
+    router.replace(`?${params.toString()}`, { scroll: false });
+
+    // Load new GeoJSON before updating city
+    let geojson = null;
+    let areas: Area[] = [];
+    if (selectedGranularity) {
+      try {
+        if (selectedGranularity.level === "district") {
+          geojson = await getDistrictPolygons(city.id)
+        } else if (selectedGranularity.level === "neighborhood" || selectedGranularity.level === "neighbourhood") {
+          geojson = await getNeighborhoodPolygons(city.id)
+        }
+        if (geojson && geojson.features && geojson.features.length > 0) {
+          areas = geojson.features.map((feature: any) => {
+            const properties = feature.properties || {}
+            return {
+              id: properties.id,
+              name: properties.name,
+              districtId: properties.district_id,
+              cityId: properties.city_id,
+              district_id: properties.district_id,
+              city_id: properties.city_id,
+              population: properties.population || 0,
+              avgIncome: properties.avg_income || 0,
+              surface: properties.surface || 0,
+              disposableIncome: properties.disposable_income || 0,
+            }
+          }).filter(area => area.id && area.name)
+        }
+      } catch (error) {
+        console.error('[MapContext] Error loading GeoJSON for switchCity:', error)
+      }
+    }
+
+    // Now update all state atomically
+    setSelectedCityState(city);
+    if (geojson && geojson.features && geojson.features.length > 0) {
+      setCurrentGeoJSONState(geojson);
+      setAvailableAreas(areas);
+    }
+    setSelectedAreaState(null);
+    setComparisonArea(null);
+    setDynamicFiltersState([]);
+    _setFilters(defaultFilters);
+    triggerRefresh();
+  }, [selectedCity, selectedGranularity, user, router, triggerRefresh]);
+
+  // Atomic granularity switch: loads new GeoJSON, then updates granularity and areas together
+  const switchGranularity = useCallback(async (granularity: GranularityLevel | null) => {
+    if (!granularity || !selectedCity || (selectedGranularity?.level === granularity.level)) return;
+
+    setIsLoadingGeoJSONState(true);
+
+    try {
+      // Load new GeoJSON before updating any state
+      let geojson = null;
+      let areas: Area[] = [];
+
+      if (granularity.level === "district") {
+        geojson = await getDistrictPolygons(selectedCity.id)
+      } else if (granularity.level === "neighborhood" || granularity.level === "neighbourhood") {
+        geojson = await getNeighborhoodPolygons(selectedCity.id)
+      }
+
+      if (geojson && geojson.features && geojson.features.length > 0) {
+        areas = geojson.features.map((feature: any) => {
+          const properties = feature.properties || {}
+          return {
+            id: properties.id,
+            name: properties.name,
+            districtId: properties.district_id,
+            cityId: properties.city_id,
+            district_id: properties.district_id,
+            city_id: properties.city_id,
+            population: properties.population || 0,
+            avgIncome: properties.avg_income || 0,
+            surface: properties.surface || 0,
+            disposableIncome: properties.disposable_income || 0,
+          }
+        }).filter(area => area.id && area.name)
+      }
+
+      // Update URL first
+      const params = new URLSearchParams(window.location.search);
+      params.set("level", granularity.level);
+      router.replace(`?${params.toString()}`, { scroll: false });
+
+      // Now update all state atomically
+      setSelectedGranularityState(granularity);
+      _setHasSelectedGranularity(true);
+      if (geojson && geojson.features && geojson.features.length > 0) {
+        setCurrentGeoJSONState(geojson);
+        setAvailableAreas(areas);
+      }
+      setSelectedAreaState(null);
+      setComparisonArea(null);
+      setDynamicFiltersState([]);
+      _setFilters(defaultFilters);
+      triggerRefresh();
+    } catch (error) {
+      console.error('[MapContext] Error loading GeoJSON for switchGranularity:', error)
+    } finally {
+      setIsLoadingGeoJSONState(false);
+    }
+  }, [selectedCity, selectedGranularity, router, triggerRefresh]);
+
   // Custom setter for selectedCity that also updates the global variable
   const setSelectedCity = useCallback((city: City | null) => {
     // Prevent unnecessary updates
@@ -572,7 +682,6 @@ export function MapProvider({ children }: { children: ReactNode }) {
     router.replace(`?${params.toString()}`, { scroll: false });
 
     // Clear only the necessary state
-    setCurrentGeoJSONState(null);
     setAvailableAreas([]);
     setSelectedAreaState(null);
     setDynamicFiltersState([]);
@@ -640,16 +749,23 @@ export function MapProvider({ children }: { children: ReactNode }) {
     [mapType, triggerRefresh],
   )
 
-  // Effect to load data when map is initialized and tenemos city y granularity
+  // Debounced loader for GeoJSON and available areas
   useEffect(() => {
-    if (!mapInitialized || !selectedCity || !selectedGranularity) return
-    const loadKey = `${selectedCity.id}_${selectedGranularity.level}`
-    if (lastLoadKeyRef.current === loadKey) return // Ya cargado
-    lastLoadKeyRef.current = loadKey
-    loadGeoJSON(selectedCity.id, selectedGranularity.level)
-    loadAvailableAreas(selectedCity.id, selectedGranularity.level)
-    loadFilterRanges(selectedCity.id, selectedGranularity.level)
-  }, [mapInitialized, selectedCity, selectedGranularity])
+    if (!selectedCity || !selectedGranularity) return;
+    const loadKey = `${selectedCity.id}_${selectedGranularity.level}`;
+    if (lastLoadKeyRef.current === loadKey) return; // Already loaded
+
+    // Debounce: batch rapid changes
+    const timeout = setTimeout(() => {
+      if (lastLoadKeyRef.current === loadKey) return;
+      lastLoadKeyRef.current = loadKey;
+      loadGeoJSON(selectedCity.id, selectedGranularity.level);
+      loadAvailableAreas(selectedCity.id, selectedGranularity.level);
+      loadFilterRanges(selectedCity.id, selectedGranularity.level);
+    }, 50); // 50ms debounce
+
+    return () => clearTimeout(timeout);
+  }, [selectedCity, selectedGranularity]);
 
   // Actualizar dynamicPointTypes cuando cambian los pointFeatures
   useEffect(() => {
@@ -689,13 +805,39 @@ export function MapProvider({ children }: { children: ReactNode }) {
     loadIndicators()
   }, [selectedCity])
 
-  const value: MapContextType = {
+  // Sync selectedGranularity with the ?level= param in the URL on mount/navigation
+  useEffect(() => {
+    if (!searchParams) return;
+    const levelParam = searchParams.get("level");
+    if (levelParam && (!selectedGranularity || selectedGranularity.level !== levelParam)) {
+      // Only update if not already set
+      const granularityLevels = [
+        { id: 2, name: "Districts", level: "district" },
+        { id: 3, name: "Neighborhoods", level: "neighborhood" },
+      ];
+      const found = granularityLevels.find(g => g.level === levelParam);
+      if (found) {
+        setSelectedGranularityState(found);
+        _setHasSelectedGranularity(true);
+      }
+    }
+  }, [searchParams, selectedGranularity]);
+
+  // Always reset selectedArea when city changes (in all views)
+  useEffect(() => {
+    setSelectedAreaState(null);
+  }, [selectedCity]);
+
+  // Memoize the context value to prevent unnecessary re-renders
+  const value = useMemo(() => ({
     selectedCity,
     setSelectedCity,
+    switchCity,
     selectedArea,
     setSelectedArea,
     selectedGranularity,
     setSelectedGranularity,
+    switchGranularity,
     currentGeoJSON,
     setCurrentGeoJSON: setCurrentGeoJSONState,
     visiblePointTypes,
@@ -726,7 +868,32 @@ export function MapProvider({ children }: { children: ReactNode }) {
     availableIndicatorDefinitions,
     availableIndicatorValues,
     setForceRefresh,
-  }
+  }), [
+    selectedCity,
+    setSelectedCity,
+    switchCity,
+    selectedArea,
+    setSelectedArea,
+    selectedGranularity,
+    setSelectedGranularity,
+    switchGranularity,
+    currentGeoJSON,
+    visiblePointTypes,
+    dynamicPointTypes,
+    dynamicFilters,
+    isLoadingGeoJSON,
+    hasSelectedGranularity,
+    mapType,
+    pointFeatures,
+    mapInitialized,
+    comparisonArea,
+    availableAreas,
+    availableIndicators,
+    currentIndicators,
+    availableIndicatorDefinitions,
+    availableIndicatorValues,
+    setForceRefresh,
+  ])
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>
 }

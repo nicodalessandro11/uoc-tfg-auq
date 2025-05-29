@@ -1,162 +1,117 @@
 "use client"
 
-import { useState, useContext } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { X, Bug, Trash2, RefreshCw } from "lucide-react"
-import { MapContext } from "@/contexts/map-context"
+import { useMapContext } from "@/contexts/map-context"
 import { clearCache as clearSupabaseCache } from "@/lib/supabase-client"
 import { clearApiCache } from "@/lib/api-service"
 
+// Declare DEBUG_MODE on window
+declare global {
+  interface Window {
+    DEBUG_MODE: boolean;
+  }
+}
+
 export function DebugPanel() {
   const [isOpen, setIsOpen] = useState(false)
-  const [debugMode, setDebugMode] = useState(false)
+  const {
+    triggerRefresh,
+    selectedCity,
+    visiblePointTypes
+  } = useMapContext()
 
-  // Always call the MapContext hook
-  const mapContext = useContext(MapContext)
-
-  const handleClearPointFeaturesCache = () => {
-    if (!mapContext) {
-      console.log("Map context not available")
-      return
+  const handleClearCache = async () => {
+    try {
+      // Clear all caches
+      clearSupabaseCache()
+      clearApiCache()
+      triggerRefresh()
+    } catch (error) {
+      console.error("Error clearing cache:", error)
     }
+  }
 
-    const { clearPointFeaturesCache, triggerRefresh, selectedCity } = mapContext
-
-    if (selectedCity) {
-      clearPointFeaturesCache(selectedCity.id)
-      console.log(`Cleared point features cache for ${selectedCity.name}`)
-    } else {
-      clearPointFeaturesCache()
-      console.log("Cleared all point features cache")
-    }
+  const handleRefresh = () => {
     triggerRefresh()
-  }
-
-  const handleClearAllCaches = () => {
-    clearApiCache()
-    clearSupabaseCache()
-    console.log("Cleared all caches")
-
-    if (mapContext?.triggerRefresh) {
-      mapContext.triggerRefresh()
-    }
-  }
-
-  const toggleDebugMode = () => {
-    const newMode = !debugMode
-    setDebugMode(newMode)
-    // Set a global flag for debug mode
-    window.DEBUG_MODE = newMode
-    console.log(`Debug mode ${newMode ? "enabled" : "disabled"}`)
   }
 
   if (!isOpen) {
     return (
       <Button
-        className="fixed bottom-4 left-4 z-50 bg-primary text-primary-foreground"
+        variant="outline"
+        size="icon"
+        className="fixed bottom-4 right-4 z-50"
         onClick={() => setIsOpen(true)}
-        size="sm"
       >
-        <Bug className="h-4 w-4 mr-2" />
-        Debug
+        <Bug className="h-4 w-4" />
       </Button>
     )
   }
 
   return (
-    <Card className="fixed bottom-4 left-4 z-50 w-80 shadow-lg">
-      <CardHeader className="pb-2 flex flex-row items-center justify-between">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Bug className="h-4 w-4 text-primary" />
-          Debug Panel
-        </CardTitle>
-        <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
+    <div className="fixed bottom-4 right-4 z-50 bg-background border rounded-lg shadow-lg p-4 w-80">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold">Debug Panel</h3>
+        <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
           <X className="h-4 w-4" />
         </Button>
-      </CardHeader>
-      <CardContent className="space-y-4">
+      </div>
+
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <Label htmlFor="debug-mode" className="cursor-pointer">
-            Enable Verbose Logging
-          </Label>
-          <Switch id="debug-mode" checked={debugMode} onCheckedChange={toggleDebugMode} />
+          <Label htmlFor="debug-mode">Debug Mode</Label>
+          <Switch
+            id="debug-mode"
+            checked={window.DEBUG_MODE || false}
+            onCheckedChange={(checked) => {
+              window.DEBUG_MODE = checked
+            }}
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <Label htmlFor="show-points">Show Points</Label>
+          <Switch
+            id="show-points"
+            checked={Object.values(visiblePointTypes).some(v => v)}
+            onCheckedChange={(checked) => {
+              // Toggle all point types
+              Object.keys(visiblePointTypes).forEach(key => {
+                visiblePointTypes[key] = checked
+              })
+              triggerRefresh()
+            }}
+          />
         </div>
 
         <div className="space-y-2">
           <Button
             variant="outline"
-            size="sm"
-            className="w-full flex items-center justify-center gap-2"
-            onClick={handleClearPointFeaturesCache}
-            disabled={!mapContext}
+            className="w-full"
+            onClick={handleClearCache}
           >
-            <Trash2 className="h-4 w-4" />
-            Clear Point Features Cache
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full flex items-center justify-center gap-2 mt-2"
-            onClick={() => {
-              if (mapContext?.selectedCity?.id === 2) {
-                console.group("🔍 Madrid Points Debug")
-
-                // Get the current state
-                const city = mapContext.selectedCity
-                const visibleTypes = mapContext.visiblePointTypes
-
-                console.log("Current city:", city?.name)
-                console.log("Visible point types:", visibleTypes)
-
-                // Force a refresh
-                mapContext.clearPointFeaturesCache(2)
-                mapContext.triggerRefresh()
-
-                console.log("Cache cleared and refresh triggered")
-                console.groupEnd()
-
-                alert("Madrid points debug info has been logged to the console. Press F12 to view.")
-              } else {
-                alert("Please select Madrid first to debug Madrid points.")
-              }
-            }}
-          >
-            <Bug className="h-4 w-4" />
-            Debug Madrid Points
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full flex items-center justify-center gap-2"
-            onClick={handleClearAllCaches}
-          >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-4 w-4 mr-2" />
             Clear All Caches
           </Button>
-
           <Button
             variant="outline"
-            size="sm"
-            className="w-full flex items-center justify-center gap-2"
-            onClick={() => mapContext?.triggerRefresh?.()}
-            disabled={!mapContext}
+            className="w-full"
+            onClick={handleRefresh}
           >
-            <RefreshCw className="h-4 w-4" />
-            Force Refresh
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh Data
           </Button>
         </div>
 
-        <div className="text-xs text-muted-foreground">
-          <p>Current city: {mapContext?.selectedCity ? mapContext.selectedCity.name : "None"}</p>
-          <p>Debug mode: {debugMode ? "Enabled" : "Disabled"}</p>
-          <p>Map context: {mapContext ? "Available" : "Not available"}</p>
+        <div className="text-sm text-muted-foreground">
+          <p>Current City: {selectedCity?.name || "None"}</p>
+          <p>Point Types: {Object.keys(visiblePointTypes).length}</p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

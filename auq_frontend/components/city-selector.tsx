@@ -69,7 +69,7 @@ function useCityData() {
 
 // Custom hook for city selection
 function useCitySelection() {
-  const { selectedCity, setSelectedCity } = useMapContext()
+  const { selectedCity, switchCity, switchGranularity } = useMapContext()
   const { user } = useAuth()
   const { toast } = useToast()
   const analyticsTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -78,7 +78,7 @@ function useCitySelection() {
   const handleCityChange = useCallback((city: City) => {
     // Use requestAnimationFrame for UI updates
     requestAnimationFrame(() => {
-      setSelectedCity(city)
+      switchCity(city)
     })
 
     // Debounce storage updates
@@ -117,7 +117,7 @@ function useCitySelection() {
         })
       }
     }, 100)
-  }, [user, setSelectedCity, toast])
+  }, [user, switchCity, toast])
 
   // Cleanup timeouts on unmount
   useEffect(() => {
@@ -137,7 +137,7 @@ function useCitySelection() {
 export function CitySelector() {
   const { cities, isLoading, error } = useCityData()
   const { selectedCity, handleCityChange } = useCitySelection()
-  const { selectedGranularity, setSelectedGranularity, setSelectedArea } = useMapContext()
+  const { selectedGranularity, switchGranularity } = useMapContext()
   const router = useRouter()
 
   // Granularity levels
@@ -148,11 +148,12 @@ export function CitySelector() {
 
   // Handle granularity change
   const handleGranularityChange = (levelObj: { id: number; name: string; level: string }) => {
-    setSelectedArea(null)
-    setSelectedGranularity(levelObj)
-    const params = new URLSearchParams(window.location.search)
-    params.set("level", levelObj.level)
-    router.replace(`?${params.toString()}`)
+    const granularity = {
+      id: levelObj.id,
+      name: levelObj.name,
+      level: levelObj.level
+    }
+    switchGranularity(granularity)
     console.log('[CitySelector] handleGranularityChange:', { levelObj, url: window.location.href })
   }
 

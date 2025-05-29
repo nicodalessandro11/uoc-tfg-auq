@@ -22,9 +22,12 @@ export default function ResetPasswordPage() {
             return
         }
         try {
-            console.log("Antes de updateUser", { password })
-            const { error, data, user } = await supabase.auth.updateUser({ password })
-            console.log("Después de updateUser", { error, data, user })
+            if (!supabase) {
+                setError("Supabase client not available")
+                return
+            }
+            const { error, data } = await supabase.auth.updateUser({ password })
+            const user = data?.user
             if (error) {
                 setError(error.message)
             } else {

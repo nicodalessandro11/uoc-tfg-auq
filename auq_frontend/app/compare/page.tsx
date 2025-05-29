@@ -5,9 +5,11 @@ import { Header } from "@/components/header"
 import { CitySelector } from "@/components/city-selector"
 import { CompareView } from "@/components/compare-view"
 import { DataDisclaimer } from "@/components/data-disclaimer"
+// import { useSearchParams } from "next/navigation"
 
 export default function ComparePage() {
   const [enabled, setEnabled] = useState(true)
+  // const searchParams = useSearchParams()
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -15,6 +17,8 @@ export default function ComparePage() {
       setEnabled(features.compare !== false)
     }
   }, [])
+
+  // Removed: useEffect that redirects to home if city or level is missing
 
   if (!enabled) {
     return (

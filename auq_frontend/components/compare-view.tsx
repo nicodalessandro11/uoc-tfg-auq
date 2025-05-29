@@ -66,69 +66,65 @@ export function CompareView() {
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>([])
   const [showIndicatorLimit, setShowIndicatorLimit] = useState(false)
 
-  // Area options for dropdowns
+  // areaOptions is just a map, keep as is
   const areaOptions = useMemo(() =>
     (availableAreas || []).map(area => ({
       value: area.id.toString(),
       label: area.name
     })), [availableAreas])
 
-  // Indicator options for multi-select, now using definitions and values
-  const indicatorOptions = useMemo(() =>
-    (availableIndicatorDefinitions || []).map(def => {
-      // Find the value and year for the selected area (area 1)
-      let year = ''
-      if (selectedArea) {
-        const found = availableIndicatorValues.find(ind => ind.indicator_def_id === def.id && ind.geo_id === selectedArea.id)
-        year = found ? found.year : ''
-      }
-      return {
-        label: `${def.name}${year ? ` (${year})` : ''}`,
-        value: `${def.name}${year ? ` (${year})` : ''}`,
-        description: def.description,
-        unit: def.unit,
-        disabled: selectedIndicators.length >= 2 && !selectedIndicators.includes(`${def.name}${year ? ` (${year})` : ''}`),
-      }
-    }), [availableIndicatorDefinitions, availableIndicatorValues, selectedArea, selectedIndicators])
-
-  // Update area selection only in context
-  const handleAreaChange = useCallback((value: string, isArea1: boolean) => {
-    const area = (availableAreas || []).find((a) => a.id === Number.parseInt(value));
-    if (area) {
-      if (isArea1) {
-        setSelectedArea(area);
-      } else {
-        setComparisonArea(area);
-      }
-    } else {
-      if (isArea1) {
-        setSelectedArea(null);
-      } else {
-        setComparisonArea(null);
-      }
+  // Pre-index availableIndicatorValues for O(1) lookup
+  const indicatorValueMap = useMemo(() => {
+    const map = new Map<string, any>()
+    for (const val of availableIndicatorValues) {
+      map.set(`${val.indicator_def_id}_${val.geo_id}`, val)
     }
-  }, [availableAreas, setSelectedArea, setComparisonArea]);
+    return map
+  }, [availableIndicatorValues])
 
-  // Reset selectedIndicators when city or granularity changes
+  // Optimize indicatorOptions
+  const indicatorOptions = useMemo(() => {
+    if (!availableIndicatorDefinitions || !selectedArea) return []
+    return availableIndicatorDefinitions
+      .map(def => {
+        const found = indicatorValueMap.get(`${def.id}_${selectedArea.id}`)
+        if (!found) return null // Only show indicators with a value for this area
+        const year = found?.year || ''
+        const indicatorKey = `${def.name}${year ? ` (${year})` : ''}`
+        return {
+          label: indicatorKey,
+          value: indicatorKey,
+          description: def.description || '',
+          unit: def.unit || '',
+          disabled: selectedIndicators.length >= 2 && !selectedIndicators.includes(indicatorKey),
+        }
+      })
+      .filter((opt): opt is { label: string; value: string; description: string; unit: string; disabled: boolean } => Boolean(opt))
+  }, [availableIndicatorDefinitions, selectedArea, selectedIndicators, indicatorValueMap])
+
+  const handleAreaChange = useCallback((value: string, isArea1: boolean) => {
+    const area = availableAreas?.find((a) => a.id === Number.parseInt(value))
+    if (isArea1) {
+      setSelectedArea(area || null)
+    } else {
+      setComparisonArea(area || null)
+    }
+  }, [availableAreas, setSelectedArea, setComparisonArea])
+
   useEffect(() => {
     setSelectedIndicators([])
   }, [selectedCity, selectedGranularity])
 
-  // Set default indicators when availableIndicatorDefinitions change
-  useEffect(() => {
-    if (availableIndicatorDefinitions && availableIndicatorDefinitions.length > 0) {
-      // Use the first two indicators with year for the selected area
-      const defaultIndicators = availableIndicatorDefinitions.slice(0, 2).map(def => {
-        let year = ''
-        if (selectedArea) {
-          const found = availableIndicatorValues.find(ind => ind.indicator_def_id === def.id && ind.geo_id === selectedArea.id)
-          year = found ? found.year : ''
-        }
-        return `${def.name}${year ? ` (${year})` : ''}`
-      })
-      setSelectedIndicators(defaultIndicators)
-    }
-  }, [availableIndicatorDefinitions, availableIndicatorValues, selectedArea])
+  // Restore the chart rendering
+  const chartWrapper = useMemo(() => (
+    <ComparisonChartWrapper
+      selectedArea={selectedArea}
+      comparisonArea={comparisonArea}
+      selectedGranularity={selectedGranularity}
+      selectedIndicators={selectedIndicators}
+      availableIndicators={availableIndicatorDefinitions || []}
+    />
+  ), [selectedArea, comparisonArea, selectedGranularity, selectedIndicators, availableIndicatorDefinitions])
 
   return (
     <div className="container mx-auto py-4 md:py-6 px-2 space-y-4">
@@ -215,13 +211,7 @@ export function CompareView() {
         <Card className="w-full md:w-2/3 flex flex-col">
           <CardContent className="p-4">
             <Suspense fallback={<LoadingSpinner />}>
-              <ComparisonChartWrapper
-                selectedArea={selectedArea}
-                comparisonArea={comparisonArea}
-                selectedGranularity={selectedGranularity}
-                selectedIndicators={selectedIndicators}
-                availableIndicators={availableIndicatorDefinitions || []}
-              />
+              {chartWrapper}
             </Suspense>
           </CardContent>
         </Card>

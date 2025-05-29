@@ -225,18 +225,25 @@ export default function LeafletMap({
 
     // Track the previous city ID to detect city changes
     const prevCityId = map.prevCityId
+    let resetTimeout = null
 
     if (selectedCity) {
       // Only set the view when the city changes
       if (!prevCityId || prevCityId !== selectedCity.id) {
         setDefaultCityView(map, selectedCity)
         map.prevCityId = selectedCity.id
-        // Do not call loadGeoJSON here; context handles it
       }
     } else {
-      // Reset to initial view if no city is selected
-      map.setView([40, -4], 5)
-      map.prevCityId = null
+      // Debounce resetting to default view
+      resetTimeout = setTimeout(() => {
+        if (!selectedCity) {
+          map.setView([40, -4], 5)
+          map.prevCityId = null
+        }
+      }, 120)
+    }
+    return () => {
+      if (resetTimeout) clearTimeout(resetTimeout)
     }
   }, [selectedCity, selectedGranularity, isMapReady])
 
@@ -322,21 +329,13 @@ export default function LeafletMap({
     const geoJsonLayer = geoJsonLayerRef.current
     const L = window.L
 
-    // console.log('[LeafletMap] Effect triggered with:', {
-    //   map: !!map,
-    //   geoJsonLayer: !!geoJsonLayer,
-    //   isMapReady,
-    //   currentGeoJSON: !!currentGeoJSON,
-    //   leafletAvailable: !!L
-    // })
-
     if (!map || !geoJsonLayer || !isMapReady || !L) {
-      // console.log('[LeafletMap] Not ready to render:', {
-      //   map: !!map,
-      //   geoJsonLayer: !!geoJsonLayer,
-      //   isMapReady,
-      //   leafletAvailable: !!L
-      // })
+      return
+    }
+
+    // Only update the layer if there is valid GeoJSON data
+    if (!currentGeoJSON || !currentGeoJSON.features || currentGeoJSON.features.length === 0) {
+      // Do NOT clear the previous polygons if no new data is ready
       return
     }
 
@@ -348,19 +347,9 @@ export default function LeafletMap({
         geoJsonLayerRef.current = L.layerGroup().addTo(map)
       }
     } catch (error) {
-      // console.warn("[LeafletMap] Error clearing GeoJSON layers:", error)
-      // If there's an error, try to create a new layer group anyway
       try {
         geoJsonLayerRef.current = L.layerGroup().addTo(map)
-      } catch (fallbackError) {
-        // console.error("[LeafletMap] Failed to create new layer group:", fallbackError)
-      }
-    }
-
-    // Check if we have valid GeoJSON data
-    if (!currentGeoJSON || !currentGeoJSON.features || currentGeoJSON.features.length === 0) {
-      // console.log('[LeafletMap] No valid GeoJSON data:', currentGeoJSON)
-      return
+      } catch (fallbackError) { }
     }
 
     // Log para depuración: inspecciona el primer feature y su geometry
