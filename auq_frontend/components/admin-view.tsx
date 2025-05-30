@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -142,7 +142,7 @@ function AvailablePointFeatures() {
   )
 }
 
-export function AdminView() {
+function AdminViewContent() {
   const { user } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
@@ -852,5 +852,18 @@ function UserEventsAnalytics() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export function AdminView() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen flex-col items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="mt-4 text-muted-foreground">Loading...</p>
+      </div>
+    }>
+      <AdminViewContent />
+    </Suspense>
   )
 }

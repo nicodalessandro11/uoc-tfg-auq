@@ -1,6 +1,6 @@
 "use client"
-
-import { useState } from "react"
+export const dynamic = "force-dynamic";
+import { useState, Suspense } from "react"
 import { MapProvider } from "@/contexts/map-context"
 import { Header } from "@/components/header"
 import { ConfigView } from "@/components/config-view"
@@ -8,7 +8,7 @@ import { LoginModal } from "@/components/login-modal"
 import { useAuth } from "@/contexts/auth-context"
 import { Loader2 } from "lucide-react"
 
-export default function ConfigPage() {
+function ConfigContent() {
   const { isAuthenticated, isLoading } = useAuth()
   const [showLoginModal, setShowLoginModal] = useState(false)
 
@@ -46,5 +46,18 @@ export default function ConfigPage() {
         <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       </div>
     </MapProvider>
+  )
+}
+
+export default function ConfigPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen flex-col items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="mt-4 text-muted-foreground">Loading...</p>
+      </div>
+    }>
+      <ConfigContent />
+    </Suspense>
   )
 }

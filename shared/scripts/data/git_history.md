@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-30 | Updated frontend pages and components
+
+- Modified various frontend pages including admin, auth, config, info, not-found, and profile pages in the auq_frontend/app directory
+- Updated components including admin-view and header in the auq_frontend/components directory
+- Made changes in the supabase-client.ts file in the auq_frontend/lib directory
+
+This commit brings a significant update to the frontend part of the application, improving user experience and interface consistency. The changes also include some backend modifications for better client-server interaction.
+
 ## 📦 Feature | 2025-05-29 | Refactor frontend components and cleanup deprecated files
 
 - Modified and refactored frontend components including admin, auth callback, chat-sidebar, compare-view, district-info, granularity-selector, map-component, map-type-selector, theme-provider, auth-context, log-user-event, supabase-client (auq_frontend/*)

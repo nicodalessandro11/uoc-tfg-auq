@@ -1,12 +1,13 @@
 "use client"
-
+export const dynamic = "force-dynamic";
+import { Suspense } from "react"
 import { MapProvider } from "@/contexts/map-context"
 import { Header } from "@/components/header"
 import { AdminView } from "@/components/admin-view"
 import { useAuth } from "@/contexts/auth-context"
 import { Loader2 } from "lucide-react"
 
-export default function AdminPage() {
+function AdminContent() {
   const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
@@ -36,5 +37,18 @@ export default function AdminPage() {
         </main>
       </div>
     </MapProvider>
+  )
+}
+
+export default function AdminPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen flex-col items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="mt-4 text-muted-foreground">Loading...</p>
+      </div>
+    }>
+      <AdminContent />
+    </Suspense>
   )
 }

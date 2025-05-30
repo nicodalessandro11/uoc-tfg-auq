@@ -373,11 +373,11 @@ export async function getCityPointFeatures(cityId: number): Promise<PointFeature
 
         // Map the features and add the type
         const mappedFeatures = (data ?? []).map((feature: any) => ({
-          ...feature,
+            ...feature,
           featureType: getFeatureTypeName(featureDefinitions, feature.feature_definition_id) ?? "",
           geoId: Number(feature.geo_id),
           city_id: Number(feature.city_id),
-        }))
+          }))
         .filter((feature: any) => feature && feature.featureType !== undefined)
         return mappedFeatures
       } finally {

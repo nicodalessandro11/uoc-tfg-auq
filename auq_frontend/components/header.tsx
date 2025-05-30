@@ -6,7 +6,7 @@ import { MapPin, BarChart2, Settings, Diff, Info as InfoIcon } from "lucide-reac
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuPortal } from "@/components/ui/dropdown-menu"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, Suspense } from "react"
 import { UserLoginModal } from "@/components/user-login-modal"
 import { useAuth } from "@/contexts/auth-context"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -71,7 +71,7 @@ function AuthSkeleton() {
   )
 }
 
-export function Header() {
+function HeaderContent() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const queryString = searchParams?.toString() || ""
@@ -244,5 +244,22 @@ export function Header() {
         </div>
       </div>
     </header>
+  )
+}
+
+export function Header() {
+  return (
+    <Suspense fallback={
+      <header className="sticky top-0 z-50 w-full modern-header">
+        <div className="flex h-16 items-center px-4">
+          <div className="flex items-center gap-3">
+            <div className="h-14 w-14 bg-primary/20 rounded-full animate-pulse" />
+            <div className="h-6 w-32 bg-primary/20 rounded animate-pulse" />
+          </div>
+        </div>
+      </header>
+    }>
+      <HeaderContent />
+    </Suspense>
   )
 }

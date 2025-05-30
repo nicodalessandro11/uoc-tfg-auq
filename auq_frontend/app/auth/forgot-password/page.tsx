@@ -1,8 +1,9 @@
 "use client"
-import { useState } from "react"
+export const dynamic = "force-dynamic";
+import { useState, Suspense } from "react"
 import { supabase } from "@/lib/supabase-client"
 
-export default function ForgotPasswordPage() {
+function ForgotPasswordContent() {
     const [email, setEmail] = useState("")
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -58,5 +59,13 @@ export default function ForgotPasswordPage() {
                 )}
             </form>
         </div>
+    )
+}
+
+export default function ForgotPasswordPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ForgotPasswordContent />
+        </Suspense>
     )
 }

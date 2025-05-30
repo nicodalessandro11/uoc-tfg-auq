@@ -1,9 +1,11 @@
-import React from "react"
+"use client"
+export const dynamic = "force-dynamic";
+import React, { Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { MapPin, Diff, BarChart2 } from "lucide-react"
 
-export default function InfoPage() {
+function InfoContent() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-background py-12">
             <div className="w-full max-w-4xl bg-card text-card-foreground border border-border rounded-2xl shadow-lg p-8 space-y-8">
@@ -75,5 +77,20 @@ export default function InfoPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function InfoPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-4 text-muted-foreground">Loading...</p>
+                </div>
+            </div>
+        }>
+            <InfoContent />
+        </Suspense>
     )
 } 

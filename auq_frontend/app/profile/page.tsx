@@ -1,15 +1,15 @@
 "use client"
-
+export const dynamic = "force-dynamic";
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { upsertProfile } from "@/lib/supabase-client"
 import { ArrowLeft } from "lucide-react"
 import { analyticsLogger } from "@/lib/analytics/logger"
 
-export default function ProfilePage() {
+function ProfileContent() {
     const { user, isAuthenticated, isLoading, refreshUser } = useAuth()
     const router = useRouter()
     const [editName, setEditName] = useState(false)
@@ -108,5 +108,20 @@ export default function ProfilePage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function ProfilePage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-4 text-muted-foreground">Loading...</p>
+                </div>
+            </div>
+        }>
+            <ProfileContent />
+        </Suspense>
     )
 } 
