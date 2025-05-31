@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 🐛 Fix | 2025-05-31 | Resolved issues in frontend and removed docker-compose file
+
+- Updated compare, error, layout, signup, and visualize pages in the auq_frontend/app directory
+- Enhanced admin-view component in the auq_frontend/components directory
+- Removed docker-compose.yml due to redundancy and potential security risks
+
+This commit addresses several bugs found in the frontend of our application. It also eliminates the docker-compose file that was no longer necessary. The changes should improve the overall user experience and security of our application.
+
 ## 📦 Feature | 2025-05-31 | Added time series indicators and updated signup page
 
 - Modified 'insert_ready_point_features_madrid.json' in 'auq_data_engine/data/processed' to include new data points

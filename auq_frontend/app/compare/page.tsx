@@ -6,6 +6,8 @@ import { CitySelector } from "@/components/city-selector"
 import { CompareView } from "@/components/compare-view"
 import { DataDisclaimer } from "@/components/data-disclaimer"
 // import { useSearchParams } from "next/navigation"
+export const dynamic = 'force-dynamic'
+
 
 export default function ComparePage() {
   const [enabled, setEnabled] = useState(true)

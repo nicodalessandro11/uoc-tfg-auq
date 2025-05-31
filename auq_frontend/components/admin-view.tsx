@@ -264,7 +264,7 @@ function AdminViewContent() {
     if (pendingNavigation) {
       window.location.href = pendingNavigation
     } else {
-      window.location.reload()
+      window.location.href = '/'
     }
   }
 

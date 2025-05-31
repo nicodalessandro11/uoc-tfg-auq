@@ -3,6 +3,7 @@ import { Manrope } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/providers"
 import { URLParamCleanup } from "@/components/url-param-cleanup"
+export const dynamic = 'force-dynamic';
 
 // Load Manrope font with specific weights
 const manrope = Manrope({

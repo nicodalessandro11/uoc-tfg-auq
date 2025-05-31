@@ -4,6 +4,7 @@ import { MapProvider } from "@/contexts/map-context"
 import { Header } from "@/components/header"
 import { CitySelector } from "@/components/city-selector"
 import { VisualizeView } from "@/components/visualize-view"
+export const dynamic = 'force-dynamic'
 
 export default function VisualizePage() {
   const [enabled, setEnabled] = useState(true)
