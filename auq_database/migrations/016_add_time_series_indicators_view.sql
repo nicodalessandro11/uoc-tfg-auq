@@ -143,6 +143,16 @@ GRANT SELECT ON time_series_indicators_view TO service_role;
 -- === Add unique constraint to user_config table ===
 ALTER TABLE user_config ADD CONSTRAINT user_config_user_id_key UNIQUE (user_id);
 
+-- Add authenticated read policy for feature_definitions
+CREATE POLICY "Authenticated read: feature_definitions" ON feature_definitions FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: indicator_definitions" ON indicator_definitions FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: indicators" ON indicators FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: cities" ON cities FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: districts" ON districts FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: neighbourhoods" ON neighbourhoods FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: point_features" ON point_features FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: geographical_levels" ON geographical_levels FOR SELECT TO authenticated USING (true);
+
 -- ================================================
 -- End of migration 016_add_time_series_indicators_view.sql
 -- ================================================

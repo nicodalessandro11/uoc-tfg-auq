@@ -519,12 +519,20 @@ CREATE POLICY "Authenticated users can select their own events" ON user_events F
 CREATE POLICY "Authenticated users can select their own config" ON user_config FOR SELECT TO authenticated USING (user_id = auth.uid());
 CREATE POLICY "Authenticated users can insert their own config" ON user_config FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
 CREATE POLICY "Authenticated users can update their own config" ON user_config FOR UPDATE TO authenticated USING (user_id = auth.uid());
+CREATE POLICY "Authenticated read: feature_definitions" ON feature_definitions FOR SELECT TO authenticated USING (true);
 
 -- Profile policies
 CREATE POLICY "Users can insert their own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Profiles are viewable by everyone" ON profiles FOR SELECT USING (true);
 CREATE POLICY "Users can update their own profile" ON profiles FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can delete their own profile" ON profiles FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Authenticated read: indicator_definitions" ON indicator_definitions FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: indicators" ON indicators FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: cities" ON cities FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: districts" ON districts FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: neighbourhoods" ON neighbourhoods FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: point_features" ON point_features FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read: geographical_levels" ON geographical_levels FOR SELECT TO authenticated USING (true);
 
 -- === 9. Permissions ===
 -- Grant schema usage

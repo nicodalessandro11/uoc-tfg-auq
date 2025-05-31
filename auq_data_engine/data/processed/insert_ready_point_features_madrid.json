@@ -5773,7 +5773,7 @@
       "postal_code": "28002",
       "district": "Chamartin",
       "area": "CiudadJardin",
-      "description": "La Biblioteca Pública Francisco Ibáñez se encuentra situada en el Centro Cultural Nicolás Salmerón (sito en la calle Mantuano, 51), en el barrio de Chamartín. Proviene de la antigua Biblioteca de Chamartín, que fue inaugurada en 1983. En el año 2015, después de una profunda remodelación, cambió su denominación por la actual de Francisco Ibáñez. La alcaldesa, Ana María Botella, inauguró el 24 de marzo de 2015 las nuevas instalaciones y se proyectó este vídeo del guionista y dibujante de cómic que le da nombre en agradecimiento.    Página en Facebook     Canal de WhatsApp Superficie: 543 metros cuadrados.  Puestos de lectura: 108  Puestos de Internet: 23 Metro: Concha Espina (línea 9), Prosperidad (línea 4)",
+      "description": "La Biblioteca Pública Francisco Ibáñez se encuentra situada en el Centro Cultural Nicolás Salmerón (sito en la calle Mantuano, 51), en el barrio de Chamartín. Proviene de la antigua Biblioteca de Chamartín, que fue inaugurada en 1983. En el año 2015, después de una profunda remodelación, cambió su denominación por la actual de Francisco Ibáñez. La alcaldesa, Ana María Botella, inauguró el 24 de marzo de 2015 las nuevas instalaciones y se proyectó este vídeo del guionista y dibujante de cómic que le da nombre en agradecimiento.    Página en Facebook     Canal de WhatsApp Superficie: 543 metros cuadrados.  Puestos de lectura: 108  Puestos de Internet: 20 Metro: Concha Espina (línea 9), Prosperidad (línea 4)",
       "services": "Préstamo de libros, multimedia y revistas. Servicio de acceso público a Internet. Zona wifi. Información bibliográfica. Animación a la lectura y formación de usuarios.    Herramientas de apoyo a la accesibilidad:   Préstamo de lupas línea guía y lupas tarjeta. Lector de pantalla NVDA en los puestos de internet. Bucle magnético en el mostrador de información.",
       "schedule": "Apertura de lunes a viernes.  Horario: de 8:30 a 21 horas.  Verano (del 15 de junio al 15 de septiembre): de 8:30 a 20 horas.  Cerrado: festivos y los días 24 y 31 de diciembre.",
       "accessibility": "1,6"
@@ -8275,7 +8275,7 @@
       "area": "LosRosales",
       "description": " En la misma sede se encuentra la Oficina de información juvenil y el Espacio de Igualdad Clara Campoamor. Metro: Villaverde Bajo Cruce (línea 3)  Cercanías Renfe: Villaverde Bajo (línea C3 y C4)",
       "services": "Sala de lectura y estudio Salón de actos / auditorio (aforo): 146 butacas y 3 para personas con movilidad reducida ( silla de ruedas)  Zonas de exposiciones en planta baja y segunda  16 aulas Ascensor Aseos adaptados Cambiador de bebe en planta baja Zona wifi",
-      "schedule": "El Centro Sociocultural Santa Petronila estará abierto de 9:00 a 21:30 h ininterrumpidamente, de lunes a viernes, y los sábados de 9:30 a 13:00.  Horario de secretaría:   Horario de mañana: de lunes a viernes de 9:30 a 14:00 h. Horario de tarde: de lunes a jueves de 17:00 a 19:00 h. Durante el mes de julio el horario será de 9:00 a 14:00 horas, de lunes a viernes.   Teléfonos de atención al público:   Información General: 917 791 204 ó ccspetronila@madrid.es  Secretaría: 915 881 237 / 917 100 309",
+      "schedule": "El Centro Sociocultural Santa Petronila estará abierto de 9:00 a 21:30 h ininterrumpidamente, de lunes a viernes, y los sábados de 9:30 a 13:30.  Horario de secretaría:   Horario de mañana: de lunes a viernes de 9:30 a 14:00 h. Horario de tarde: de lunes a jueves de 17:00 a 19:00 h. Durante el mes de julio el horario será de 9:00 a 14:00 horas, de lunes a viernes.   Teléfonos de atención al público:   Información General: 917 791 204 ó ccspetronila@madrid.es  Secretaría: 915 881 237 / 917 100 309",
       "accessibility": "1"
     }
   },
@@ -38021,6 +38021,26 @@
   },
   {
     "feature_definition_id": 14,
+    "name": "Parque de la Montaña. Junto a Templo de Debod (Moncloa-Aravaca)",
+    "latitude": 40.424301175943256,
+    "longitude": -3.7162688083251094,
+    "geom": "SRID=4326;POINT(-3.7162688083251094 40.424301175943256)",
+    "geo_level_id": 3,
+    "geo_id": 125,
+    "city_id": 2,
+    "properties": {
+      "address": "CALLE FERRAZ 1",
+      "postal_code": "28008",
+      "district": "Moncloa-Aravaca",
+      "area": "CasaCampo",
+      "description": "  Metro: Plaza de España (línea 3 y 6).",
+      "services": "No dispone de WiFi Aforo aproximado 500 personas",
+      "schedule": "Al aire libre",
+      "accessibility": "1"
+    }
+  },
+  {
+    "feature_definition_id": 14,
     "name": "Parroquia de la Asunción de Aravaca",
     "latitude": 40.45750401365236,
     "longitude": -3.7830717384473393,
@@ -41814,7 +41834,7 @@
       "district": "PuenteDeVallecas",
       "area": "PalomerasSureste",
       "description": "  Metro: Miguel Hernández (línea 1).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41834,7 +41854,7 @@
       "district": "Fuencarral-ElPardo",
       "area": "Valverde",
       "description": " Este Centro de Salud presta atención continuada como centro de continuidad de cuidados de enfermería sábados, domingos y festivos de 9 a 21 horas. Metro: Fuencarral (línea 10).",
-      "services": "Cita previa:    Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "Puede consultar más información en el siguiente enlace.",
       "accessibility": "3"
     }
@@ -41853,8 +41873,8 @@
       "postal_code": "28035",
       "district": "Fuencarral-ElPardo",
       "area": "PenaGrande",
-      "description": "  Bus: 67, 82.",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "description": "  ",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41874,7 +41894,7 @@
       "district": "CiudadLineal",
       "area": "PuebloNuevo",
       "description": "  Metro: García Noblejas (línea 7).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41894,7 +41914,7 @@
       "district": "CiudadLineal",
       "area": "PuebloNuevo",
       "description": " Este Centro de Salud presta atención continuada como centro de atención continuada médica de lunes a viernes de 21 a 8 horas y los sábados, domingos y festivos 24 horas. Metro: Simancas (línea 7), Alsacia (línea 2).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "Pueden consultar más información en el siguiente enlace.",
       "accessibility": "3"
     }
@@ -41914,7 +41934,7 @@
       "district": "Latina",
       "area": "LasAguilas",
       "description": "  Cercanías Renfe: Las Aguilas (línea C5).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41934,7 +41954,7 @@
       "district": "Carabanchel",
       "area": "Opanel",
       "description": "  Metro: Oporto (líneas 5 y 6), Urgel (línea 5).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41954,7 +41974,7 @@
       "district": "Salamanca",
       "area": "Goya",
       "description": "  Metro: O'Donnell (línea 6).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -41974,7 +41994,7 @@
       "district": "Carabanchel",
       "area": "Buenavista",
       "description": "  Metro: Carabanchel Alto (línea 11).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43914,7 +43934,7 @@
       "district": "Hortaleza",
       "area": "Valdefuentes",
       "description": "  Metro Ligero: Virgen del Cortijo (línea ML1).  Cercanías Renfe: Fuente de la Mora (líneas C1, C10 y Regional).",
-      "services": "Cita previa:   Online. Desde dispositivos móviles. Por telefonía automatizada de reconocimiento de voz. Quiosco digital en el centro de salud. Presencialmente en el centro de salud.",
+      "services": "",
       "schedule": "",
       "accessibility": "3"
     }
@@ -43953,9 +43973,9 @@
       "postal_code": "28006",
       "district": "Salamanca",
       "area": "Castellana",
-      "description": "  Metro: Gregorio Marañón (líneas 7 y 10), Rubén Darío (línea 5), Núñez de Balboa (líneas 5 y 9).",
+      "description": "  Metro: Gregorio Marañón (líneas 7 y 10), Rubén Darío (línea 5), Núñez de Balboa (línea 5).",
       "services": "",
-      "schedule": "Con cita previa telefónica o por web. Lunes a Viernes de 9 a 14 y de 15 a 20 horas.",
+      "schedule": "Puede solicitar su cita de modo presencial (horario de 09.00 a 14.00 horas), llamando al teléfono 914111140 o por web. De lunes a viernes de 9 a 14 horas y de 15.00 a 20.00 horas.",
       "accessibility": "3"
     }
   },
@@ -44053,7 +44073,7 @@
       "postal_code": "28010",
       "district": "Chamberi",
       "area": "Trafalgar",
-      "description": "Centro especializado y orientado a la prevención, diagnóstico y tratamiento de las infecciones de transmisión sexual ITS. El Centro Sanitario Sandoval realiza pruebas de infecciones de transmisión sexual (sífilis, gonococia, clamidia, hepatitis, VPH, VIH, etc.), con resultados en 3-4 días. Además, este centro cuenta con distintas consultas de seguimiento, de consejo informado, PreP, PPE, vacunas (VHA, VHB, VPH, Mpox, virus varicela zóster, neumococo, gripe&amp;hellip;).  Metro: Bilbao (línea 1 y línea 4) y San Bernardo (línea 2 y línea 4)",
+      "description": "Centro especializado y orientado a la prevención, diagnóstico y tratamiento de las infecciones de transmisión sexual ITS. El Centro Sanitario Sandoval realiza pruebas de infecciones de transmisión sexual (sífilis, gonococia, clamidia, hepatitis, VPH, VIH, etc.), con resultados en 3-4 días. Además, este centro cuenta con distintas consultas de seguimiento, de consejo informado, PreP, PPE, vacunas (VHA, VHB, VPH, Mpox, virus varicela zóster, neumococo, gripe&amp;hellip;).  Metro: Bilbao (líneas 1 y 4) y San Bernardo (líneas 2 y 4)",
       "services": "",
       "schedule": "De lunes a viernes de 8 a 22 horas con cita previa De lunes a viernes de 8:15 a 13 horas y de 15:15 a 20 horas sin cita previa Cerrado festivos",
       "accessibility": "0"
@@ -44075,7 +44095,7 @@
       "area": "Gaztambide",
       "description": "Centro especializado y orientado a la prevención, diagnóstico y tratamiento de las infecciones de transmisión sexual ITS. El Centro Sanitario Sandoval realiza pruebas de infecciones de transmisión sexual (sífilis, gonococia, clamidia, hepatitis, VPH, VIH, etc.), con resultados en 3-4 días. Además, este centro cuenta con distintas consultas de seguimiento, de consejo informado, PreP, PPE, vacunas (VHA, VHB, VPH, Mpox, virus varicela zóster, neumococo, gripe&amp;hellip;).  Metro: Islas Filipinas (línea 7)",
       "services": "",
-      "schedule": "De lunes a viernes de 08 a 15 horas con o sin cita. Cerrado festivos",
+      "schedule": "De lunes a viernes (no festivos) de 08:00 a 15:00 horas con cita previa. De lunes a viernes (no festivos) de 08:15-13:00 horas sin cita previa",
       "accessibility": "0"
     }
   },
@@ -45393,7 +45413,7 @@
       "postal_code": "28028",
       "district": "Salamanca",
       "area": "Guindalera",
-      "description": "  Metro: Diego de León (líneas 4, 5 y 6).",
+      "description": "  Metro: Diego de León (líneas 4, 5 y 6) y Manuel Becerra (líneas 2 y 6)",
       "services": "",
       "schedule": "",
       "accessibility": "3"

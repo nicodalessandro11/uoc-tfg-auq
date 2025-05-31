@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 
 export default function SignUpPage() {
+    const [mounted, setMounted] = useState(false)
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -17,10 +18,14 @@ export default function SignUpPage() {
     const [success, setSuccess] = useState(false)
     const router = useRouter()
 
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
     const isFormValid = username && email && password && confirmPassword && password === confirmPassword
 
     async function handleSubmit(e: React.FormEvent) {
-        console.log("handleSubmit triggered");
+        console.log("[SignUp] Starting signup process");
         e.preventDefault()
         setError(null)
         setLoading(true)
@@ -29,22 +34,30 @@ export default function SignUpPage() {
             // Dynamic import to avoid SSR issues
             const { supabase } = await import("@/lib/supabase-client")
             if (!supabase) throw new Error("Supabase client not available")
+            console.log("[SignUp] Supabase client initialized");
 
             // 0. Check if username is unique
+            console.log("[SignUp] Checking if username is unique:", username);
             const { data: existing, error: checkError } = await supabase
                 .from("profiles")
                 .select("user_id")
                 .eq("display_name", username)
                 .maybeSingle()
-            console.log("Después de check username único", { existing, checkError });
-            if (checkError) throw checkError
+            console.log("[SignUp] Username check result:", { existing, checkError });
+            
+            if (checkError) {
+                console.error("[SignUp] Error checking username:", checkError);
+                throw checkError;
+            }
             if (existing) {
+                console.log("[SignUp] Username already taken");
                 setError("Username is already taken. Please choose another.")
                 setLoading(false)
                 return
             }
 
             // 1. Sign up user with metadata
+            console.log("[SignUp] Attempting to sign up user with email:", email);
             const { data, error: signUpError } = await supabase.auth.signUp({
                 email,
                 password,
@@ -54,9 +67,32 @@ export default function SignUpPage() {
                     }
                 }
             });
-            console.log('Supabase signUp response:', data, signUpError);
+            console.log('[SignUp] Supabase signUp response:', { 
+                data: {
+                    user: data?.user ? {
+                        id: data.user.id,
+                        email: data.user.email,
+                        identities: data.user.identities?.length || 0
+                    } : null,
+                    session: data?.session ? 'Session created' : 'No session'
+                },
+                error: signUpError ? {
+                    message: signUpError.message,
+                    status: signUpError.status,
+                    name: signUpError.name
+                } : null
+            });
+
             if (signUpError) {
-                if (signUpError.message && signUpError.message.toLowerCase().includes("user already registered")) {
+                console.error("[SignUp] Signup error details:", {
+                    message: signUpError.message,
+                    status: signUpError.status,
+                    name: signUpError.name
+                });
+                
+                if (signUpError.status === 429) {
+                    setError("Too many sign-up attempts. Please wait a few minutes before trying again.");
+                } else if (signUpError.message && signUpError.message.toLowerCase().includes("user already registered")) {
                     setError("This email is already registered. Please log in or confirm your email.");
                 } else if (signUpError.message && signUpError.message.toLowerCase().includes("email")) {
                     setError("There is already an account with this email. Try logging in or confirming your email.");
@@ -66,18 +102,30 @@ export default function SignUpPage() {
                 setLoading(false)
                 return
             }
+
             if (data && data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+                console.log("[SignUp] User exists but has no identities");
                 setError("This email is already registered. Please log in or use the password recovery option.");
                 setLoading(false);
                 return;
             }
+
+            console.log("[SignUp] Signup successful");
             setSuccess(true)
         } catch (err: any) {
-            console.error("Error en handleSubmit:", err);
+            console.error("[SignUp] Unexpected error:", {
+                message: err.message,
+                stack: err.stack,
+                name: err.name
+            });
             setError(err.message || "An error occurred. Please try again.")
         } finally {
             setLoading(false)
         }
+    }
+
+    if (!mounted) {
+        return null // or a loading spinner
     }
 
     return (

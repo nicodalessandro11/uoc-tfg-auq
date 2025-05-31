@@ -1,5 +1,14 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-05-31 | Added time series indicators and updated signup page
+
+- Modified 'insert_ready_point_features_madrid.json' in 'auq_data_engine/data/processed' to include new data points
+- Created a new view for time series indicators in '016_add_time_series_indicators_view.sql' under 'auq_database/migrations'
+- Updated 'schema.sql' in 'auq_database' to reflect the new database structure
+- Enhanced the signup page in 'page.tsx' under 'auq_frontend/app/signup'
+
+This update improves the data analysis capabilities of our system by adding time series indicators. It also enhances user registration experience on the signup page.
+
 ## 📦 Feature | 2025-05-30 | Updated frontend pages and components
 
 - Modified various frontend pages including admin, auth, config, info, not-found, and profile pages in the auq_frontend/app directory
