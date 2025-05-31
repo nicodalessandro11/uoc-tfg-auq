@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 🔐 Config | 2025-05-31 | Update pipeline and project configuration
+
+- Modified the .github/workflows/et-pipeline.yml file to enhance the workflow
+- Updated the pyproject.toml in auq_data_engine to ensure project dependencies are up-to-date
+- Technical details: Changes were made to the pipeline configuration and Python project setup
+
+This commit aims to improve the efficiency of the pipeline and ensure the project setup is current with the latest dependencies.
+
 ## 🛠️ Setup | 2025-05-31 | Added pyproject.toml
 
 - Created and staged pyproject.toml file
