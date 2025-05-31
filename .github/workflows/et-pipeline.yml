@@ -50,16 +50,16 @@ jobs:
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        PYTHONPATH: shared
+        PYTHONPATH: ${{ github.workspace }}:shared
       working-directory: auq_data_engine
       run: |
-        python main.py
+        python -m main
     
     - name: Run Tests
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        PYTHONPATH: shared
+        PYTHONPATH: ${{ github.workspace }}:shared
       working-directory: auq_data_engine
       run: |
         pytest tests/

@@ -2,6 +2,14 @@
 
 ## 🔐 Config | 2025-05-31 | Update et-pipeline.yml workflow
 
+- Modified .github/workflows/et-pipeline.yml to enhance the build process
+- This change was necessary to improve the efficiency and reliability of the CI/CD pipeline
+- Technical details: Updated the workflow script in the YAML file
+
+This update should result in faster, more reliable builds, helping us to deliver quality software more consistently.
+
+## 🔐 Config | 2025-05-31 | Update et-pipeline.yml workflow
+
 - Modified .github/workflows/et-pipeline.yml to enhance pipeline efficiency
 - This update is intended to optimize the CI/CD process and reduce build time
 - Technical details: modified the YAML configuration file for GitHub Actions
