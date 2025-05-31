@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 🔐 Config | 2025-05-31 | Update et-pipeline.yml workflow
+
+- Modified .github/workflows/et-pipeline.yml to enhance pipeline efficiency
+- This update is intended to optimize the CI/CD process and reduce build time
+- Technical details: modified the YAML configuration file for GitHub Actions
+
+This change will improve the overall performance of the CI/CD pipeline, making it more efficient and reliable for future deployments.
+
 ## 🔐 Config | 2025-05-31 | Update pipeline and project configuration
 
 - Modified the .github/workflows/et-pipeline.yml file to enhance the workflow
