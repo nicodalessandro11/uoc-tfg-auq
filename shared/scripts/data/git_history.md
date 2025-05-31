@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 🛠️ Setup | 2025-05-31 | Added pyproject.toml
+
+- Created and staged pyproject.toml file
+- This file is used to manage project dependencies and configuration
+- Utilized Poetry for dependency management
+
+This is a foundational step in setting up the project environment.
+
 ## 🚀 Deploy | 2025-05-31 | Set up new GitHub Actions workflow
 
 - Added a new workflow file: .github/workflows/et-pipeline.yml
