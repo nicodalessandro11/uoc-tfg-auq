@@ -1,0 +1,75 @@
+name: ETL Pipeline
+
+on:
+  # Run on schedule (daily at 00:00 UTC)
+  schedule:
+    - cron: '0 0 * * *'
+  
+  # Run manually from GitHub Actions tab
+  workflow_dispatch:
+  
+  # Run on push to main branch
+  push:
+    branches:
+      - main
+    paths:
+      - 'auq_data_engine/**'
+      - 'shared/**'
+      - 'pyproject.toml'
+      - '.github/workflows/etl-pipeline.yml'
+
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        sparse-checkout: |
+          auq_data_engine/
+          shared/
+          pyproject.toml
+        sparse-checkout-cone-mode: true
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgeos-dev
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+    
+    - name: Run ETL Pipeline
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      run: |
+        cd auq_data_engine
+        python main.py
+    
+    - name: Run Tests
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      run: |
+        cd auq_data_engine
+        pytest tests/
+    
+    - name: Handle Success
+      if: success()
+      run: |
+        echo "ETL pipeline completed successfully!"
+    
+    - name: Handle Failure
+      if: failure()
+      run: |
+        echo "ETL pipeline failed!"
+        exit 1 

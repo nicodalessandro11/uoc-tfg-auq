@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 🚀 Deploy | 2025-05-31 | Set up new GitHub Actions workflow
+
+- Added a new workflow file: .github/workflows/et-pipeline.yml
+- The new workflow aims to automate the build, test, and deployment process
+- This workflow uses GitHub Actions as the CI/CD tool
+
+This change will help in streamlining the deployment process and ensuring code quality before each deployment.
+
 ## 🐛 Fix | 2025-05-31 | Resolved issues in frontend and removed docker-compose file
 
 - Updated compare, error, layout, signup, and visualize pages in the auq_frontend/app directory
