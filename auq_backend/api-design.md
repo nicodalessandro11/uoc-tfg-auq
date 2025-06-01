@@ -1,4 +1,4 @@
-# *Are U Query-ous* - API Design Specification
+# *Are-u-Queryous?* - API Design Specification
 
 ## Overview
 

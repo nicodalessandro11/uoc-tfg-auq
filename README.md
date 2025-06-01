@@ -1,4 +1,4 @@
-# *Are U Query-ous?* — Monorepo
+# *Are-u-Queryous?* — Monorepo
 
 This monorepo contains the complete codebase for the **Are U Query-ous** platform, a geospatial data visualization tool designed to explore, compare, and analyze open urban datasets at multiple geographical levels.
 

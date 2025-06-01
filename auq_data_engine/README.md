@@ -1,14 +1,39 @@
-# *Are U Query-ous?* — Data Engine Service
+# *Are-u-Queryous?* — Data Engine Service
 
-This document outlines the updated structure of the ETL pipeline for integrating and uploading open urban geospatial datasets into Supabase. The system supports multiple cities (e.g., Barcelona, Madrid) and handles various dataset types (districts, neighbourhoods, point features, indicators).
+This document outlines the ETL pipeline for integrating and uploading urban geospatial datasets into Supabase. The system supports multiple cities (e.g., Barcelona, Madrid) and handles various dataset types (districts, neighbourhoods, point features, indicators) through city-specific API integrations.
+
+## City-Specific API Integration
+
+Each city has its own API implementation:
+
+### Barcelona
+
+- Uses the Barcelona Open Data API (`opendata-ajuntament.barcelona.cat`)
+- Implements SQL-based queries for data extraction
+- Features include:
+  - Playgrounds, Libraries, Museums
+  - Sports facilities, Parks and gardens
+  - Cultural venues (Theaters, Cinemas)
+  - Educational institutions
+
+### Madrid
+
+- Uses Madrid's Open Data API
+- Implements REST-based data extraction
+- Features include:
+  - Parks and gardens
+  - Museums and cultural centers
+  - Health facilities
+  - Educational centers
+  - Libraries
 
 ## Standard ETL Flow
 
 Each dataset follows this 3-phase process:
 
-1. **Extract**: Dataset is downloaded (manually or via URL) into `[city_name]/data/raw/`.
-2. **Transform**: Data is cleaned, validated, and formatted. Output saved to `[city_name]/data/processed/`.
-3. **Load**: The final dataset is uploaded to Supabase `upload/`.
+1. **Extract**: Data is fetched from city-specific APIs using dedicated API clients
+2. **Transform**: Data is cleaned, validated, and formatted according to standardized schemas
+3. **Load**: The final dataset is uploaded to Supabase
 
 ## Execution Flow (Orchestration)
 
@@ -32,71 +57,121 @@ Uploads to Supabase only happen if validations pass (`pytest`).
 
 ```bash
 auq_data_engine/
-├── data/                   # Raw and processed datasets
-│   ├── raw/                # Raw source files
-│   └── processed/          # Cleaned & formatted datasets
+├── data/                             # Processed datasets and API manifests
+│   └── processed/                    # Cleaned & formatted datasets
 │
-├── barcelona/              # Barcelona-specific ETL scripts
+├── barcelona/                        # Barcelona-specific ETL scripts
+│   ├── api_client.py                 # Barcelona Open Data API client
 │   ├── load_districts.py
 │   ├── load_neighbourhoods.py
 │   ├── load_point_features.py
-│   └── load_indicators.py
+│   ├── load_indicators.py
+│   └── __init__.py
 │
-├── madrid/                 # Madrid-specific ETL scripts
+├── madrid/                           # Madrid-specific ETL scripts
+│   ├── api_client.py                 # Madrid Open Data API client
 │   ├── load_districts.py
 │   ├── load_neighbourhoods.py
 │   ├── load_point_features.py
-│   └── load_indicators.py
+│   ├── load_indicators.py
+│   └── __init__.py
 │
-├── upload/                 # Supabase upload utilities
+├── upload/                           # Supabase upload utilities
 │   └── upload_to_supabase.py
 │
-├── tests/                  # Pytest validation rules
+├── tests/                            # Pytest validation rules
 │   └── test_base_data_upload.py
 │
-├── main.py                 # Main orchestrator
-├── pyproject.toml          # Project configuration
-└── __init__.py             # Package initialization
+├── main.py                           # Main orchestrator
+├── pyproject.toml                    # Project configuration
+└── __init__.py                       # Package initialization
 ```
 
-## Example Execution
+## API Integration Details
+
+### Barcelona API
+
+- Uses SQL-based queries for precise data filtering
+- Implements retry mechanism with exponential backoff
+- Handles rate limiting and timeout scenarios
+- Supports multiple feature types through SQL filters
+
+### Madrid API
+
+- Uses REST endpoints for data extraction
+- Implements custom area code mapping for location data
+- Handles multiple data formats (JSON, XML)
+- Supports various feature categories through dedicated processors
+
+## API Client Implementations
+
+Each city has its own dedicated API client implementation that handles data retrieval and processing:
+
+### Barcelona API Client (`barcelona/api_client.py`)
+
+The Barcelona API client is designed to work with the CKAN-based Open Data API:
+
+- **Base URL**: `https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search`
+- **Key Features**:
+  - Pagination support with configurable limit (default: 1000 records)
+  - Automatic handling of large datasets through offset-based pagination
+  - Support for both JSON and CSV output formats
+  - Built-in error handling and logging
+  - Data validation before saving
+
+Example usage:
 
 ```python
-# main.py simplified:
+from barcelona.api_client import run
 
-# ETL: Districts
-bcn_d.run()
-mad_d.run()
-upload.run_district_upload()
-
-# ETL: Neighbourhoods (uses district map from Supabase)
-bcn_n.run()
-mad_n.run()
-upload.run_neighbourhood_upload()
-
-# Run tests
-run_tests("test_base_data_upload.py")
-
-# Point features & indicators
-bcn_p.run()
-mad_p.run()
-upload.run_point_feature_upload()
-
-bcn_i.run()
-mad_i.run()
-upload.run_indicator_upload()
+# Fetch data and save as JSON
+run(
+    resource_id="your-resource-id",
+    output_path="path/to/output.json",
+    output_format="json"
+)
 ```
+
+### Madrid API Client (`madrid/api_client.py`)
+
+The Madrid API client interfaces with Madrid's Open Data API:
+
+- **Base URL**: `https://datos.madrid.es/egob/catalogo/`
+- **Key Features**:
+  - Automatic format detection (JSON/CSV) based on endpoint
+  - Direct DataFrame conversion for CSV responses
+  - UTF-8 encoding support
+  - Comprehensive error handling
+  - Simple endpoint-based data retrieval
+
+Example usage:
+
+```python
+from madrid.api_client import run
+
+# Fetch data from endpoint
+data = run("your-endpoint.json")  # or .csv
+```
+
+Both clients implement:
+
+- Robust error handling
+- Logging with emoji indicators for better visibility
+- Type hints for better code maintainability
+- Command-line interface for direct usage
+- Consistent return types (DataFrame or Dict)
 
 ## Benefits of This Structure
 
-- **Modular**: Add cities or datasets without breaking existing logic.
-- **Safe**: Uploads only proceed after passing validation.
-- **Scalable**: Easily extendable with new dataset types.
-- **Consistent**: Reusable naming and folder conventions.
+- **Modular**: Add cities or datasets without breaking existing logic
+- **Safe**: Uploads only proceed after passing validation
+- **Scalable**: Easily extendable with new dataset types and API integrations
+- **Consistent**: Standardized data format across different city APIs
+- **Reliable**: Built-in error handling and retry mechanisms
 
 ## Naming Conventions
 
-- `load_districts.py` → contains `run()` for that dataset
+- `load_[dataset].py` → contains `run()` for that dataset
 - `insert_ready_[dataset]_[city].json` → processed file for upload
 - `[city]-[dataset].json` → original file hosted on Supabase
 
@@ -107,6 +182,8 @@ Each processed dataset is tested against:
 - Geometry structure match
 - Record counts
 - Join validity (e.g. neighbourhoods with valid district IDs)
+- API response format validation
+- Data type consistency
 
 Tests are written using `pytest`.
 
@@ -119,13 +196,75 @@ Tests are written using `pytest`.
 | **Shapely**   | Geometry objects           |
 | **Supabase**  | Cloud DB for open data     |
 | **pytest**    | Dataset validations        |
+| **Requests**  | API client                 |
 
-## Future Datasets (Ideas)
+## GitHub Actions Automation
 
-- 🚉 Transit stops, metro entrances  
-- 🏫 Public schools and health centers  
-- 🏞️ Parks, gardens, green zones  
-- 📊 Income per district, population stats
+The ETL pipeline is automated using GitHub Actions. The workflow:
+
+1. Runs daily at 00:00 UTC
+2. Can be triggered manually from the Actions tab
+3. Runs automatically on pushes to main branch
+
+### Setup Requirements
+
+1. Add these secrets to your GitHub repository:
+   - `SUPABASE_URL`: Your Supabase project URL
+   - `SUPABASE_SERVICE_KEY`: Your Supabase service role key
+
+2. The workflow will:
+   - Set up Python 3.11 environment
+   - Install system dependencies (libgeos-dev)
+   - Install Python packages
+   - Run the ETL pipeline
+   - Execute tests
+   - Report success/failure
+
+### Manual Trigger
+
+To run the pipeline manually:
+
+1. Go to the repository's "Actions" tab
+2. Select "ETL Pipeline" workflow
+3. Click "Run workflow"
+
+### Monitoring
+
+- Check the Actions tab for workflow runs
+- View logs for each step
+- Get notifications on failures
+
+## Running the Engine
+
+The AUQ Data Engine can be run in two ways:
+
+### 1. Run with Python (Manual)
+
+Run the full ETL process: extract, transform, test, and upload:
+
+```bash
+PYTHONPATH=shared python -m auq_data_engine.main
+```
+
+Testing and skip the upload step:
+
+```bash
+PYTHONPATH=shared python -m auq_data_engine.main --skip-upload
+```
+
+### 2. Run with the Makefile (Recommended)
+
+Run full engine:
+
+```bash
+make run-engine
+```
+
+Run without upload:
+
+```bash
+make run-engine-dev
+```
 
 ## License & Ownership
 

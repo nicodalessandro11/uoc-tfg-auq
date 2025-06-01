@@ -1,4 +1,4 @@
-# *Are U Query-ous?* — Shared Utilities
+# *Are-u-Queryous?* — Shared Utilities
 
 This module provides **reusable libraries, scripts, and documentation** shared across the monorepo. It enables consistency, code reuse, and tooling across the data engine, frontend, and backend.
 

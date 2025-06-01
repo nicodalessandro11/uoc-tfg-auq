@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📄 Docs | 2025-06-01 | Update README files across multiple modules
+
+- Updated README.md files in auq_backend, auq_data_engine, auq_database, auq_frontend, auq_nlp, and shared modules
+- This was done to ensure all module documentation is up-to-date and provides accurate information to the team
+- Markdown was used for the documentation updates
+
+This comprehensive update ensures that all team members have access to the most recent information about each module. This will facilitate better understanding and quicker onboarding for new team members.
+
 ## 🔐 Config | 2025-05-31 | Update et-pipeline.yml workflow
 
 - Modified .github/workflows/et-pipeline.yml to enhance the build process

@@ -1,4 +1,4 @@
-# *Are U Query-ous?* — Database Schema & Migrations
+# *Are-u-Queryous?* — Database Schema & Migrations
 
 This module defines the complete **relational database schema** for the Are U Query-ous platform, designed to support geospatial visualization, comparative urban analysis, and multi-level filtering of open data across cities.
 

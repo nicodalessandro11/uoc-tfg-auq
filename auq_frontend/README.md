@@ -1,4 +1,4 @@
-# *Are U Query-ous?* — Frontend Application
+# *Are-u-Queryous?* — Frontend Application
 
 This document outlines the structure and functionality of the **frontend interface** for the Are U Query-ous platform. Built with **Next.js**, **Tailwind CSS**, and **Supabase**, the app provides a geospatial visualization experience, enabling users to compare and analyze open urban data interactively.
 
