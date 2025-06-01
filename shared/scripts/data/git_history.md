@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 🗃️ DB | 2025-06-01 | Added new schema diagram and mascot image
+
+- Added new Supabase schema diagram to auq_database (supabase-schema-diagram.svg)
+- Introduced new mascot image in the public frontend (mascot-blue.svg)
+- Files were added to enhance the visual representation of the database schema and to improve the frontend aesthetics
+
+This commit is part of our ongoing effort to improve the documentation and user interface of our project.
+
 ## 📄 Docs | 2025-06-01 | Update README files across multiple modules
 
 - Updated README.md files in auq_backend, auq_data_engine, auq_database, auq_frontend, auq_nlp, and shared modules
