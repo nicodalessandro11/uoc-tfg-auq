@@ -1,5 +1,13 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📄 Docs | 2025-06-02 | Update README.md
+
+- Modified README.md in auq_frontend
+- To provide updated information and instructions for the project
+- Used Markdown language for formatting
+
+This update aims to improve the project's documentation, making it more comprehensive and user-friendly.
+
 ## 🗃️ DB | 2025-06-01 | Added new schema diagram and mascot image
 
 - Added new Supabase schema diagram to auq_database (supabase-schema-diagram.svg)
