@@ -1,4 +1,4 @@
-# *Are U Query-ous?* - Changelog
+# *Are-u-Queryous?* - Changelog
 
 This project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and uses [Semantic Versioning](https://semver.org/).
 
@@ -6,6 +6,8 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) an
 
 ### Docs
 
+- 2025-06-02: Added new appendix descriptions and refined structure for thesis report
+- 2025-06-02: Added final user documentation for Emoji Logger and Git History
 - 2025-05-06: Update README.md with latest project information
 - 2025-05-06: Update documentation and changelog generation script
 - 2025-05-06: Update scripts and documentation
@@ -29,6 +31,9 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) an
 
 ### Feature
 
+- 2025-06-02: Finalized frontend chapter including NLP assistant placeholder
+- 2025-06-02: UI prepared for future NLP integration with mocked responses
+- 2025-06-02: Wrapped frontend views under clear section organization for documentation
 - 2025-05-06: Added new frontend components and updated documentation
 - 2025-05-04: Added advanced filtering capabilities
 - 2025-05-01: Optimized map rendering and data loading
@@ -58,6 +63,8 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) an
 
 ### Fix
 
+- 2025-06-02: Minor style improvements in admin and compare views
+- 2025-06-02: Fixed 404 custom page rendering issue in deployment
 - 2025-05-03: Resolved mobile responsiveness issues
 - 2025-04-29: Fixed Supabase PostGIS query with raw SQL
 - 2025-04-27: Fixed syntax error in map-context.tsx
@@ -71,12 +78,15 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) an
 
 ### Refactor
 
+- 2025-06-02: Final cleanup of frontend documentation and appendix integration
 - 2025-04-21: Restructured project organization and data handling
 - 2025-04-15: Separated ETL and upload stages for districts and neighbourhoods
 - 2025-04-15: Cleaned up compiled .pyc files from venv
 
 ### Config
 
+- 2025-06-02: Separated production environment under a dedicated repository with login limits
+- 2025-06-02: Updated deployment setup using Vercel and custom domain areuqueryous.com
 - 2025-04-18: Remove system files from git tracking
 - 2025-04-17: Update gitignore to exclude system files
 - 2025-04-15: Added Supabase credentials to .env.example and removed exposed password
@@ -96,3 +106,4 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) an
 - 2025-05-06: Update documentation and changelog generation script
 - 2025-05-06: Update scripts and documentation
 - 2025-04-15: Added commit message template for project documentation
+

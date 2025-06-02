@@ -1,4 +1,12 @@
-# *Are-u-Queryous?* - GIT LOGS
+# *Are U Query-ous?* - GIT LOGS
+
+## 📄 Docs | 2025-06-02 | Update README and CHANGELOG
+
+- Updated CHANGELOG.md to reflect recent changes
+- Revised shared/README.md and shared/common_lib/README.md for clarity and accuracy
+- Utilized Markdown for formatting and organization
+
+This commit aims to improve the documentation of our project, making it easier for both team members and users to understand the system. It's essential to keep our documentation up-to-date as the project evolves.
 
 ## 📄 Docs | 2025-06-02 | Update documentation and add new standards
 
