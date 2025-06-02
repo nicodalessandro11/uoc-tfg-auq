@@ -1,4 +1,4 @@
-# *Are U Query-ous?* - Commit Template
+# *Are-u-Queryous?* - Commit Template
 
 This template provides a professional, consistent structure for writing Git commit messages in the Are-U-Query-ous project.
 
@@ -46,4 +46,4 @@ This template provides a professional, consistent structure for writing Git comm
 ## License & Ownership
 
 This **Commit Template Document** was designed and documented by Nico Dalessandro  
-for the UOC Final Degree Project (TFG) — "Are U Query-ous?"
+for the UOC Final Degree Project (TFG) — "Are-u-Queryous?"

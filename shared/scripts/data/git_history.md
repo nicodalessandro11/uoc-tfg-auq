@@ -1,4 +1,12 @@
-# *Are U Query-ous?* - GIT LOGS
+# *Are-u-Queryous?* - GIT LOGS
+
+## 📄 Docs | 2025-06-02 | Update documentation and add new standards
+
+- Updated various README files and api-design.md in auq_backend, auq_data_engine, auq_database, auq_frontend, auq_nlp, and shared/docs modules
+- This was done to ensure the documentation is up-to-date and reflects the current state of the project
+- Added new frontend_standards.md and supabase_integration.md in shared/docs module to provide clear guidelines and standards for frontend development and Supabase integration
+
+This commit aims to improve the overall quality of our documentation, making it easier for new team members to understand the project and for existing members to follow the latest standards and practices.
 
 ## 📄 Docs | 2025-06-02 | Update README.md
 

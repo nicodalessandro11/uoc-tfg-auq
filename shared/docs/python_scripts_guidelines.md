@@ -1,4 +1,4 @@
-# *Are U Query-ous?* – Python Script Standards & Best Practices
+# *Are-u-Queryous?* - Python Script Standards & Best Practices
 
 This document defines the professional standards for **all Python scripts** within the `uoc-tfg-auq` project — including ETL pipelines, utilities, analysis modules, CLI tools, and integrations. These guidelines ensure consistency, testability, and maintainability across the codebase.
 
@@ -163,4 +163,4 @@ Following this standard ensures that Python scripts:
 ## License & Ownership
 
 This **Python Guidelines Document** was designed and documented by Nico Dalessandro  
-for the UOC Final Degree Project (TFG) — "Are U Query-ous?"
+for the UOC Final Degree Project (TFG) — "Are-u-Queryous?"
