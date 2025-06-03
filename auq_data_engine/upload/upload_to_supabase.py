@@ -39,14 +39,14 @@ EXPECTED_COUNTS = {
     "bcn": {
         "districts": 10,
         "neighbourhoods": 73,
-        "point_features": 0,  # Set this based on expected count
-        "indicators": 0  # Set this based on expected count
+        "point_features": 0,
+        "indicators": 0
     },
     "madrid": {
         "districts": 21,
         "neighbourhoods": 131,
-        "point_features": 0,  # Set this based on expected count
-        "indicators": 0  # Set this based on expected count
+        "point_features": 0,
+        "indicators": 0
     }
 }
 

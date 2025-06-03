@@ -1,13 +1,13 @@
 # *Are-u-Queryous?* — Monorepo
 
-This monorepo contains the complete codebase for the **Are U Query-ous** platform, a geospatial data visualization tool designed to explore, compare, and analyze open urban datasets at multiple geographical levels.
+This monorepo contains the complete codebase for the **Are-u-Queryous?** platform, a geospatial data visualization tool designed to explore, compare, and analyze open urban datasets at multiple geographical levels.Are-u-Queryous?
 
 > Developed as part of the Universitat Oberta de Catalunya (UOC) Final Degree Project (TFG) by **Nico Dalessandro Calderon**
 
 ## Monorepo Structure
 
 ```bash
-├── auq_backend/        # REST API with Fast API to be integrated with Next.js API routes (in progress)
+├── auq_backend/        # REST API Placeholder with Detailed Documentation
 ├── auq_data_engine/    # Python ETL pipeline for urban datasets 
 ├── auq_database/       # PostgreSQL + PostGIS schema, migrations, seed data
 ├── auq_frontend/       # Next.js + Leaflet frontend application (in progress)
@@ -108,7 +108,7 @@ cp shared/.env.example .env
 cp auq_frontend/.env.local.example auq_frontend/.env.local
 ```
 
-Then add your Supabase credentials (URL, anon/public keys) to the files above.
+Then Create a Supabase Project then add your Supabase credentials (URL, anon/public keys) to the files above (.env.example template available).
 
 ### 3. Install Dependencies
 

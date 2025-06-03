@@ -1,5 +1,14 @@
 # *Are U Query-ous?* - GIT LOGS
 
+## 📦 Feature | 2025-06-03 | Updated API clients and database upload
+
+- Modified the API clients for both Barcelona and Madrid in the auq_data_engine module
+- Changes were made to improve the efficiency of data retrieval and handling
+- Also updated the upload_to_supabase.py file to enhance the upload process to our Supabase database
+- Updated the database schema in schema.sql to accommodate the new data structure
+
+This commit aims to improve the overall data retrieval and upload process, making it more efficient and robust. These changes should significantly enhance the performance of our data engine.
+
 ## 📄 Docs | 2025-06-02 | Update README and CHANGELOG
 
 - Updated CHANGELOG.md to reflect recent changes

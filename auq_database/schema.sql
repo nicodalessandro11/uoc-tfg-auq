@@ -2,8 +2,8 @@
 -- Description: This SQL script sets up the database schema for the AUQ application.
 -- Author: Nico D'Alessandro Calderon
 -- Email: nicodalessandro11@gmail.com
--- Date: 2025-04-01
--- Version: 1.0.0
+-- Date: 2025-06-02
+-- Version: 1.16.0
 -- License: MIT License
 -- ====================================
 
