@@ -26,7 +26,7 @@ jobs:
       with:
         sparse-checkout: |
           auq_data_engine/
-          shared/
+          shared/common_lib/
         sparse-checkout-cone-mode: true
     
     - name: Set up Python
