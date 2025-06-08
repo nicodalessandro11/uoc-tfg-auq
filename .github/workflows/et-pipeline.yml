@@ -43,7 +43,7 @@ jobs:
     - name: Install shared library
       run: |
         python -m pip install --upgrade pip
-        cd shared/common_lib && pip install -e .
+        pip install -e shared/common_lib
     
     - name: Install Python dependencies
       working-directory: auq_data_engine
@@ -55,7 +55,7 @@ jobs:
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        PYTHONPATH: ${{ github.workspace }}/shared
+        PYTHONPATH: shared
       working-directory: auq_data_engine
       run: |
         python -m main
@@ -64,7 +64,7 @@ jobs:
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        PYTHONPATH: ${{ github.workspace }}/shared
+        PYTHONPATH: shared
       working-directory: auq_data_engine
       run: |
         pytest tests/
