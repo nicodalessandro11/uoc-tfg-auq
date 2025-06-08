@@ -1,4 +1,4 @@
-name: ETL Pipeline
+name: Point Features ETL Pipeline
 
 on:
   # Run on schedule (daily at 00:00 UTC)
@@ -13,21 +13,15 @@ on:
     branches:
       - main
     paths:
-      - 'auq_data_engine/**'
-      - 'shared/**'
-      - '.github/workflows/etl-pipeline.yml'
+      - '.github/workflows/etl/**'
+      - '.github/workflows/et-pipeline.yml'
 
 jobs:
-  run-etl:
+  run-point-features-etl:
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v3
-      with:
-        sparse-checkout: |
-          auq_data_engine/
-          shared/common_lib/
-        sparse-checkout-cone-mode: true
     
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -35,47 +29,27 @@ jobs:
         python-version: '3.11'
         cache: 'pip'
     
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libgeos-dev
-    
-    - name: Install shared library
-      run: |
-        python -m pip install --upgrade pip
-        pip install -e shared/common_lib
-    
     - name: Install Python dependencies
-      working-directory: auq_data_engine
+      working-directory: .github/workflows/etl
       run: |
         python -m pip install --upgrade pip
-        pip install -e .
+        pip install requests pandas python-dotenv supabase pytest pathlib
     
-    - name: Run ETL Pipeline
+    - name: Run Point Features ETL Pipeline
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        PYTHONPATH: shared
-      working-directory: auq_data_engine
+      working-directory: .github/workflows/etl
       run: |
-        python -m main
-    
-    - name: Run Tests
-      env:
-        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        PYTHONPATH: shared
-      working-directory: auq_data_engine
-      run: |
-        pytest tests/
+        python main.py
     
     - name: Handle Success
       if: success()
       run: |
-        echo "ETL pipeline completed successfully!"
+        echo "Point Features ETL pipeline completed successfully!"
     
     - name: Handle Failure
       if: failure()
       run: |
-        echo "ETL pipeline failed!"
+        echo "Point Features ETL pipeline failed!"
         exit 1 
