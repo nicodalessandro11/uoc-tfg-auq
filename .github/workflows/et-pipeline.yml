@@ -41,10 +41,9 @@ jobs:
         sudo apt-get install -y libgeos-dev
     
     - name: Install shared library
-      working-directory: shared/common_lib
       run: |
         python -m pip install --upgrade pip
-        pip install -e .
+        cd shared/common_lib && pip install -e .
     
     - name: Install Python dependencies
       working-directory: auq_data_engine
@@ -56,7 +55,7 @@ jobs:
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        PYTHONPATH: shared
+        PYTHONPATH: ${{ github.workspace }}/shared
       working-directory: auq_data_engine
       run: |
         python -m main
@@ -65,7 +64,7 @@ jobs:
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        PYTHONPATH: shared
+        PYTHONPATH: ${{ github.workspace }}/shared
       working-directory: auq_data_engine
       run: |
         pytest tests/
